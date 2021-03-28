@@ -1,0 +1,8 @@
+﻿   Add address fields.
+   Test and find out what multiple addresses look like. And other fields.
+   Test all the different type in apple and/or google to see how to export emails, phones, etc.
+   Reduce width of combobox columns.
+   Finish export.
+   Finish setting fields in VCardLibVCFService.
+   Add check both next to date and show/hine date picker. Seperate field to back up the nullable one.
+   Settings page.

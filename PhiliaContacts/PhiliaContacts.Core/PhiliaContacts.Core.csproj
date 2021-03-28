@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Base\Resources\contact-placeholder.png" />
+    <None Remove="Base\Resources\man-1.jpeg" />
+    <None Remove="Base\Resources\man-2.jpeg" />
+    <None Remove="Base\Resources\woman-1.jpeg" />
+    <None Remove="Base\Resources\woman-2.jpeg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Base\Resources\contact-placeholder.png" />
+    <EmbeddedResource Include="Base\Resources\man-1.jpeg" />
+    <EmbeddedResource Include="Base\Resources\man-2.jpeg" />
+    <EmbeddedResource Include="Base\Resources\woman-1.jpeg" />
+    <EmbeddedResource Include="Base\Resources\woman-2.jpeg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EWSoftware.PDI.Data" Version="2020.11.25" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="vCardLib.dll" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AmalgamateLabs.Win10\AmalgamateLabs.Win10.csproj" />
+    <ProjectReference Include="..\..\PhiliaContacts.Domains\PhiliaContacts.Domains.csproj" />
+  </ItemGroup>
+
+</Project>

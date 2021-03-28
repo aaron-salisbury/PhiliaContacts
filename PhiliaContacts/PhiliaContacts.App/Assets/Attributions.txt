@@ -1,0 +1,16 @@
+﻿    Logo "Notebook" by Freepik from Flaticon.
+    https://www.flaticon.com/free-icon/notebook_1012212
+
+    Placeholder contact image "User" by Becris from Flaticon.
+    https://www.flaticon.com/free-icon/user_848006
+
+    *** Test Data Contact Images: ***
+
+    By Pixabay, from Pexels.
+    https://www.pexels.com/photo/adult-beard-boy-casual-220453/
+
+    By Pixabay, from Pexels.
+    https://www.pexels.com/photo/adult-attractive-beautiful-beauty-415829/
+
+    By Andrew Dick, from Pexels.
+    https://www.pexels.com/photo/photography-of-man-in-white-shirt-with-round-black-analog-watch-697509/

@@ -1,0 +1,297 @@
+﻿<UserControl
+    x:Class="PhiliaContacts.App.Base.Controls.ContactDetailControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:PhiliaContacts.App.Base.Helpers"
+    xmlns:iconPacks="using:MahApps.Metro.IconPacks"
+    xmlns:tg="using:Telerik.UI.Xaml.Controls.Grid"
+    mc:Ignorable="d"
+    d:DesignHeight="1200"
+    d:DesignWidth="625">
+
+    <ScrollViewer Name="ForegroundElement" Padding="{StaticResource DetailPageMargin}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="24" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- HEADER -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Height="75">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{x:Bind helpers:Images.BytesToBitmapSource(MasterContact.Photo), Mode=OneWay}" Stretch="UniformToFill" />
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock
+                    Margin="{StaticResource MediumLeftMargin}"
+                    VerticalAlignment="Center"
+                    Text="{x:Bind MasterContact.FormattedName, Mode=OneWay}"
+                    Style="{ThemeResource TitleTextBlockStyle}" />
+                <Button Name="FavoriteButton" Click="FavoriteButton_Click" Background="Transparent" Margin="20,3,0,0">
+                    <FontIcon Glyph="{x:Bind MasterContact.FavoriteSegoeMDL2Glyph, Mode=OneWay}" FontSize="20" />
+                </Button>
+            </StackPanel>
+
+            <!-- FORM -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <!-- Icon -->
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="5" />
+                    <!-- Left Field -->
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="15" />
+                    <!-- Right Field -->
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <!-- Name 1 -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <!-- Company -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <!-- Email -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <!-- Phone Numbers -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <!-- Birthday -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <!-- Twitter -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <!-- Facebook -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <!-- LinkedIn -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
+                    <!-- Notes -->
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="UserRegular"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+                <TextBox Grid.Column="2" Grid.Row="0" Header="First Name" Text="{x:Bind MasterContact.GivenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="4" Grid.Row="0" Header="Last Name" Text="{x:Bind MasterContact.FamilyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="2" Grid.Row="1" Header="Middle Name" Text="{x:Bind MasterContact.MiddleName, Mode=TwoWay}" Margin="0,5,0,0" />
+                <TextBox Grid.Column="4" Grid.Row="1" Header="Nickname" Text="{x:Bind MasterContact.Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,0" />
+                
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="3"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="BuildingRegular"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+                <TextBox Grid.Column="2" Grid.Row="3" Header="Company" Text="{x:Bind MasterContact.Organization, Mode=TwoWay}" />
+                <TextBox Grid.Column="4" Grid.Row="3" Header="Job Title" Text="{x:Bind MasterContact.Title, Mode=TwoWay}" />
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="5"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Kind="EnvelopeRegular"
+                    Margin="0,25,20,0"
+                    Opacity="0.5" />
+                <StackPanel Grid.Column="2" Grid.Row="5" Grid.ColumnSpan="3" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Email" />
+                        <Button Name ="AddEmailButton" Click="AddEmailButton_Click" Background="Transparent" Margin="6,-4,0,0">
+                            <FontIcon Glyph="&#xECC8;" FontSize="15" />
+                        </Button>
+                        <Button Name="DeleteEmailButton" Click="DeleteEmailButton_Click" Background="Transparent" Margin="-5,-4,0,0">
+                            <FontIcon Glyph="&#xECC9;" FontSize="15" />
+                        </Button>
+                    </StackPanel>
+
+                    <tg:RadDataGrid 
+                        Name="EmailGrid"
+                        ColumnDataOperationsMode="Inline"
+                        UserEditMode="Inline"
+                        ItemsSource="{x:Bind MasterContact.EmailAddresses, Mode=TwoWay}" 
+                        AutoGenerateColumns="False"
+                        UserGroupMode="Disabled"
+                        UserColumnReorderMode="None"
+                        ColumnResizeHandleDisplayMode="None"
+                        UserSortMode="None"
+                        UserFilterMode="Disabled"
+                        SelectedItem="{x:Bind SelectedEmail, Mode=TwoWay}"
+                        MaxHeight="100">
+                        <tg:RadDataGrid.Columns>
+                            <tg:DataGridTextColumn Name="EmailColumn" PropertyName="Email" />
+                            <tg:DataGridComboBoxColumn Name="EmailTypeColumn" PropertyName="Type" Header="Label" ItemsSource="{x:Bind EmailTypes}" />
+                        </tg:RadDataGrid.Columns>
+                    </tg:RadDataGrid>
+                </StackPanel>
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="7"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Kind="PhoneAltSolid"
+                    Margin="0,25,20,0"
+                    Opacity="0.5" />
+                <StackPanel Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="3" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="Phone" />
+                        <Button Name="AddPhoneButton" Click="AddPhoneButton_Click" Background="Transparent" Margin="6,-4,0,0">
+                            <FontIcon Glyph="&#xECC8;" FontSize="15" />
+                        </Button>
+                        <Button Name="DeletePhoneButton" Click="DeletePhoneButton_Click" Background="Transparent" Margin="-5,-4,0,0">
+                            <FontIcon Glyph="&#xECC9;" FontSize="15" />
+                        </Button>
+                    </StackPanel>
+
+                    <tg:RadDataGrid 
+                        Name="PhoneGrid"
+                        ColumnDataOperationsMode="Inline"
+                        UserEditMode="Inline"
+                        ItemsSource="{x:Bind MasterContact.PhoneNumbers, Mode=TwoWay}" 
+                        AutoGenerateColumns="False"
+                        UserGroupMode="Disabled"
+                        UserColumnReorderMode="None"
+                        ColumnResizeHandleDisplayMode="None"
+                        UserSortMode="None"
+                        UserFilterMode="Disabled"
+                        SelectedItem="{x:Bind SelectedPhoneNumber, Mode=TwoWay}"
+                        MaxHeight="100">
+                        <tg:RadDataGrid.Columns>
+                            <tg:DataGridTextColumn Name="PhoneNumberColumn" PropertyName="Number" />
+                            <tg:DataGridComboBoxColumn Name="PhoneNumberTypeColumn" PropertyName="Type" Header="Label" ItemsSource="{x:Bind PhoneNumberTypes}" />
+                        </tg:RadDataGrid.Columns>
+                    </tg:RadDataGrid>
+                </StackPanel>
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="9"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="BirthdayCakeSolid"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+                <Grid Grid.Column="2" Grid.Row="9" Grid.ColumnSpan="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Text="Birthday" Margin="0,0,0,4" />
+                    <CheckBox Grid.Row="1" Grid.Column="2" Name="BirthdayCheckBox" Content="Set" IsChecked="{x:Bind ShowBirthdate, Mode=TwoWay}" />
+                    <DatePicker
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Name="BirthDatePicker"
+                        Date="{x:Bind DateTimeOffsetBirthdate, Mode=TwoWay}"
+                        Visibility="Collapsed"/>
+                </Grid>
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="11"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="TwitterBrands"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+                <TextBox  
+                    Grid.Column="2" 
+                    Grid.Row="11" 
+                    Header="Twitter User" 
+                    Text="{x:Bind MasterContact.TwitterUser, Mode=TwoWay}" 
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap" />
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="13"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="FacebookBrands"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+                <TextBox  
+                    Grid.Column="2" 
+                    Grid.Row="13" 
+                    Header="Facebook User" 
+                    Text="{x:Bind MasterContact.FacebookUser, Mode=TwoWay}" 
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap" />
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="15"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="LinkedinBrands"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+                <TextBox  
+                    Grid.Column="2" 
+                    Grid.Row="15" 
+                    Header="LinkedIn User" 
+                    Text="{x:Bind MasterContact.LinkedInUser, Mode=TwoWay}" 
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap" />
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="17"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="StickyNoteRegular"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+                <TextBox  
+                    Grid.Column="2" 
+                    Grid.Row="17" 
+                    Grid.ColumnSpan="3"
+                    Header="Notes" 
+                    Text="{x:Bind MasterContact.Notes, Mode=TwoWay}" 
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+
+</UserControl>
