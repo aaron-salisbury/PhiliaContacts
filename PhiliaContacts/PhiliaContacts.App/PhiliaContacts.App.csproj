@@ -280,13 +280,13 @@
     <PRIResource Include="Base\Strings\en-us\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\PhiliaContacts.Domains\PhiliaContacts.Domains.csproj">
-      <Project>{a6f4b59e-93df-45a6-bee0-cc7cccf7bd1d}</Project>
-      <Name>PhiliaContacts.Domains</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PhiliaContacts.Core\PhiliaContacts.Core.csproj">
       <Project>{ffdc6382-19e9-43b9-be88-b88ceb78d1ec}</Project>
       <Name>PhiliaContacts.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhiliaContacts.Domains\PhiliaContacts.Domains.csproj">
+      <Project>{0eb7b479-f714-4a4e-8556-6d48ee8c1d66}</Project>
+      <Name>PhiliaContacts.Domains</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Windows.Security.Cryptography;
 using Windows.Storage;
-using Windows.Storage.Streams;
 
 namespace AmalgamateLabs.Win10
 {
