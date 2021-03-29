@@ -27,8 +27,6 @@ namespace PhiliaContacts.App.Base.Controls
         {
             this.InitializeComponent();
 
-            ShowBirthdate = MasterContact.Birthday != null;
-
             //EmailGrid.Columns.Where(c => string.Equals(c.Name, "EmailColumn")).FirstOrDefault().Width = 307;
             //EmailGrid.Columns.Where(c => string.Equals(c.Name, "EmailTypeColumn")).FirstOrDefault().Width = 153;
         }
@@ -43,47 +41,6 @@ namespace PhiliaContacts.App.Base.Controls
         {
             MasterContact.IsFavorite = !MasterContact.IsFavorite;
         }
-
-        #region Birthdate
-        private bool _showBirthdate;
-        public bool ShowBirthdate
-        {
-            get => _showBirthdate;
-            set
-            {
-                _showBirthdate = value;
-                if (!_showBirthdate)
-                {
-                    MasterContact.Birthday = null;
-                    BirthDatePicker.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    if (MasterContact.Birthday == null)
-                    {
-                        DateTimeOffsetBirthdate = new DateTimeOffset(new DateTime(DateTime.Now.Year - 20, 1, 1));
-                    }
-                    else
-                    {
-                        DateTimeOffsetBirthdate = new DateTimeOffset(MasterContact.Birthday.Value);
-                    }
-
-                    BirthDatePicker.Visibility = Visibility.Visible;
-                }
-            }
-        }
-
-        private DateTimeOffset _dateTimeOffsetBirthdate;
-        public DateTimeOffset DateTimeOffsetBirthdate
-        {
-            get => _dateTimeOffsetBirthdate;
-            set
-            {
-                _dateTimeOffsetBirthdate = value;
-                MasterContact.Birthday = _dateTimeOffsetBirthdate.DateTime;
-            }
-        }
-        #endregion
 
         #region Email
         public EmailAddress SelectedEmail;
@@ -132,10 +89,5 @@ namespace PhiliaContacts.App.Base.Controls
             }
         }
         #endregion
-
-        //private void EmailListView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    SelectedEmail = (sender as ListView).SelectedItem;
-        //}
     }
 }

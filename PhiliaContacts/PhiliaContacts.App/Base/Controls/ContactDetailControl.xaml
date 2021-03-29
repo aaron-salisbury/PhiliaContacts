@@ -5,12 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:PhiliaContacts.App.Base.Helpers"
+    xmlns:converters="using:PhiliaContacts.App.Base.Converters"
     xmlns:iconPacks="using:MahApps.Metro.IconPacks"
     xmlns:tg="using:Telerik.UI.Xaml.Controls.Grid"
     mc:Ignorable="d"
     d:DesignHeight="1200"
     d:DesignWidth="625">
 
+    <UserControl.Resources>
+        <converters:DateTimeToDateTimeOffestConverter x:Key="DateOffsetConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
+    
     <ScrollViewer Name="ForegroundElement" Padding="{StaticResource DetailPageMargin}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid>
             <Grid.RowDefinitions>
@@ -209,13 +215,13 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Row="0" Text="Birthday" Margin="0,0,0,4" />
-                    <CheckBox Grid.Row="1" Grid.Column="2" Name="BirthdayCheckBox" Content="Set" IsChecked="{x:Bind ShowBirthdate, Mode=TwoWay}" />
-                    <DatePicker
-                        Grid.Row="1"
-                        Grid.Column="0"
+                    <CheckBox Grid.Row="1" Grid.Column="2" Name="BirthdayCheckBox" Content="Set" IsChecked="{x:Bind MasterContact.HasBirthday, Mode=TwoWay}" />
+                    <DatePicker 
+                        Grid.Row="1" 
+                        Grid.Column="0" 
                         Name="BirthDatePicker"
-                        Date="{x:Bind DateTimeOffsetBirthdate, Mode=TwoWay}"
-                        Visibility="Collapsed"/>
+                        Visibility="{x:Bind MasterContact.HasBirthday, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" 
+                        SelectedDate="{x:Bind MasterContact.Birthday, Mode=TwoWay, Converter={StaticResource DateOffsetConverter}}" />
                 </Grid>
 
                 <iconPacks:PackIconFontAwesome 

@@ -129,6 +129,8 @@
     <Compile Include="Base\Controls\MyAppBar.xaml.cs">
       <DependentUpon>MyAppBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Base\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Base\Converters\DateTimeToDateTimeOffestConverter.cs" />
     <Compile Include="Base\Extensions\EnumExtensions.cs" />
     <Compile Include="Base\Helpers\Animation.cs" />
     <Compile Include="Base\Helpers\ComboBoxEnumItem.cs" />

@@ -31,8 +31,8 @@ namespace PhiliaContacts.Core
 
             DefaultContactImage = Images.EmbeddedImageToBytes("PhiliaContacts.Core.Base.Resources.contact-placeholder.png");
 
-            Load();
-            //LoadTestData();
+            //Load();
+            LoadTestData();
         }
 
         public bool Save()

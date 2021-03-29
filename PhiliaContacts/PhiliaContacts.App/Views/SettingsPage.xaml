@@ -58,12 +58,21 @@
 
             <StackPanel Margin="{StaticResource XSmallTopMargin}">
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" />
+
                 <TextBlock
-                    x:Uid="Settings_AboutDescription"
+                    x:Uid="Settings_AboutCopyright"
                     Margin="{StaticResource XSmallTopMargin}"
                     Style="{ThemeResource BodyTextBlockStyle}" />
 
-                <HyperlinkButton x:Uid="Settings_PrivacyTermsLink" Margin="{StaticResource XSmallTopMargin}" />
+                <TextBlock
+                    x:Uid="Settings_AboutDescription"
+                    Margin="{StaticResource XSmallTopMargin}"
+                    Style="{ThemeResource BodyTextBlockStyle}" HorizontalAlignment="Left" />
+
+                <StackPanel Orientation="Horizontal">
+                    <HyperlinkButton x:Uid="Settings_PrivacyTermsLink" Margin="{StaticResource XSmallTopMargin}" />
+                    <HyperlinkButton x:Uid="Settings_IssuesLink" Margin="20,8,0,0" />
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>

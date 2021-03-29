@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Sample App</value>
+    <value>Philia Contacts</value>
     <comment>Application display name</comment>
   </data>
   <data name="Settings_Theme.Text" xml:space="preserve">
@@ -150,11 +150,21 @@
     <comment>Privacy Statement link content for Settings</comment>
   </data>
   <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>https://termly.io/products/privacy-policy-generator/</value>
+    <value>https://github.com/aaron-salisbury/PhiliaContacts/blob/master/PrivacyPolicy.md</value>
     <comment>Here is your Privacy Statement url for Settings</comment>
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>
     <comment>Personalization text for Settings</comment>
+  </data>
+  <data name="Settings_AboutCopyright.Text" xml:space="preserve">
+    <value>© Aaron Salisbury</value>
+    <comment>About this application copyright for Settings.</comment>
+  </data>
+  <data name="Settings_IssuesLink.Content" xml:space="preserve">
+    <value>Issues</value>
+  </data>
+  <data name="Settings_IssuesLink.NavigateUri" xml:space="preserve">
+    <value>https://github.com/aaron-salisbury/PhiliaContacts/issues</value>
   </data>
 </root>

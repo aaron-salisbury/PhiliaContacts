@@ -4,5 +4,4 @@
    Reduce width of combobox columns.
    Finish export.
    Finish setting fields in VCardLibVCFService.
-   Add check both next to date and show/hine date picker. Seperate field to back up the nullable one.
-   Settings page.
+   Finish date converter so that date gets set to null when we want.
