@@ -13,8 +13,8 @@
     d:DesignWidth="625">
 
     <UserControl.Resources>
-        <converters:DateTimeToDateTimeOffestConverter x:Key="DateOffsetConverter" />
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:DateTimeToDateTimeOffestConverter x:Key="DateOffsetConverter" />
     </UserControl.Resources>
     
     <ScrollViewer Name="ForegroundElement" Padding="{StaticResource DetailPageMargin}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -220,7 +220,7 @@
                         Grid.Row="1" 
                         Grid.Column="0" 
                         Name="BirthDatePicker"
-                        Visibility="{x:Bind MasterContact.HasBirthday, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}}" 
+                        Visibility="{x:Bind MasterContact.HasBirthday, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" 
                         SelectedDate="{x:Bind MasterContact.Birthday, Mode=TwoWay, Converter={StaticResource DateOffsetConverter}}" />
                 </Grid>
 
