@@ -84,8 +84,8 @@ namespace PhiliaContacts.Core
                     PhoneNumbers = new ObservableCollection<PhoneNumber> { new PhoneNumber { Number = "(555) 555-5555", Type = PhoneNumber.PhoneNumberType.Home } },
                     Url = "http://www.amalgamatelabs.com",
                     Birthday = new DateTime(1985, 2, 28),
-                    TwitterUser = "https://twitter.com/msdev",
-                    FacebookUser = "https://www.facebook.com/MSFTDev.US"
+                    TwitterUser = "msdev",
+                    FacebookUser = "MSFTDev.US"
                 },
                 new Contact
                 {
@@ -98,8 +98,8 @@ namespace PhiliaContacts.Core
                     PhoneNumbers = new ObservableCollection<PhoneNumber> { new PhoneNumber { Number = "(555) 555-5555", Type = PhoneNumber.PhoneNumberType.Home } },
                     Url = "http://www.amalgamatelabs.com",
                     Birthday = new DateTime(1985, 2, 28),
-                    TwitterUser = "https://twitter.com/msdev",
-                    FacebookUser = "https://www.facebook.com/MSFTDev.US"
+                    TwitterUser = "msdev",
+                    FacebookUser = "MSFTDev.US"
                 },
                 new Contact
                 {
@@ -112,8 +112,8 @@ namespace PhiliaContacts.Core
                     PhoneNumbers = new ObservableCollection<PhoneNumber> { new PhoneNumber { Number = "(555) 555-5555", Type = PhoneNumber.PhoneNumberType.Home } },
                     Url = "http://www.amalgamatelabs.com",
                     Birthday = new DateTime(1985, 2, 28),
-                    TwitterUser = "https://twitter.com/msdev",
-                    FacebookUser = "https://www.facebook.com/MSFTDev.US"
+                    TwitterUser = "msdev",
+                    FacebookUser = "MSFTDev.US"
                 },
                 new Contact
                 {
@@ -125,8 +125,8 @@ namespace PhiliaContacts.Core
                     EmailAddresses = new ObservableCollection<EmailAddress> { new EmailAddress { Email = "kat.skinner@fakeemail.com", Type = EmailAddress.EmailType.Home } },
                     PhoneNumbers = new ObservableCollection<PhoneNumber> { new PhoneNumber { Number = "(555) 555-5555", Type = PhoneNumber.PhoneNumberType.Home } },
                     Birthday = new DateTime(1960, 2, 28),
-                    TwitterUser = "https://twitter.com/msdev",
-                    FacebookUser = "https://www.facebook.com/MSFTDev.US"
+                    TwitterUser = "msdev",
+                    FacebookUser = "MSFTDev.US"
                 },
             };
         }

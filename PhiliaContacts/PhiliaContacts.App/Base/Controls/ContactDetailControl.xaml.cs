@@ -42,6 +42,11 @@ namespace PhiliaContacts.App.Base.Controls
             MasterContact.IsFavorite = !MasterContact.IsFavorite;
         }
 
+        private void BirthdayClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            MasterContact.Birthday = null;
+        }
+
         #region Email
         public EmailAddress SelectedEmail;
 

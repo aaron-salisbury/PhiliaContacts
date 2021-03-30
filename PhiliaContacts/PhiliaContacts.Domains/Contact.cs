@@ -66,25 +66,6 @@ namespace PhiliaContacts.Domains
             {
                 _birthday = value;
                 RaisePropertyChanged();
-                if (_birthday != null)
-                {
-                    HasBirthday = true;
-                }
-            }
-        }
-
-        private bool _hasBirthday = false;
-        public bool HasBirthday
-        {
-            get => _hasBirthday;
-            set
-            {
-                _hasBirthday = value;
-                RaisePropertyChanged();
-                if (!_hasBirthday)
-                {
-                    Birthday = null;
-                }
             }
         }
 

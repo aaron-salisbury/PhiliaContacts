@@ -4,4 +4,3 @@
    Reduce width of combobox columns.
    Finish export.
    Finish setting fields in VCardLibVCFService.
-   Finish date converter so that date gets set to null when we want.
