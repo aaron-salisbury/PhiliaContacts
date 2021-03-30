@@ -26,9 +26,6 @@ namespace PhiliaContacts.App.Base.Controls
         public ContactDetailControl()
         {
             this.InitializeComponent();
-
-            //EmailGrid.Columns.Where(c => string.Equals(c.Name, "EmailColumn")).FirstOrDefault().Width = 307;
-            //EmailGrid.Columns.Where(c => string.Equals(c.Name, "EmailTypeColumn")).FirstOrDefault().Width = 153;
         }
 
         private static void OnMasterContactPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

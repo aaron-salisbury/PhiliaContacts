@@ -1,6 +1,5 @@
 ﻿   Add address fields.
-   Test and find out what multiple addresses look like. And other fields.
-   Test all the different type in apple and/or google to see how to export emails, phones, etc.
-   Reduce width of combobox columns.
-   Finish export.
    Finish setting fields in VCardLibVCFService.
+   Test and find out what multiple addresses look like. And other fields.
+   Finish export.
+   Test all the different type in apple and/or google to see how to export emails, phones, etc.

@@ -146,8 +146,8 @@
                         SelectedItem="{x:Bind SelectedEmail, Mode=TwoWay}"
                         MaxHeight="100">
                         <tg:RadDataGrid.Columns>
-                            <tg:DataGridTextColumn Name="EmailColumn" PropertyName="Email" />
-                            <tg:DataGridComboBoxColumn Name="EmailTypeColumn" PropertyName="Type" Header="Label" ItemsSource="{x:Bind EmailTypes}" />
+                            <tg:DataGridComboBoxColumn Name="EmailTypeColumn" PropertyName="Type" Header="Label" ItemsSource="{x:Bind EmailTypes}" SizeMode="Fixed" Width="125" />
+                            <tg:DataGridTextColumn Name="EmailColumn" PropertyName="Email" SizeMode="Stretch" />
                         </tg:RadDataGrid.Columns>
                     </tg:RadDataGrid>
                 </StackPanel>
@@ -187,8 +187,8 @@
                         SelectedItem="{x:Bind SelectedPhoneNumber, Mode=TwoWay}"
                         MaxHeight="100">
                         <tg:RadDataGrid.Columns>
-                            <tg:DataGridTextColumn Name="PhoneNumberColumn" PropertyName="Number" />
-                            <tg:DataGridComboBoxColumn Name="PhoneNumberTypeColumn" PropertyName="Type" Header="Label" ItemsSource="{x:Bind PhoneNumberTypes}" />
+                            <tg:DataGridComboBoxColumn Name="PhoneNumberTypeColumn" PropertyName="Type" Header="Label" ItemsSource="{x:Bind PhoneNumberTypes}" SizeMode="Fixed" Width="125" />
+                            <tg:DataGridTextColumn Name="PhoneNumberColumn" PropertyName="Number" SizeMode="Stretch" />
                         </tg:RadDataGrid.Columns>
                     </tg:RadDataGrid>
                 </StackPanel>
