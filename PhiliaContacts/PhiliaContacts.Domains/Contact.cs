@@ -81,8 +81,6 @@ namespace PhiliaContacts.Domains
 
         public string LinkedInUser { get; set; }
 
-        public ObservableCollection<Address> Addresses { get; set; } = new ObservableCollection<Address>();
-
         public string Url { get; set; }
 
         public string Notes { get; set; }
