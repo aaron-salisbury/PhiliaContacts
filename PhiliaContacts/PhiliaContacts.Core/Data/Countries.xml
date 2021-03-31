@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Countries>
+  <Country>Afghanistan</Country>
+  <Country>Albania</Country>
+  <Country>Algeria</Country>
+  <Country>Andorra</Country>
+  <Country>Angola</Country>
+  <Country>Antigua and Barbuda</Country>
+  <Country>Argentina</Country>
+  <Country>Armenia</Country>
+  <Country>Australia</Country>
+  <Country>Austria</Country>
+  <Country>Azerbaijan</Country>
+  <Country>Bahamas</Country>
+  <Country>Bahrain</Country>
+  <Country>Bangladesh</Country>
+  <Country>Barbados</Country>
+  <Country>Belarus</Country>
+  <Country>Belgium</Country>
+  <Country>Belize</Country>
+  <Country>Benin</Country>
+  <Country>Bhutan</Country>
+  <Country>Bolivia</Country>
+  <Country>Bosnia and Herzegovina</Country>
+  <Country>Botswana</Country>
+  <Country>Brazil</Country>
+  <Country>Brunei</Country>
+  <Country>Bulgaria</Country>
+  <Country>Burkina Faso</Country>
+  <Country>Burundi</Country>
+  <Country>Côte d'Ivoire</Country>
+  <Country>Cabo Verde</Country>
+  <Country>Cambodia</Country>
+  <Country>Cameroon</Country>
+  <Country>Canada</Country>
+  <Country>Central African Republic</Country>
+  <Country>Chad</Country>
+  <Country>Chile</Country>
+  <Country>China</Country>
+  <Country>Colombia</Country>
+  <Country>Comoros</Country>
+  <Country>Congo (Congo-Brazzaville)</Country>
+  <Country>Costa Rica</Country>
+  <Country>Croatia</Country>
+  <Country>Cuba</Country>
+  <Country>Cyprus</Country>
+  <Country>Czechia(Czech Republic)</Country>
+  <Country>Democratic Republic of the Congo</Country>
+  <Country>Denmark</Country>
+  <Country>Djibouti</Country>
+  <Country>Dominica</Country>
+  <Country>Dominican Republic</Country>
+  <Country>Ecuador</Country>
+  <Country>Egypt</Country>
+  <Country>El Salvador</Country>
+  <Country>Equatorial Guinea</Country>
+  <Country>Eritrea</Country>
+  <Country>Estonia</Country>
+  <Country>Eswatini</Country>
+  <Country>Ethiopia</Country>
+  <Country>Fiji</Country>
+  <Country>Finland</Country>
+  <Country>France</Country>
+  <Country>Gabon</Country>
+  <Country>Gambia</Country>
+  <Country>Georgia</Country>
+  <Country>Germany</Country>
+  <Country>Ghana</Country>
+  <Country>Greece</Country>
+  <Country>Grenada</Country>
+  <Country>Guatemala</Country>
+  <Country>Guinea</Country>
+  <Country>Guinea-Bissau</Country>
+  <Country>Guyana</Country>
+  <Country>Haiti</Country>
+  <Country>Holy See</Country>
+  <Country>Honduras</Country>
+  <Country>Hungary</Country>
+  <Country>Iceland</Country>
+  <Country>India</Country>
+  <Country>Indonesia</Country>
+  <Country>Iran</Country>
+  <Country>Iraq</Country>
+  <Country>Ireland</Country>
+  <Country>Israel</Country>
+  <Country>Italy</Country>
+  <Country>Jamaica</Country>
+  <Country>Japan</Country>
+  <Country>Jordan</Country>
+  <Country>Kazakhstan</Country>
+  <Country>Kenya</Country>
+  <Country>Kiribati</Country>
+  <Country>Kuwait</Country>
+  <Country>Kyrgyzstan</Country>
+  <Country>Laos</Country>
+  <Country>Latvia</Country>
+  <Country>Lebanon</Country>
+  <Country>Lesotho</Country>
+  <Country>Liberia</Country>
+  <Country>Libya</Country>
+  <Country>Liechtenstein</Country>
+  <Country>Lithuania</Country>
+  <Country>Luxembourg</Country>
+  <Country>Madagascar</Country>
+  <Country>Malawi</Country>
+  <Country>Malaysia</Country>
+  <Country>Maldives</Country>
+  <Country>Mali</Country>
+  <Country>Malta</Country>
+  <Country>Marshall Islands</Country>
+  <Country>Mauritania</Country>
+  <Country>Mauritius</Country>
+  <Country>Mexico</Country>
+  <Country>Micronesia</Country>
+  <Country>Moldova</Country>
+  <Country>Monaco</Country>
+  <Country>Mongolia</Country>
+  <Country>Montenegro</Country>
+  <Country>Morocco</Country>
+  <Country>Mozambique</Country>
+  <Country>Myanmar</Country>
+  <Country>Namibia</Country>
+  <Country>Nauru</Country>
+  <Country>Nepal</Country>
+  <Country>Netherlands</Country>
+  <Country>New Zealand</Country>
+  <Country>Nicaragua</Country>
+  <Country>Niger</Country>
+  <Country>Nigeria</Country>
+  <Country>North Korea</Country>
+  <Country>North Macedonia</Country>
+  <Country>Norway</Country>
+  <Country>Oman</Country>
+  <Country>Pakistan</Country>
+  <Country>Palau</Country>
+  <Country>Palestine State</Country>
+  <Country>Panama</Country>
+  <Country>Papua New Guinea</Country>
+  <Country>Paraguay</Country>
+  <Country>Peru</Country>
+  <Country>Philippines</Country>
+  <Country>Poland</Country>
+  <Country>Portugal</Country>
+  <Country>Qatar</Country>
+  <Country>Romania</Country>
+  <Country>Russia</Country>
+  <Country>Rwanda</Country>
+  <Country>Saint Kitts and Nevis</Country>
+  <Country>Saint Lucia</Country>
+  <Country>Saint Vincent and the Grenadines</Country>
+  <Country>Samoa</Country>
+  <Country>San Marino</Country>
+  <Country>Sao Tome and Principe</Country>
+  <Country>Saudi Arabia</Country>
+  <Country>Senegal</Country>
+  <Country>Serbia</Country>
+  <Country>Seychelles</Country>
+  <Country>Sierra Leone</Country>
+  <Country>Singapore</Country>
+  <Country>Slovakia</Country>
+  <Country>Slovenia</Country>
+  <Country>Solomon Islands</Country>
+  <Country>Somalia</Country>
+  <Country>South Africa</Country>
+  <Country>South Korea</Country>
+  <Country>South Sudan</Country>
+  <Country>Spain</Country>
+  <Country>Sri Lanka</Country>
+  <Country>Sudan</Country>
+  <Country>Suriname</Country>
+  <Country>Sweden</Country>
+  <Country>Switzerland</Country>
+  <Country>Syria</Country>
+  <Country>Tajikistan</Country>
+  <Country>Tanzania</Country>
+  <Country>Thailand</Country>
+  <Country>Timor-Leste</Country>
+  <Country>Togo</Country>
+  <Country>Tonga</Country>
+  <Country>Trinidad and Tobago</Country>
+  <Country>Tunisia</Country>
+  <Country>Turkey</Country>
+  <Country>Turkmenistan</Country>
+  <Country>Tuvalu</Country>
+  <Country>Uganda</Country>
+  <Country>Ukraine</Country>
+  <Country>United Arab Emirates</Country>
+  <Country>United Kingdom</Country>
+  <Country>United States of America</Country>
+  <Country>Uruguay</Country>
+  <Country>Uzbekistan</Country>
+  <Country>Vanuatu</Country>
+  <Country>Venezuela</Country>
+  <Country>Vietnam</Country>
+  <Country>Yemen</Country>
+  <Country>Zambia</Country>
+  <Country>Zimbabwe</Country>
+</Countries>

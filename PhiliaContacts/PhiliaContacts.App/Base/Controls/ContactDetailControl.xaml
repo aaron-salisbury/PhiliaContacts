@@ -22,6 +22,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="24" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="15" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <!-- HEADER -->
@@ -316,6 +318,76 @@
                     Text="{x:Bind MasterContact.Notes, Mode=TwoWay}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
+            </Grid>
+            
+            <!-- ADDRESS -->
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <!-- Icon -->
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="5" />
+                    <!-- Left Field -->
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="15" />
+                    <!-- Right Field -->
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="2"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="HouseUserSolid"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+
+                <TextBlock Grid.Column="2" Grid.Row="1" Text="Address" Margin="0,0,0,4" />
+
+                <TextBox  
+                    Grid.Column="2" 
+                    Grid.Row="2" 
+                    Text="{x:Bind MasterContact.Street, Mode=TwoWay}" PlaceholderText="Street" Margin="0,0,0,4" />
+
+                <Grid Grid.Column="2" Grid.Row="3" Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox  
+                    Grid.Column="0" 
+                    Text="{x:Bind MasterContact.City, Mode=TwoWay}" PlaceholderText="City" />
+
+                    <TextBox  
+                    Grid.Column="2" 
+                    Text="{x:Bind MasterContact.State, Mode=TwoWay}" PlaceholderText="State" />
+                </Grid>
+
+                <TextBox  
+                    Grid.Column="2" 
+                    Grid.Row="4" 
+                    Text="{x:Bind MasterContact.Zip, Mode=TwoWay}" PlaceholderText="Zip"
+                    Margin="0,0,0,4"/>
+
+                <AutoSuggestBox
+                    Grid.Column="2" 
+                    Grid.Row="5"
+                    Name="CountrySearchBox"
+                    PlaceholderText="Country or Region"
+                    TextChanged="CountrySearchBox_TextChanged"
+                    SuggestionChosen="CountrySearchBox_SuggestionChosen"/>
             </Grid>
         </Grid>
     </ScrollViewer>

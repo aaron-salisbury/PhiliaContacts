@@ -10,6 +10,7 @@
     <None Remove="Base\Resources\man-2.jpeg" />
     <None Remove="Base\Resources\woman-1.jpeg" />
     <None Remove="Base\Resources\woman-2.jpeg" />
+    <None Remove="Data\Countries.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +19,7 @@
     <EmbeddedResource Include="Base\Resources\man-2.jpeg" />
     <EmbeddedResource Include="Base\Resources\woman-1.jpeg" />
     <EmbeddedResource Include="Base\Resources\woman-2.jpeg" />
+    <EmbeddedResource Include="Data\Countries.xml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using PhiliaContacts.Domains;
+﻿using PhiliaContacts.Core;
+using PhiliaContacts.Domains;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,6 +90,40 @@ namespace PhiliaContacts.App.Base.Controls
                 MasterContact.PhoneNumbers.Remove(SelectedPhoneNumber);
                 SelectedPhoneNumber = null;
             }
+        }
+        #endregion
+
+        #region Country
+        private void CountrySearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            List<string> suitableItems = new List<string>();
+            string[] splitText = sender.Text.ToLower().Split(" ");
+
+            foreach (string country in Manager.Countries)
+            {
+                bool found = splitText.All((key) =>
+                {
+                    return country.ToLower().Contains(key);
+                });
+
+                if (found)
+                {
+                    suitableItems.Add(country);
+                }
+            }
+
+            if (suitableItems.Count == 0)
+            {
+                suitableItems.Add("No results found");
+            }
+
+            sender.ItemsSource = suitableItems;
+
+        }
+
+        private void CountrySearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            CountrySearchBox.Text = args.SelectedItem.ToString();
         }
         #endregion
     }

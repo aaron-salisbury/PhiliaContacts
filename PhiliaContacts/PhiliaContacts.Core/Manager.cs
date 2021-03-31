@@ -1,8 +1,10 @@
 ﻿using PhiliaContacts.Core.Base;
 using PhiliaContacts.Core.Base.Helpers;
+using PhiliaContacts.Core.Data;
 using PhiliaContacts.Domains;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -12,7 +14,9 @@ namespace PhiliaContacts.Core
     {
         internal ILogger Logger { get; set; }
 
-        public byte[] DefaultContactImage { get; set; }
+        public byte[] DefaultContactImage { get; }
+
+        public static List<string> Countries { get; set; }
 
         private ObservableCollection<Contact> _contacts;
         public ObservableCollection<Contact> Contacts
@@ -30,6 +34,8 @@ namespace PhiliaContacts.Core
             Logger = appLogger.Logger;
 
             DefaultContactImage = Images.EmbeddedImageToBytes("PhiliaContacts.Core.Base.Resources.contact-placeholder.png");
+
+            Countries = CRUD.ReadCountries();
 
             //Load();
             LoadTestData();
