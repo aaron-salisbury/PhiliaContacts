@@ -43,9 +43,6 @@ namespace PhiliaContacts.Core.Services
                         PhoneNumbers = new ObservableCollection<PhoneNumber>(vCard.PhoneNumbers.Select(pn => ConvertVCardPhone(pn))),
                         Title = vCard.Title,
                         Photo = vCard.Pictures?.Where(p => p.Picture != null)?.FirstOrDefault()?.Picture ?? placeholderImage,
-
-                        //TODO: Addresses
-
                         Notes = vCard.Note,
                         IsFavorite = vCard.CustomFields?.Any(kvp => string.Equals(kvp.Key, "CATEGORIES") && kvp.Value.Contains("starred")) ?? false,
                         Organization = !string.IsNullOrEmpty(vCard.Organization) && vCard.Organization.Contains(";") ? 
@@ -57,14 +54,14 @@ namespace PhiliaContacts.Core.Services
                     {
                         if (vCard.CustomFields.Any(cf => cf.Key.Contains("URL;")))
                         {
-                            newContact.Url = vCard.CustomFields?
+                            newContact.Url = vCard.CustomFields
                                 .Where(cf => !string.IsNullOrEmpty(cf.Key) && cf.Key.Contains(".URL;"))?
                                 .FirstOrDefault().Value;
                         }
 
                         if (vCard.CustomFields.Any(cf => cf.Key.EndsWith("TYPE=twitter")))
                         {
-                            newContact.TwitterUser = vCard.CustomFields?
+                            newContact.TwitterUser = vCard.CustomFields
                                 .Where(cf => !string.IsNullOrEmpty(cf.Key) && cf.Key.EndsWith("TYPE=twitter"))?
                                 .FirstOrDefault().Key
                                 .GetAfterLastOrEmpty("USER=")
@@ -73,7 +70,7 @@ namespace PhiliaContacts.Core.Services
 
                         if (vCard.CustomFields.Any(cf => cf.Key.EndsWith("TYPE=facebook")))
                         {
-                            newContact.FacebookUser = vCard.CustomFields?
+                            newContact.FacebookUser = vCard.CustomFields
                                 .Where(cf => !string.IsNullOrEmpty(cf.Key) && cf.Key.EndsWith("TYPE=facebook"))?
                                 .FirstOrDefault().Key
                                 .GetAfterLastOrEmpty("USER=")
@@ -82,11 +79,38 @@ namespace PhiliaContacts.Core.Services
 
                         if (vCard.CustomFields.Any(cf => cf.Key.EndsWith("TYPE=linkedin")))
                         {
-                            newContact.LinkedInUser = vCard.CustomFields?
+                            newContact.LinkedInUser = vCard.CustomFields
                                 .Where(cf => !string.IsNullOrEmpty(cf.Key) && cf.Key.EndsWith("TYPE=linkedin"))?
                                 .FirstOrDefault().Key
                                 .GetAfterLastOrEmpty("USER=")
                                 .GetUntilOrEmpty(";");
+                        }
+
+                        if (vCard.CustomFields.Any(cf => cf.Key.StartsWith("item") && cf.Key.Contains(".ADR;")))
+                        {
+                            List<KeyValuePair<string, string>> addressProperties = vCard.CustomFields
+                                .Where(cf => cf.Key.StartsWith("item") && cf.Key.Contains(".ADR;"))
+                                .ToList();
+
+                            KeyValuePair<string, string> addressProperty;
+
+                            if (addressProperties.Any(ap => ap.Key.Contains("TYPE=pref")))
+                            {
+                                addressProperty = addressProperties
+                                .Where(ap => ap.Key.Contains("TYPE=pref"))
+                                .FirstOrDefault();
+                            }
+                            else
+                            {
+                                addressProperty = addressProperties.FirstOrDefault();
+                            }
+
+                            string[] addressParts = addressProperty.Value.Split(';');
+
+                            newContact.Street = addressParts.Length >= 3 && !string.IsNullOrEmpty(addressParts[2]) ? addressParts[2] : null;
+                            newContact.City = addressParts.Length >= 4 && !string.IsNullOrEmpty(addressParts[3]) ? addressParts[3] : null;
+                            newContact.State = addressParts.Length >= 5 && !string.IsNullOrEmpty(addressParts[4]) ? addressParts[4] : null;
+                            newContact.Zip = addressParts.Length >= 6 && !string.IsNullOrEmpty(addressParts[5]) ? addressParts[5] : null;
                         }
                     }
 

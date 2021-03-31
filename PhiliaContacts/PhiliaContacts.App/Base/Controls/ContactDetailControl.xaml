@@ -387,7 +387,8 @@
                     Name="CountrySearchBox"
                     PlaceholderText="Country or Region"
                     TextChanged="CountrySearchBox_TextChanged"
-                    SuggestionChosen="CountrySearchBox_SuggestionChosen"/>
+                    SuggestionChosen="CountrySearchBox_SuggestionChosen"
+                    Text="{x:Bind MasterContact.CountryRegion, Mode=TwoWay}"/>
             </Grid>
         </Grid>
     </ScrollViewer>

@@ -87,6 +87,8 @@ namespace PhiliaContacts.Domains
 
         public string Notes { get; set; }
 
+        public AddressTypes AddressType { get; set; }
+
         public string Street { get; set; }
 
         public string City { get; set; }
@@ -119,6 +121,17 @@ namespace PhiliaContacts.Domains
             }
 
             return $"{FormattedName} ({Nickname})";
+        }
+
+        public enum AddressTypes
+        {
+            Work = 0,
+            Home = 1,
+            Domestic = 2,
+            International = 3,
+            Postal = 4,
+            Parcel = 5,
+            None = 6
         }
     }
 }

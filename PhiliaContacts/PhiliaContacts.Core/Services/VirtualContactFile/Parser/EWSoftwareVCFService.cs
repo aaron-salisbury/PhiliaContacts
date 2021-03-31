@@ -37,7 +37,7 @@ namespace PhiliaContacts.Core.Services
                 {
                     DateTime.TryParse(vCard.BirthDate?.Value, out DateTime birthDay);
 
-                    contacts.Add(new Contact
+                    Contact newContact = new Contact
                     {
                         GivenName = vCard.Name.GivenName,
                         MiddleName = vCard.Name.AdditionalNames,
@@ -54,11 +54,14 @@ namespace PhiliaContacts.Core.Services
                         TwitterUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=twitter"))?.FirstOrDefault()?.Value,
                         FacebookUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=facebook"))?.FirstOrDefault()?.Value,
                         LinkedInUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=linkedin"))?.FirstOrDefault()?.Value,
-                        Addresses = new ObservableCollection<Address>(vCard.Addresses.Select(a => ConvertVCardAddress(a))),
                         Url = vCard.Urls?.Where(u => !string.IsNullOrEmpty(u.Value))?.FirstOrDefault()?.Value,
                         Notes = vCard.Notes?.Where(n => !string.IsNullOrEmpty(n.Value))?.FirstOrDefault()?.Value,
                         IsFavorite = vCard.Categories?.Value?.Contains("starred") ?? false
-                    });
+                    };
+
+                    SetAddressFields(newContact, vCard.Addresses);
+
+                    contacts.Add(newContact);
                 }
 
                 _logger.Information("Successfully converted vCard file.");
@@ -176,43 +179,56 @@ namespace PhiliaContacts.Core.Services
             return phoneNumber;
         }
 
-        private static Address ConvertVCardAddress(AddressProperty addressProperty)
+        private static void SetAddressFields(Contact contact, AddressPropertyCollection addresses)
         {
-            Address address = new Address
+            if (addresses != null && addresses.Count > 0)
             {
-                Location = addressProperty.Value
-            };
+                AddressProperty addressProperty = addresses.OrderBy(a => a.PreferredOrder).FirstOrDefault();
 
+                contact.AddressType = ConvertVCardAddressType(addressProperty);
+                contact.Street = addressProperty.StreetAddress;
+                contact.City = addressProperty.Locality;
+                contact.State = addressProperty.Region;
+                contact.Zip = addressProperty.PostalCode;
+                contact.CountryRegion = addressProperty.Country;
+            }
+        }
+
+        private static Contact.AddressTypes ConvertVCardAddressType(AddressProperty addressProperty)
+        {
+            Contact.AddressTypes addressType;
+
+            //TODO: Need to handle more than one enum in value.
             switch (addressProperty.AddressTypes)
             {
                 case AddressTypes.None:
-                    address.Type = Address.AddressType.None;
+                    addressType = Contact.AddressTypes.None;
                     break;
                 case AddressTypes.Domestic:
-                    address.Type = Address.AddressType.Domestic;
+                    addressType = Contact.AddressTypes.Domestic;
                     break;
                 case AddressTypes.International:
-                    address.Type = Address.AddressType.International;
+                    addressType = Contact.AddressTypes.International;
                     break;
                 case AddressTypes.Postal:
-                    address.Type = Address.AddressType.Postal;
+                    addressType = Contact.AddressTypes.Postal;
                     break;
                 case AddressTypes.Parcel:
-                    address.Type = Address.AddressType.Parcel;
+                    addressType = Contact.AddressTypes.Parcel;
                     break;
                 case AddressTypes.Home:
                 case AddressTypes.Preferred:
-                    address.Type = Address.AddressType.Home;
+                    addressType = Contact.AddressTypes.Home;
                     break;
                 case AddressTypes.Work:
-                    address.Type = Address.AddressType.Work;
+                    addressType = Contact.AddressTypes.Work;
                     break;
                 default:
-                    address.Type = Address.AddressType.None;
+                    addressType = Contact.AddressTypes.None;
                     break;
             }
 
-            return address;
+            return addressType;
         }
     }
 }
