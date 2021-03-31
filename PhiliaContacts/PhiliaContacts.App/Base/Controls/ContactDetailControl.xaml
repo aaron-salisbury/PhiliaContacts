@@ -70,6 +70,9 @@
                     <!-- Birthday -->
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="10" />
+                    <!-- Url -->
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="10" />
                     <!-- Twitter -->
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="10" />
@@ -230,14 +233,14 @@
                     Height="20"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
-                    Kind="TwitterBrands"
+                    Kind="GlobeSolid"
                     Margin="0,0,20,5"
                     Opacity="0.5" />
                 <TextBox  
                     Grid.Column="2" 
                     Grid.Row="11" 
-                    Header="Twitter User" 
-                    Text="{x:Bind MasterContact.TwitterUser, Mode=TwoWay}" 
+                    Header="URL" 
+                    Text="{x:Bind MasterContact.Url, Mode=TwoWay}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
 
@@ -248,14 +251,14 @@
                     Height="20"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
-                    Kind="FacebookBrands"
+                    Kind="TwitterBrands"
                     Margin="0,0,20,5"
                     Opacity="0.5" />
                 <TextBox  
                     Grid.Column="2" 
                     Grid.Row="13" 
-                    Header="Facebook User" 
-                    Text="{x:Bind MasterContact.FacebookUser, Mode=TwoWay}" 
+                    Header="Twitter User" 
+                    Text="{x:Bind MasterContact.TwitterUser, Mode=TwoWay}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
 
@@ -266,14 +269,14 @@
                     Height="20"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
-                    Kind="LinkedinBrands"
+                    Kind="FacebookBrands"
                     Margin="0,0,20,5"
                     Opacity="0.5" />
                 <TextBox  
                     Grid.Column="2" 
                     Grid.Row="15" 
-                    Header="LinkedIn User" 
-                    Text="{x:Bind MasterContact.LinkedInUser, Mode=TwoWay}" 
+                    Header="Facebook User" 
+                    Text="{x:Bind MasterContact.FacebookUser, Mode=TwoWay}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
 
@@ -284,12 +287,30 @@
                     Height="20"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
-                    Kind="StickyNoteRegular"
+                    Kind="LinkedinBrands"
                     Margin="0,0,20,5"
                     Opacity="0.5" />
                 <TextBox  
                     Grid.Column="2" 
                     Grid.Row="17" 
+                    Header="LinkedIn User" 
+                    Text="{x:Bind MasterContact.LinkedInUser, Mode=TwoWay}" 
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap" />
+
+                <iconPacks:PackIconFontAwesome 
+                    Grid.Column="0"
+                    Grid.Row="19"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Kind="StickyNoteRegular"
+                    Margin="0,0,20,5"
+                    Opacity="0.5" />
+                <TextBox  
+                    Grid.Column="2" 
+                    Grid.Row="19" 
                     Grid.ColumnSpan="3"
                     Header="Notes" 
                     Text="{x:Bind MasterContact.Notes, Mode=TwoWay}" 

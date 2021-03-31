@@ -1,6 +1,7 @@
 ﻿using PhiliaContacts.Core.Services;
 using PhiliaContacts.Domains;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -16,10 +17,10 @@ namespace PhiliaContacts.Core
 
                 IVCFParserService vcfService = new EWSoftwareVCFService(manager.Logger);
 
-                manager.Contacts = new ObservableCollection<Contact>(
-                    vcfService.GetContactsFromVCFContents(vCardContents)
-                        .OrderBy(c => c.DisplayName)
-                        .ThenBy(c => c.GivenName));
+                HashSet<Contact> contacts = new HashSet<Contact>(manager.Contacts);
+                contacts.UnionWith(vcfService.GetContactsFromVCFContents(vCardContents));
+
+                manager.Contacts = new ObservableCollection<Contact>(contacts.OrderBy(c => c.FamilyName).ThenBy(c => c.GivenName));
 
                 manager.Logger.Information("Successfully imported contacts.");
                 return true;

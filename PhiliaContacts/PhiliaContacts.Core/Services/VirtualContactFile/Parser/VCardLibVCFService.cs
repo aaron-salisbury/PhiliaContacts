@@ -1,4 +1,6 @@
-﻿using PhiliaContacts.Domains;
+﻿using PhiliaContacts.Core.Base.Extensions;
+using PhiliaContacts.Core.Base.Helpers;
+using PhiliaContacts.Domains;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,8 @@ namespace PhiliaContacts.Core.Services
 
                 _logger.Information("Beginning to convert vCard file.");
 
+                byte[] placeholderImage = Images.EmbeddedImageToBytes("PhiliaContacts.Core.Base.Resources.contact-placeholder.png");
+
                 foreach (vCardLib.Models.vCard vCard in Deserializer.FromString(vcfContents))
                 {
                     Contact newContact = new Contact
@@ -38,17 +42,53 @@ namespace PhiliaContacts.Core.Services
                         EmailAddresses = new ObservableCollection<EmailAddress>(vCard.EmailAddresses.Select(ea => ConvertVCardEmail(ea))),
                         PhoneNumbers = new ObservableCollection<PhoneNumber>(vCard.PhoneNumbers.Select(pn => ConvertVCardPhone(pn))),
                         Title = vCard.Title,
-                        Organization = vCard.Organization,
-                        Photo = vCard.Pictures?.Where(p => p.Picture != null)?.FirstOrDefault()?.Picture,
+                        Photo = vCard.Pictures?.Where(p => p.Picture != null)?.FirstOrDefault()?.Picture ?? placeholderImage,
 
-                        //TODO: Twitter, Facebook, LinkedIn
-                        
                         //TODO: Addresses
 
-                        Url = vCard.Url,
                         Notes = vCard.Note,
-                        IsFavorite = vCard.CustomFields?.Any(kvp => string.Equals(kvp.Key, "CATEGORIES") && kvp.Value.Contains("starred")) ?? false
+                        IsFavorite = vCard.CustomFields?.Any(kvp => string.Equals(kvp.Key, "CATEGORIES") && kvp.Value.Contains("starred")) ?? false,
+                        Organization = !string.IsNullOrEmpty(vCard.Organization) && vCard.Organization.Contains(";") ? 
+                            vCard.Organization.GetUntilOrEmpty(";") : 
+                            vCard.Organization,
                     };
+
+                    if (vCard.CustomFields != null)
+                    {
+                        if (vCard.CustomFields.Any(cf => cf.Key.Contains("URL;")))
+                        {
+                            newContact.Url = vCard.CustomFields?
+                                .Where(cf => !string.IsNullOrEmpty(cf.Key) && cf.Key.Contains(".URL;"))?
+                                .FirstOrDefault().Value;
+                        }
+
+                        if (vCard.CustomFields.Any(cf => cf.Key.EndsWith("TYPE=twitter")))
+                        {
+                            newContact.TwitterUser = vCard.CustomFields?
+                                .Where(cf => !string.IsNullOrEmpty(cf.Key) && cf.Key.EndsWith("TYPE=twitter"))?
+                                .FirstOrDefault().Key
+                                .GetAfterLastOrEmpty("USER=")
+                                .GetUntilOrEmpty(";");
+                        }
+
+                        if (vCard.CustomFields.Any(cf => cf.Key.EndsWith("TYPE=facebook")))
+                        {
+                            newContact.FacebookUser = vCard.CustomFields?
+                                .Where(cf => !string.IsNullOrEmpty(cf.Key) && cf.Key.EndsWith("TYPE=facebook"))?
+                                .FirstOrDefault().Key
+                                .GetAfterLastOrEmpty("USER=")
+                                .GetUntilOrEmpty(";");
+                        }
+
+                        if (vCard.CustomFields.Any(cf => cf.Key.EndsWith("TYPE=linkedin")))
+                        {
+                            newContact.LinkedInUser = vCard.CustomFields?
+                                .Where(cf => !string.IsNullOrEmpty(cf.Key) && cf.Key.EndsWith("TYPE=linkedin"))?
+                                .FirstOrDefault().Key
+                                .GetAfterLastOrEmpty("USER=")
+                                .GetUntilOrEmpty(";");
+                        }
+                    }
 
                     if (vCard.BirthDay != null)
                     {
@@ -72,7 +112,7 @@ namespace PhiliaContacts.Core.Services
         {
             return new EmailAddress
             {
-                Email = vCardEmail.Email,
+                Email = vCardEmail.Email.Contains(":") ? vCardEmail.Email.GetAfterLastOrEmpty(":") : vCardEmail.Email,
                 Type = (EmailAddress.EmailType)Convert.ToInt32(vCardEmail.Type)
             };
         }
