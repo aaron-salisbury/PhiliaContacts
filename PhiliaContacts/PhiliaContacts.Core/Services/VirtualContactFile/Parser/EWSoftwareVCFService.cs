@@ -198,34 +198,37 @@ namespace PhiliaContacts.Core.Services
         {
             Contact.AddressTypes addressType;
 
-            //TODO: Need to handle more than one enum in value.
-            switch (addressProperty.AddressTypes)
+            if (addressProperty.AddressTypes.HasFlag(AddressTypes.Home) || addressProperty.AddressTypes.HasFlag(AddressTypes.Preferred))
             {
-                case AddressTypes.None:
-                    addressType = Contact.AddressTypes.None;
-                    break;
-                case AddressTypes.Domestic:
-                    addressType = Contact.AddressTypes.Domestic;
-                    break;
-                case AddressTypes.International:
-                    addressType = Contact.AddressTypes.International;
-                    break;
-                case AddressTypes.Postal:
-                    addressType = Contact.AddressTypes.Postal;
-                    break;
-                case AddressTypes.Parcel:
-                    addressType = Contact.AddressTypes.Parcel;
-                    break;
-                case AddressTypes.Home:
-                case AddressTypes.Preferred:
-                    addressType = Contact.AddressTypes.Home;
-                    break;
-                case AddressTypes.Work:
-                    addressType = Contact.AddressTypes.Work;
-                    break;
-                default:
-                    addressType = Contact.AddressTypes.None;
-                    break;
+                addressType = Contact.AddressTypes.Home;
+            }
+            else if (addressProperty.AddressTypes.HasFlag(AddressTypes.None))
+            {
+                addressType = Contact.AddressTypes.None;
+            }
+            else if (addressProperty.AddressTypes.HasFlag(AddressTypes.Domestic))
+            {
+                addressType = Contact.AddressTypes.Domestic;
+            }
+            else if (addressProperty.AddressTypes.HasFlag(AddressTypes.International))
+            {
+                addressType = Contact.AddressTypes.International;
+            }
+            else if (addressProperty.AddressTypes.HasFlag(AddressTypes.Postal))
+            {
+                addressType = Contact.AddressTypes.Postal;
+            }
+            else if (addressProperty.AddressTypes.HasFlag(AddressTypes.Parcel))
+            {
+                addressType = Contact.AddressTypes.Parcel;
+            }
+            else if (addressProperty.AddressTypes.HasFlag(AddressTypes.Work))
+            {
+                addressType = Contact.AddressTypes.Work;
+            }
+            else
+            {
+                addressType = Contact.AddressTypes.None;
             }
 
             return addressType;
