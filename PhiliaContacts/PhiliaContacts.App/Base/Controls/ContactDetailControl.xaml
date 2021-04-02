@@ -338,12 +338,11 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <iconPacks:PackIconFontAwesome 
                     Grid.Column="0"
-                    Grid.Row="2"
+                    Grid.Row="1"
                     Width="20"
                     Height="20"
                     HorizontalAlignment="Left"
@@ -352,13 +351,26 @@
                     Margin="0,0,20,5"
                     Opacity="0.5" />
 
-                <TextBlock Grid.Column="2" Grid.Row="1" Text="Address" Margin="0,0,0,4" />
+                <TextBox  
+                    Grid.Column="2" 
+                    Grid.Row="1" 
+                    Header="Address"
+                    Text="{x:Bind MasterContact.Street, Mode=TwoWay}" PlaceholderText="Street" Margin="0,0,0,4" />
+
+                <ComboBox 
+                    Grid.Column="4" 
+                    Grid.Row="1" 
+                    Header="Type"
+                    ItemsSource="{x:Bind AddressTypes}" 
+                    SelectedItem="{x:Bind MasterContact.AddressType, Mode=TwoWay}" />
 
                 <TextBox  
                     Grid.Column="2" 
                     Grid.Row="2" 
-                    Text="{x:Bind MasterContact.Street, Mode=TwoWay}" PlaceholderText="Street" Margin="0,0,0,4" />
-
+                    Grid.ColumnSpan="1"
+                    Text="{x:Bind MasterContact.City, Mode=TwoWay}" PlaceholderText="City"
+                    Margin="0,0,0,4"/>
+                
                 <Grid Grid.Column="2" Grid.Row="3" Margin="0,0,0,4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
@@ -368,22 +380,16 @@
 
                     <TextBox  
                     Grid.Column="0" 
-                    Text="{x:Bind MasterContact.City, Mode=TwoWay}" PlaceholderText="City" />
+                    Text="{x:Bind MasterContact.Zip, Mode=TwoWay}" PlaceholderText="Zip" />
 
                     <TextBox  
                     Grid.Column="2" 
                     Text="{x:Bind MasterContact.State, Mode=TwoWay}" PlaceholderText="State" />
                 </Grid>
 
-                <TextBox  
-                    Grid.Column="2" 
-                    Grid.Row="4" 
-                    Text="{x:Bind MasterContact.Zip, Mode=TwoWay}" PlaceholderText="Zip"
-                    Margin="0,0,0,4"/>
-
                 <AutoSuggestBox
                     Grid.Column="2" 
-                    Grid.Row="5"
+                    Grid.Row="4"
                     Name="CountrySearchBox"
                     PlaceholderText="Country or Region"
                     TextChanged="CountrySearchBox_TextChanged"

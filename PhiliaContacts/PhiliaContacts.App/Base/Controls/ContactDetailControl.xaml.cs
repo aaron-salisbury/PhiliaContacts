@@ -12,6 +12,8 @@ namespace PhiliaContacts.App.Base.Controls
 {
     public sealed partial class ContactDetailControl : UserControl
     {
+        public List<Contact.AddressTypes> AddressTypes { get; set; } = Enum.GetValues(typeof(Contact.AddressTypes)).Cast<Contact.AddressTypes>().ToList();
+
         public Contact MasterContact
         {
             get { return GetValue(MasterContactProperty) as Contact; }

@@ -85,7 +85,7 @@ namespace PhiliaContacts.Domains
 
         public string Notes { get; set; }
 
-        public AddressTypes AddressType { get; set; }
+        public AddressTypes AddressType { get; set; } = AddressTypes.None;
 
         public string Street { get; set; }
 
