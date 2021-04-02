@@ -100,7 +100,7 @@
                     Opacity="0.5" />
                 <TextBox Grid.Column="2" Grid.Row="0" Header="First Name" Text="{x:Bind MasterContact.GivenName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Grid.Column="4" Grid.Row="0" Header="Last Name" Text="{x:Bind MasterContact.FamilyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Grid.Column="2" Grid.Row="1" Header="Middle Name" Text="{x:Bind MasterContact.MiddleName, Mode=TwoWay}" Margin="0,5,0,0" />
+                <TextBox Grid.Column="2" Grid.Row="1" Header="Middle Name" Text="{x:Bind MasterContact.MiddleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,0" />
                 <TextBox Grid.Column="4" Grid.Row="1" Header="Nickname" Text="{x:Bind MasterContact.Nickname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0,0" />
 
                 <iconPacks:PackIconFontAwesome 
@@ -113,8 +113,8 @@
                     Kind="BuildingRegular"
                     Margin="0,0,20,5"
                     Opacity="0.5" />
-                <TextBox Grid.Column="2" Grid.Row="3" Header="Company" Text="{x:Bind MasterContact.Organization, Mode=TwoWay}" />
-                <TextBox Grid.Column="4" Grid.Row="3" Header="Job Title" Text="{x:Bind MasterContact.Title, Mode=TwoWay}" />
+                <TextBox Grid.Column="2" Grid.Row="3" Header="Company" Text="{x:Bind MasterContact.Organization, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="4" Grid.Row="3" Header="Job Title" Text="{x:Bind MasterContact.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <iconPacks:PackIconFontAwesome 
                     Grid.Column="0"
@@ -141,7 +141,7 @@
                         Name="EmailGrid"
                         ColumnDataOperationsMode="Inline"
                         UserEditMode="Inline"
-                        ItemsSource="{x:Bind MasterContact.EmailAddresses, Mode=TwoWay}" 
+                        ItemsSource="{x:Bind MasterContact.EmailAddresses, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                         AutoGenerateColumns="False"
                         UserGroupMode="Disabled"
                         UserColumnReorderMode="None"
@@ -182,7 +182,7 @@
                         Name="PhoneGrid"
                         ColumnDataOperationsMode="Inline"
                         UserEditMode="Inline"
-                        ItemsSource="{x:Bind MasterContact.PhoneNumbers, Mode=TwoWay}" 
+                        ItemsSource="{x:Bind MasterContact.PhoneNumbers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                         AutoGenerateColumns="False"
                         UserGroupMode="Disabled"
                         UserColumnReorderMode="None"
@@ -242,7 +242,7 @@
                     Grid.Column="2" 
                     Grid.Row="11" 
                     Header="URL" 
-                    Text="{x:Bind MasterContact.Url, Mode=TwoWay}" 
+                    Text="{x:Bind MasterContact.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
 
@@ -260,7 +260,7 @@
                     Grid.Column="2" 
                     Grid.Row="13" 
                     Header="Twitter User" 
-                    Text="{x:Bind MasterContact.TwitterUser, Mode=TwoWay}" 
+                    Text="{x:Bind MasterContact.TwitterUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
 
@@ -278,7 +278,7 @@
                     Grid.Column="2" 
                     Grid.Row="15" 
                     Header="Facebook User" 
-                    Text="{x:Bind MasterContact.FacebookUser, Mode=TwoWay}" 
+                    Text="{x:Bind MasterContact.FacebookUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
 
@@ -296,7 +296,7 @@
                     Grid.Column="2" 
                     Grid.Row="17" 
                     Header="LinkedIn User" 
-                    Text="{x:Bind MasterContact.LinkedInUser, Mode=TwoWay}" 
+                    Text="{x:Bind MasterContact.LinkedInUser, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
 
@@ -315,7 +315,7 @@
                     Grid.Row="19" 
                     Grid.ColumnSpan="3"
                     Header="Notes" 
-                    Text="{x:Bind MasterContact.Notes, Mode=TwoWay}" 
+                    Text="{x:Bind MasterContact.Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                     AcceptsReturn="True"
                     TextWrapping="Wrap" />
             </Grid>
@@ -355,20 +355,20 @@
                     Grid.Column="2" 
                     Grid.Row="1" 
                     Header="Address"
-                    Text="{x:Bind MasterContact.Street, Mode=TwoWay}" PlaceholderText="Street" Margin="0,0,0,4" />
+                    Text="{x:Bind MasterContact.Street, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Street" Margin="0,0,0,4" />
 
                 <ComboBox 
                     Grid.Column="4" 
                     Grid.Row="1" 
                     Header="Type"
                     ItemsSource="{x:Bind AddressTypes}" 
-                    SelectedItem="{x:Bind MasterContact.AddressType, Mode=TwoWay}" />
+                    SelectedItem="{x:Bind MasterContact.AddressType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBox  
                     Grid.Column="2" 
                     Grid.Row="2" 
                     Grid.ColumnSpan="1"
-                    Text="{x:Bind MasterContact.City, Mode=TwoWay}" PlaceholderText="City"
+                    Text="{x:Bind MasterContact.City, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="City"
                     Margin="0,0,0,4"/>
                 
                 <Grid Grid.Column="2" Grid.Row="3" Margin="0,0,0,4">
@@ -380,11 +380,11 @@
 
                     <TextBox  
                     Grid.Column="0" 
-                    Text="{x:Bind MasterContact.Zip, Mode=TwoWay}" PlaceholderText="Zip" />
+                    Text="{x:Bind MasterContact.Zip, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Zip" />
 
                     <TextBox  
                     Grid.Column="2" 
-                    Text="{x:Bind MasterContact.State, Mode=TwoWay}" PlaceholderText="State" />
+                    Text="{x:Bind MasterContact.State, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="State" />
                 </Grid>
 
                 <AutoSuggestBox
@@ -394,7 +394,7 @@
                     PlaceholderText="Country or Region"
                     TextChanged="CountrySearchBox_TextChanged"
                     SuggestionChosen="CountrySearchBox_SuggestionChosen"
-                    Text="{x:Bind MasterContact.CountryRegion, Mode=TwoWay}"/>
+                    Text="{x:Bind MasterContact.CountryRegion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
         </Grid>
     </ScrollViewer>
