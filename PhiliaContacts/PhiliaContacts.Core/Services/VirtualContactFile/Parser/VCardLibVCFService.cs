@@ -12,7 +12,7 @@ namespace PhiliaContacts.Core.Services
 {
     public class VCardLibVCFService : IVCFParserService
     {
-        private ILogger _logger { get; set; }
+        private readonly ILogger _logger;
 
         public VCardLibVCFService(ILogger logger)
         {
