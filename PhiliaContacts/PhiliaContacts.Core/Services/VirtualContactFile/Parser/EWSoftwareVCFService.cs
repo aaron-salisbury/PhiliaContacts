@@ -35,7 +35,11 @@ namespace PhiliaContacts.Core.Services
 
                 foreach (VCard vCard in vcp.VCards)
                 {
-                    DateTime.TryParse(vCard.BirthDate?.Value, out DateTime birthDay);
+                    DateTime? birthday = null;
+                    if (DateTime.TryParse(vCard.BirthDate?.Value, out DateTime vCardBirthday))
+                    {
+                        birthday = vCardBirthday;
+                    }
 
                     Contact newContact = new Contact
                     {
@@ -47,7 +51,7 @@ namespace PhiliaContacts.Core.Services
                         Suffix = vCard.Name.NameSuffix,
                         EmailAddresses = new ObservableCollection<EmailAddress>(vCard.EMailAddresses.Select(ea => ConvertVCardEmail(ea))),
                         PhoneNumbers = new ObservableCollection<PhoneNumber>(vCard.Telephones.Select(t => ConvertVCardPhone(t))),
-                        Birthday = birthDay,
+                        Birthday = birthday,
                         Title = vCard.Title?.Value,
                         Organization = vCard.Organization?.Name,
                         Photo = ConvertVCardPhoto(vCard.Photo, placeholderImage),

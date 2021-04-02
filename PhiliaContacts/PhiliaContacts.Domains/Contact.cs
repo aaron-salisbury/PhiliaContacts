@@ -58,7 +58,7 @@ namespace PhiliaContacts.Domains
 
         public ObservableCollection<PhoneNumber> PhoneNumbers { get; set; } = new ObservableCollection<PhoneNumber>();
 
-        private DateTime? _birthday;
+        private DateTime? _birthday = null;
         public DateTime? Birthday
         {
             get => _birthday;

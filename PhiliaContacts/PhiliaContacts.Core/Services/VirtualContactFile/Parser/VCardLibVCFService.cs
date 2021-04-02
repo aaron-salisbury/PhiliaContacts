@@ -44,6 +44,7 @@ namespace PhiliaContacts.Core.Services
                         Title = vCard.Title,
                         Photo = vCard.Pictures?.Where(p => p.Picture != null)?.FirstOrDefault()?.Picture ?? placeholderImage,
                         Notes = vCard.Note,
+                        Birthday = vCard.BirthDay,
                         IsFavorite = vCard.CustomFields?.Any(kvp => string.Equals(kvp.Key, "CATEGORIES") && kvp.Value.Contains("starred")) ?? false,
                         Organization = !string.IsNullOrEmpty(vCard.Organization) && vCard.Organization.Contains(";") ? 
                             vCard.Organization.GetUntilOrEmpty(";") : 
@@ -112,11 +113,6 @@ namespace PhiliaContacts.Core.Services
                             newContact.State = addressParts.Length >= 5 && !string.IsNullOrEmpty(addressParts[4]) ? addressParts[4] : null;
                             newContact.Zip = addressParts.Length >= 6 && !string.IsNullOrEmpty(addressParts[5]) ? addressParts[5] : null;
                         }
-                    }
-
-                    if (vCard.BirthDay != null)
-                    {
-                        newContact.Birthday = vCard.BirthDay.Value;
                     }
 
                     contacts.Add(newContact);
