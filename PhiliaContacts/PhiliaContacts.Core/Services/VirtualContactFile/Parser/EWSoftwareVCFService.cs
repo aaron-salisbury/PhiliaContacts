@@ -1,6 +1,7 @@
 ﻿using EWSoftware.PDI.Objects;
 using EWSoftware.PDI.Parser;
 using EWSoftware.PDI.Properties;
+using PhiliaContacts.Core.Base.Extensions;
 using PhiliaContacts.Core.Base.Helpers;
 using PhiliaContacts.Domains;
 using Serilog;
@@ -55,9 +56,9 @@ namespace PhiliaContacts.Core.Services
                         Title = vCard.Title?.Value,
                         Organization = vCard.Organization?.Name,
                         Photo = ConvertVCardPhoto(vCard.Photo, placeholderImage),
-                        TwitterUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=twitter"))?.FirstOrDefault()?.Value,
-                        FacebookUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=facebook"))?.FirstOrDefault()?.Value,
-                        LinkedInUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=linkedin"))?.FirstOrDefault()?.Value,
+                        TwitterUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=twitter"))?.FirstOrDefault()?.CustomParameters.GetAfterLastOrEmpty("X-USER=").GetUntilOrEmpty(";"),
+                        FacebookUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=facebook"))?.FirstOrDefault()?.CustomParameters.GetAfterLastOrEmpty("X-USER=").GetUntilOrEmpty(";"),
+                        LinkedInUser = vCard.CustomProperties?.Where(cp => cp.CustomParameters != null && cp.CustomParameters.Contains("TYPE=linkedin"))?.FirstOrDefault()?.CustomParameters.GetAfterLastOrEmpty("X-USER=").GetUntilOrEmpty(";"),
                         Url = vCard.Urls?.Where(u => !string.IsNullOrEmpty(u.Value))?.FirstOrDefault()?.Value,
                         Notes = vCard.Notes?.Where(n => !string.IsNullOrEmpty(n.Value))?.FirstOrDefault()?.Value,
                         IsFavorite = vCard.Categories?.Value?.Contains("starred") ?? false

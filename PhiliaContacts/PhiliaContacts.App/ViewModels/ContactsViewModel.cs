@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Threading;
 using PhiliaContacts.Core;
 using PhiliaContacts.Domains;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -36,6 +37,7 @@ namespace PhiliaContacts.App.ViewModels
             NewContactCommand = new RelayCommand(() => AddNewContact());
             DeleteContactCommand = new RelayCommand(() => DeleteContact());
             ImportCommand = new RelayCommand(async () => await LaunchFilePickerAndImportAsync(), () => !IsBusy);
+            ExportCommand = new RelayCommand(async () => await LaunchFilePickerAndExportAsync(), () => !IsBusy);
             SaveCommand = new RelayCommand(async () => await InitiateProcessAsync(Manager.Save, SaveCommand, WorkflowSuccessAction, WorkflowFailureAction), () => !IsBusy);
         }
 
@@ -137,6 +139,61 @@ namespace PhiliaContacts.App.ViewModels
             }).ConfigureAwait(false);
 
             return tcs.Task;
+        }
+
+        private async Task<bool> LaunchFilePickerAndExportAsync()
+        {
+            bool processIsSuccessful = false;
+
+            FileSavePicker savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.Downloads,
+                SuggestedFileName = "PhiliaContacts"
+            };
+
+            savePicker.FileTypeChoices.Add("Virtual Contact File", new List<string>() { ".vcf" });
+
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    IsBusy = true;
+
+                    CachedFileManager.DeferUpdates(file);
+
+                    await FileIO.WriteTextAsync(file, Writer.Write(Manager));
+
+                    Windows.Storage.Provider.FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
+
+                    processIsSuccessful = status == Windows.Storage.Provider.FileUpdateStatus.Complete;
+
+                    if (processIsSuccessful)
+                    {
+                        if (WorkflowSuccessAction != null)
+                        {
+                            WorkflowSuccessAction.Invoke();
+                        }
+                    }
+                    else
+                    {
+                        if (WorkflowFailureAction != null)
+                        {
+                            WorkflowFailureAction.Invoke();
+                        }
+                    }
+                }
+                finally
+                {
+                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                    {
+                        IsBusy = false;
+                        ExportCommand.RaiseCanExecuteChanged();
+                    });
+                }
+            }
+
+            return processIsSuccessful;
         }
     }
 }

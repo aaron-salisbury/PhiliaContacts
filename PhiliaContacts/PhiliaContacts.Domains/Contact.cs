@@ -120,6 +120,19 @@ namespace PhiliaContacts.Domains
 
         public string FavoriteSegoeMDL2Glyph => IsFavorite ? "\uE735" : "\uE734";
 
+        public bool IsValid
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(GivenName) && string.IsNullOrEmpty(FamilyName) && string.IsNullOrEmpty(Nickname))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
         public override string ToString()
         {
             if (string.IsNullOrEmpty(Nickname))
