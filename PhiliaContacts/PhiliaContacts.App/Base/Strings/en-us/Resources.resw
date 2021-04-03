@@ -142,7 +142,7 @@
     <comment>About this application title for Settings</comment>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>This is a sample application generated from Aaron Salisbury's Windows 10 App Solution Template.</value>
+    <value>Manage all your contacts centrally and cleanly. Import from, or export to, your Android or Apple contacts using the universal vCard (Virtual Contact File) format.</value>
     <comment>About this application description for Settings</comment>
   </data>
   <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
