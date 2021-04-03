@@ -28,11 +28,41 @@
 
             <!-- HEADER -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                <Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Height="75">
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{x:Bind helpers:Images.BytesToBitmapSource(MasterContact.Photo), Mode=OneWay}" Stretch="UniformToFill" />
-                    </Ellipse.Fill>
-                </Ellipse>
+                <Grid>
+                    <Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Height="75">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{x:Bind helpers:Images.BytesToBitmapSource(MasterContact.Photo), Mode=OneWay}" Stretch="UniformToFill" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+
+                    <Grid>
+                        <Ellipse 
+                            Name="AddPhotoButtonBackground" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Width="77" 
+                            Height="77" 
+                            Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+                            Opacity="0" />
+
+                        <Button 
+                            Name="AddPhotoButton"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Width="75" 
+                            Height="75" 
+                            CornerRadius="35" 
+                            Opacity="0"
+                            Foreground="White"
+                            PointerEntered="Button_PointerEntered"
+                            PointerExited="Button_PointerExited"
+                            Click="AddPhotoButton_Click">
+                            <FontIcon Glyph="&#xE722;" FontSize="20" />
+                        </Button>
+                    </Grid>
+
+                </Grid>
+
                 <TextBlock
                     Margin="{StaticResource MediumLeftMargin}"
                     VerticalAlignment="Center"

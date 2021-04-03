@@ -73,7 +73,16 @@ namespace PhiliaContacts.Domains
 
         public string Organization { get; set; }
 
-        public byte[] Photo { get; set; }
+        private byte[] _photo;
+        public byte[] Photo
+        {
+            get => _photo;
+            set
+            {
+                _photo = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public string TwitterUser { get; set; }
 

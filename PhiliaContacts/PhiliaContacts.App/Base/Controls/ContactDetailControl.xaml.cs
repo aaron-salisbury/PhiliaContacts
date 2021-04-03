@@ -1,8 +1,12 @@
-﻿using PhiliaContacts.Core;
+﻿using PhiliaContacts.App.Base.Helpers;
+using PhiliaContacts.Core;
 using PhiliaContacts.Domains;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using static PhiliaContacts.Domains.EmailAddress;
@@ -46,6 +50,52 @@ namespace PhiliaContacts.App.Base.Controls
         {
             MasterContact.Birthday = null;
         }
+
+        #region Photo
+        private void Button_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            AddPhotoButton.Opacity = 1.0D;
+            AddPhotoButtonBackground.Opacity = 0.8D;
+        }
+
+        private void Button_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            AddPhotoButton.Opacity = 0.0D;
+            AddPhotoButtonBackground.Opacity = 0.0D;
+        }
+
+        private async void AddPhotoButton_Click(object sender, RoutedEventArgs e)
+        {
+            byte[] image = await PickPhotoAsync();
+
+            if (image != null)
+            {
+                MasterContact.Photo = image;
+            }
+        }
+
+        private async Task<byte[]> PickPhotoAsync()
+        {
+            FileOpenPicker filePicker = new FileOpenPicker
+            {
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary,
+                ViewMode = PickerViewMode.Thumbnail
+            };
+            filePicker.FileTypeFilter.Add(".jpg");
+            filePicker.FileTypeFilter.Add(".jpeg");
+            filePicker.FileTypeFilter.Add(".bmp");
+            filePicker.FileTypeFilter.Add(".png");
+
+            StorageFile file = await filePicker.PickSingleFileAsync();
+
+            if (file != null)
+            {
+                return await Images.StorageFileToBytesAsync(file);
+            }
+
+            return null;
+        }
+        #endregion
 
         #region Email
         public EmailAddress SelectedEmail;

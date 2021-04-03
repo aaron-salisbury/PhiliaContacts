@@ -28,7 +28,7 @@
                 </Grid.ColumnDefinitions>
                 <Ellipse Grid.Column="0" VerticalAlignment="Center" Width="50" Height="50">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{x:Bind helpers:Images.BytesToBitmapSource(Photo)}" Stretch="UniformToFill" />
+                        <ImageBrush ImageSource="{x:Bind helpers:Images.BytesToBitmapSource(Photo), Mode=OneWay}" Stretch="UniformToFill" />
                     </Ellipse.Fill>
                 </Ellipse>
                 <StackPanel

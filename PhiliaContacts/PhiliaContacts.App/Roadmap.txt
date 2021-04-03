@@ -1,4 +1,4 @@
-﻿   Finish setting fields in VCardLibVCFService.
-   Test and find out what multiple addresses look like. And other fields.
+﻿   Fix APPX4001: Build property AppxBundlePlatforms is not explicitly set and is calculated based on currently building architecture.
    Finish export.
-   Test all the different type in apple and/or google to see how to export emails, phones, etc.
+       - Test and find out what multiple phones and emails look like. Anything with a custom property whose key starts with "item".
+       - Test and find out what Apple and Google export for enums (email type, phone type, address type).
