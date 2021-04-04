@@ -19,6 +19,7 @@ namespace PhiliaContacts.Core
                 string rev = "REV:" + "2021-03-26T17:56:19Z"; //TODO: get this format from DateTime.Now.
 
                 StringBuilder stringBuilder = new StringBuilder();
+                int itemCounter = 0;
 
                 foreach (Contact contact in manager.Contacts)
                 {
@@ -27,8 +28,7 @@ namespace PhiliaContacts.Core
                         continue;
                     }
 
-                    //TODO: Limit line length. Wrap and intent one space.
-                    //TODO: Don't try to write valueless lines.
+                    //TODO: Limit line length. Wrap and indent one space.
 
                     stringBuilder.AppendLine(HEADER + Environment.NewLine + VERSION);
 
@@ -39,14 +39,14 @@ namespace PhiliaContacts.Core
                         stringBuilder.AppendLine($"FN:{contact.FormattedName}");
                     }
 
-                    if (!string.IsNullOrEmpty(contact.Organization))
-                    {
-                        stringBuilder.AppendLine($"ORG:{contact.Organization};");
-                    }
-
                     if (!string.IsNullOrEmpty(contact.Nickname))
                     {
                         stringBuilder.AppendLine($"NICKNAME:{contact.Nickname}");
+                    }
+
+                    if (contact.IsFavorite)
+                    {
+                        stringBuilder.AppendLine("CATEGORIES:starred");
                     }
 
                     if (contact.Birthday != null)
@@ -54,9 +54,19 @@ namespace PhiliaContacts.Core
                         stringBuilder.AppendLine($"BDAY;VALUE=date:{contact.Birthday.Value:yyyy-MM-dd}");
                     }
 
+                    if (!string.IsNullOrEmpty(contact.Organization))
+                    {
+                        stringBuilder.AppendLine($"ORG:{contact.Organization};");
+                    }
+
                     if (!string.IsNullOrEmpty(contact.Title))
                     {
                         stringBuilder.AppendLine($"TITLE:{contact.Title}");
+                    }
+
+                    if (!string.IsNullOrEmpty(contact.Url))
+                    {
+                        stringBuilder.AppendLine($"URL;TYPE=HOME:{contact.Url}");
                     }
 
                     if (!string.IsNullOrEmpty(contact.Notes))
@@ -64,9 +74,19 @@ namespace PhiliaContacts.Core
                         stringBuilder.AppendLine($"NOTE:{contact.Notes}");
                     }
 
-                    //TODO: Address, phones, URL, emails. Also don't forget about IsFavorite, URL, and any others.
+                    foreach(EmailAddress email in contact.EmailAddresses)
+                    {
+                        if (email.Type == EmailAddress.EmailType.None)
+                        {
+                            stringBuilder.AppendLine($"EMAIL;TYPE=INTERNET:{email.Email}");
+                        }
+                        else
+                        {
+                            stringBuilder.AppendLine($"EMAIL;TYPE=INTERNET;TYPE={email.Type.ToString().ToUpper()}:{email.Email}");
+                        }
+                    }
 
-
+                    //TODO: Address, phones.
 
                     if (!string.IsNullOrEmpty(contact.TwitterUser))
                     {
@@ -81,11 +101,6 @@ namespace PhiliaContacts.Core
                     if (!string.IsNullOrEmpty(contact.LinkedInUser))
                     {
                         stringBuilder.AppendLine($"X-SOCIALPROFILE;X-USER={contact.LinkedInUser};TYPE=linkedin:http://www.linkedin.com/in/" + contact.LinkedInUser);
-                    }
-
-                    if (contact.IsFavorite)
-                    {
-                        stringBuilder.AppendLine("CATEGORIES:starred");
                     }
 
                     if (contact.Photo != null && contact.Photo != manager.DefaultContactImage)
