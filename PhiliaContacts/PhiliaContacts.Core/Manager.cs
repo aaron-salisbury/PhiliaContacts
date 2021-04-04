@@ -64,9 +64,16 @@ namespace PhiliaContacts.Core
             {
                 Logger.Information("Loading contacts.");
 
-                Contacts = new ObservableCollection<Contact>(Task.Run(() => Data.CRUD.ReadDomainsAsync<Contact>()).Result);
+                IEnumerable<Contact> savedContacts = Task.Run(() => Data.CRUD.ReadDomainsAsync<Contact>()).Result;
 
-                return true;
+                if (savedContacts != null)
+                {
+                    Contacts = new ObservableCollection<Contact>(savedContacts);
+                    return true;
+                }
+
+                Contacts = new ObservableCollection<Contact>();
+                return false;
             }
             catch (Exception e)
             {

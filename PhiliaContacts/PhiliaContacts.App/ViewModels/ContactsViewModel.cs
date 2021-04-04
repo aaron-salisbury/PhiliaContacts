@@ -32,7 +32,7 @@ namespace PhiliaContacts.App.ViewModels
 
         public ContactsViewModel()
         {
-            Selected = Manager.Contacts?.First();
+            Selected = Manager.Contacts?.FirstOrDefault();
 
             NewContactCommand = new RelayCommand(() => AddNewContact());
             DeleteContactCommand = new RelayCommand(() => DeleteContact());
