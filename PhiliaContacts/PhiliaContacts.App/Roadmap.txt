@@ -1,5 +1,0 @@
-﻿   Fix APPX4001: Build property AppxBundlePlatforms is not explicitly set and is calculated based on currently building architecture.
-   Finish export.
-       - Test and find out what multiple phones and emails look like. Anything with a custom property whose key starts with "item".
-       - Test and find out what Apple and Google export for enums (email type, phone type, address type).
-       - Google and Apple export a few properties differently. Test and make sure the import service can handle the different combinations.

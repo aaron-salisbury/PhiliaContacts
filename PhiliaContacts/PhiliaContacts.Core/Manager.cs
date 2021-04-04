@@ -37,8 +37,8 @@ namespace PhiliaContacts.Core
 
             Countries = CRUD.ReadCountries();
 
-            //Load();
-            LoadTestData();
+            Load();
+            //LoadTestData();
         }
 
         public bool Save()
