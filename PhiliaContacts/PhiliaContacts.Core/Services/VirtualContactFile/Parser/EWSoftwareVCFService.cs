@@ -79,11 +79,46 @@ namespace PhiliaContacts.Core.Services
             }
         }
 
-        private static byte[] ConvertVCardPhoto(PhotoProperty photoProperty, byte[] defaultImage)
+        private byte[] ConvertVCardPhoto(PhotoProperty photoProperty, byte[] defaultImage)
         {
             if (photoProperty != null && !string.IsNullOrEmpty(photoProperty.Value))
             {
-                return Images.ImageUrlToBytes(photoProperty.Value);
+                try
+                {
+                    if (photoProperty.Value.ToUpper().Contains("ENCODING=BASE64"))
+                    {
+                        int typeIndex = photoProperty.Value.IndexOf("TYPE=JPEG;");
+                        string encodedImage = (typeIndex < 0)
+                            ? photoProperty.Value
+                            : photoProperty.Value.Remove(typeIndex, "TYPE=JPEG;".Length);
+
+                        int typeAltIndex = encodedImage.IndexOf("TYPE=JPEG:");
+                        encodedImage = (typeAltIndex < 0)
+                            ? encodedImage
+                            : encodedImage.Remove(typeAltIndex, "TYPE=JPEG:".Length);
+
+                        int encodingIndex = encodedImage.IndexOf("ENCODING=BASE64;");
+                        encodedImage = (encodingIndex < 0)
+                            ? encodedImage
+                            : encodedImage.Remove(encodingIndex, "ENCODING=BASE64;".Length);
+
+                        int encodingAltIndex = encodedImage.IndexOf("ENCODING=BASE64:");
+                        encodedImage = (encodingAltIndex < 0)
+                            ? encodedImage
+                            : encodedImage.Remove(encodingAltIndex, "ENCODING=BASE64:".Length);
+
+                        return Convert.FromBase64String(encodedImage);
+                    }
+                    else
+                    {
+                        return Images.ImageUrlToBytes(photoProperty.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.Error($"Failed to convert vCard photo: {e.Message}");
+                    return defaultImage;
+                }
             }
 
             return defaultImage;
