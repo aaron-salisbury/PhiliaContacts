@@ -12,6 +12,8 @@ namespace PhiliaContacts.Core
 
         public static string Write(Manager manager)
         {
+            // https://weblogs.asp.net/gunnarpeipman/creating-vcard-with-image-in-net
+
             try
             {
                 manager.Logger.Information("Beginning to write contacts.");
