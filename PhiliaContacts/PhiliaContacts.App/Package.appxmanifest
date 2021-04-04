@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="16FCE992-2619-4AB4-966F-60DCD8905872"
-    Publisher="CN=aaron"
-    Version="1.0.0.0" />
+    Name="60826AaronSalisbury.PhiliaContacts"
+    Publisher="CN=7DEA5566-0BC8-4D89-BAB5-AA36A27E4938"
+    Version="1.0.1.0" />
 
-  <mp:PhoneIdentity PhoneProductId="8d56a34b-d180-43ed-a3fd-d3732a1bc2dc" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="7c7bf0f4-4429-40f4-a85b-0d6e3fea24dd" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Philia Contacts</DisplayName>
@@ -36,7 +36,7 @@
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         BackgroundColor="transparent" Description="Philia Contacts">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square310x310Logo"/>
             <uap:ShowOn Tile="wide310x150Logo"/>
