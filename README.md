@@ -5,7 +5,7 @@ UWP application meant to serve as a central contact organizer. Imports and expor
 
 Manage all your contacts centrally and cleanly. Import from, or export to, your Android or Apple contacts using the universal vCard (Virtual Contact File) format.
 
-<img src="https://github.com/aaron-salisbury/PhiliaContacts/blob/master/screenshot.png" width="600">
+<img src="https://raw.githubusercontent.com/aaron-salisbury/PhiliaContacts/master/StoreListings/DesktopScreenshot1.png" width="600">
 
 Background
 ----------
