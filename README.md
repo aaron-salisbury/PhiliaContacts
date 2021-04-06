@@ -1,6 +1,8 @@
 Philia Contacts
 ===============
 
+Available in the [Microsoft Store](https://www.microsoft.com/en-us/p/philia-contacts/9mxht996k5st).
+
 UWP application meant to serve as a central contact organizer. Imports and exports vCard file format.
 
 Manage all your contacts centrally and cleanly. Import from, or export to, your Android or Apple contacts using the universal vCard (Virtual Contact File) format.
