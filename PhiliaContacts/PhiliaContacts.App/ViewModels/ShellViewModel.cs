@@ -1,4 +1,5 @@
-﻿using PhiliaContacts.Core;
+﻿using PhiliaContacts.App.Base.Services;
+using PhiliaContacts.Core;
 using PhiliaContacts.Core.Base;
 using Windows.UI.Xaml;
 
@@ -21,7 +22,7 @@ namespace PhiliaContacts.App.ViewModels
         public ShellViewModel()
         {
             AppLogger = new AppLogger();
-            Manager = new Manager(AppLogger);
+            Manager = new Manager(StorageLocationService.StorageFolderToken, AppLogger);
         }
     }
 }

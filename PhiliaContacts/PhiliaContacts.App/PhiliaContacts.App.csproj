@@ -138,6 +138,7 @@
     <Compile Include="Base\Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Base\Converters\DateTimeToDateTimeOffestConverter.cs" />
     <Compile Include="Base\Extensions\EnumExtensions.cs" />
+    <Compile Include="Base\Extensions\StringExtensions.cs" />
     <Compile Include="Base\Helpers\Animation.cs" />
     <Compile Include="Base\Helpers\ComboBoxEnumItem.cs" />
     <Compile Include="Base\Helpers\DispatcherHelper.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Base\Helpers\UI.cs" />
     <Compile Include="Base\Services\ActivationService.cs" />
     <Compile Include="Base\Services\NavigationService.cs" />
+    <Compile Include="Base\Services\StorageLocationService.cs" />
     <Compile Include="Base\Services\ThemeSelectorService.cs" />
     <Compile Include="ShellPage.xaml.cs">
       <DependentUpon>ShellPage.xaml</DependentUpon>

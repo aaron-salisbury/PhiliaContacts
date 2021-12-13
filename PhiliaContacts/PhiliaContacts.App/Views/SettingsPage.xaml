@@ -16,6 +16,13 @@
     <Grid Margin="{StaticResource MediumLeftRightMargin}">
         <StackPanel
             x:Name="ContentArea">
+
+            <TextBlock Text="Storage Location" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <StackPanel Orientation="Horizontal" Margin="{StaticResource SmallTopBottomMargin}">
+                <TextBox Text="{Binding StorageFolderPath}" Width="250" IsReadOnly="true" />
+                <Button Content="Select Folder" Command="{Binding SelectFolderCommand}" Margin="5,0,0,0" />
+            </StackPanel>
+
             <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                 <TextBlock x:Uid="Settings_Theme" />

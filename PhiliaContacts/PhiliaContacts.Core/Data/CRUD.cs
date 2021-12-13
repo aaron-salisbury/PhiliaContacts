@@ -10,9 +10,9 @@ namespace PhiliaContacts.Core.Data
 {
     public class CRUD
     {
-        public static async Task<IEnumerable<T>> ReadDomainsAsync<T>()
+        public static async Task<IEnumerable<T>> ReadDomainsAsync<T>(string folderToken = null)
         {
-            string json = await AmalgamateLabs.Win10.IO.ReadLocalDataFileAsync(GetJsonFileNameForGivenType<T>());
+            string json = await AmalgamateLabs.Win10.IO.ReadLocalDataFileAsync(GetJsonFileNameForType<T>(), folderToken);
 
             if (!string.IsNullOrEmpty(json))
             {
@@ -22,14 +22,19 @@ namespace PhiliaContacts.Core.Data
             return null;
         }
 
-        public static async Task UpdateDomainsAsync<T>(IEnumerable<object> domains)
+        public static async Task UpdateDomainsAsync<T>(IEnumerable<object> domains, string folderToken = null)
         {
             string json = await Json.StringifyAsync(domains);
 
-            await AmalgamateLabs.Win10.IO.WriteLocalDataFileAsync(GetJsonFileNameForGivenType<T>(), json);
+            await AmalgamateLabs.Win10.IO.WriteLocalDataFileAsync(GetJsonFileNameForType<T>(), json, folderToken);
         }
 
-        private static string GetJsonFileNameForGivenType<T>()
+        public static async Task DeleteDataAsync<T>(string folderToken = null)
+        {
+            await AmalgamateLabs.Win10.IO.DeleteLocalDataFileAsync(GetJsonFileNameForType<T>(), folderToken);
+        }
+
+        private static string GetJsonFileNameForType<T>()
         {
             return $"{typeof(T).Name}.json";
         }

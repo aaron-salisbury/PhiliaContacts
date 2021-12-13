@@ -14,6 +14,21 @@ namespace PhiliaContacts.Core
     {
         internal ILogger Logger { get; set; }
 
+        private string _storageFolderToken;
+        public string StorageFolderToken
+        {
+            get => _storageFolderToken;
+            set
+            {
+                if (!string.Equals(value, _storageFolderToken))
+                {
+                    Delete();
+                    _storageFolderToken = value;
+                    Save();//TODO: If data file already exists in new location, load instead of save.
+                }
+            }
+        }
+
         public byte[] DefaultContactImage { get; }
 
         public static List<string> Countries { get; set; }
@@ -29,8 +44,10 @@ namespace PhiliaContacts.Core
             }
         }
 
-        public Manager(AppLogger appLogger)
+        public Manager(string storageFolderToken, AppLogger appLogger)
         {
+            _storageFolderToken = storageFolderToken;
+
             Logger = appLogger.Logger;
 
             DefaultContactImage = Images.EmbeddedImageToBytes("PhiliaContacts.Core.Base.Resources.contact-placeholder.png");
@@ -47,7 +64,7 @@ namespace PhiliaContacts.Core
             {
                 Logger.Information("Saving contacts.");
 
-                Task.Run(() => Data.CRUD.UpdateDomainsAsync<Contact>(Contacts)).Wait();
+                Task.Run(() => Data.CRUD.UpdateDomainsAsync<Contact>(Contacts, StorageFolderToken)).Wait();
 
                 return true;
             }
@@ -58,13 +75,30 @@ namespace PhiliaContacts.Core
             }
         }
 
+        public bool Delete()
+        {
+            try
+            {
+                Logger.Information("Deleting contacts.");
+
+                Task.Run(() => Data.CRUD.DeleteDataAsync<Contact>(StorageFolderToken)).Wait();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Failed to delete contacts: {e.Message}");
+                return false;
+            }
+        }
+
         private bool Load()
         {
             try
             {
                 Logger.Information("Loading contacts.");
 
-                IEnumerable<Contact> savedContacts = Task.Run(() => Data.CRUD.ReadDomainsAsync<Contact>()).Result;
+                IEnumerable<Contact> savedContacts = Task.Run(() => Data.CRUD.ReadDomainsAsync<Contact>(StorageFolderToken)).Result;
 
                 if (savedContacts != null)
                 {

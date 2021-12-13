@@ -55,6 +55,7 @@ namespace PhiliaContacts.App.Base.Services
         {
             Helpers.UI.ApplyColorToTitleBar();
 
+            await StorageLocationService.InitializeAsync().ConfigureAwait(false);
             await ThemeSelectorService.InitializeAsync().ConfigureAwait(false);
         }
 

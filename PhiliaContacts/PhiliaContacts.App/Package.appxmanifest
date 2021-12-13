@@ -9,7 +9,7 @@
   <Identity
     Name="60826AaronSalisbury.PhiliaContacts"
     Publisher="CN=7DEA5566-0BC8-4D89-BAB5-AA36A27E4938"
-    Version="1.0.6.0" />
+    Version="1.0.7.0" />
 
   <mp:PhoneIdentity PhoneProductId="7c7bf0f4-4429-40f4-a85b-0d6e3fea24dd" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
