@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xaml.Interactivity;
-using PhiliaContacts.App.ViewModels;
+using PhiliaContacts.App.Base.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -65,13 +65,13 @@ namespace PhiliaContacts.App.Base.Behaviors
         {
             base.OnAttached();
             _current = this;
-            ViewModelLocator.Current.NavigationService.Navigated += OnNavigated;
+            NavigationService.Navigated += OnNavigated;
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            ViewModelLocator.Current.NavigationService.Navigated -= OnNavigated;
+            NavigationService.Navigated -= OnNavigated;
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)

@@ -1,16 +1,15 @@
-﻿using GalaSoft.MvvmLight;
-using PhiliaContacts.App.Base.Extensions;
+﻿using PhiliaContacts.App.Base.Extensions;
 
 namespace PhiliaContacts.App.ViewModels
 {
-    public class IntroductionViewModel : ViewModelBase
+    public class IntroductionViewModel : BaseViewModel
     {
         private string _appDisplayName;
 
         public string AppDisplayName
         {
             get => _appDisplayName;
-            set => Set(ref _appDisplayName, value);
+            set => SetProperty(ref _appDisplayName, value);
         }
 
         public IntroductionViewModel()

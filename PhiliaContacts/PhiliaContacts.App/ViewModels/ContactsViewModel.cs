@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
+﻿using Microsoft.Toolkit.Mvvm.Input;
 using PhiliaContacts.Core;
 using PhiliaContacts.Domains;
 using System;
@@ -27,7 +26,7 @@ namespace PhiliaContacts.App.ViewModels
         public Contact Selected
         {
             get { return _selected; }
-            set { Set(ref _selected, value); }
+            set { SetProperty(ref _selected, value); }
         }
 
         public ContactsViewModel()
@@ -95,10 +94,10 @@ namespace PhiliaContacts.App.ViewModels
                 }
                 finally
                 {
-                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                    Base.Helpers.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         IsBusy = false;
-                        ImportCommand.RaiseCanExecuteChanged();
+                        ImportCommand.NotifyCanExecuteChanged();
                         Selected = Manager.Contacts.FirstOrDefault();
                     });
                 }
@@ -115,7 +114,7 @@ namespace PhiliaContacts.App.ViewModels
             {
                 bool processIsSuccessful = false;
 
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                Base.Helpers.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     processIsSuccessful = Importer.Import(Manager, vCardContents);
 
@@ -185,10 +184,10 @@ namespace PhiliaContacts.App.ViewModels
                 }
                 finally
                 {
-                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                    Base.Helpers.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         IsBusy = false;
-                        ExportCommand.RaiseCanExecuteChanged();
+                        ExportCommand.NotifyCanExecuteChanged();
                     });
                 }
             }

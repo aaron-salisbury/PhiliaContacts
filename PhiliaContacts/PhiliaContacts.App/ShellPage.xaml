@@ -10,8 +10,15 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:behaviors="using:PhiliaContacts.App.Base.Behaviors"
     xmlns:helpers="using:PhiliaContacts.App.Base.Helpers"
-    xmlns:iconPacks="using:MahApps.Metro.IconPacks">
+    xmlns:iconPacks="using:MahApps.Metro.IconPacks"
+    xmlns:views="using:PhiliaContacts.App.Views">
 
+    <i:Interaction.Behaviors>
+        <ic:EventTriggerBehavior EventName="Loaded">
+            <ic:InvokeCommandAction Command="{x:Bind ViewModel.LoadedCommand}" />
+        </ic:EventTriggerBehavior>
+    </i:Interaction.Behaviors>
+    
     <winui:NavigationView 
         x:Name="navigationView"
         IsBackButtonVisible="Collapsed"
@@ -24,14 +31,14 @@
         <winui:NavigationView.MenuItems>
 
             <winui:NavigationViewItemSeparator/>
-            
-            <winui:NavigationViewItem Content="Contacts" helpers:NavHelper.NavigateTo="PhiliaContacts.App.ViewModels.ContactsViewModel">
+
+            <winui:NavigationViewItem Content="Contacts" helpers:NavHelper.NavigateTo="views:ContactsPage">
                 <winui:NavigationViewItem.Icon>
                     <iconPacks:PathIconFontAwesome Kind="AddressCardSolid" />
                 </winui:NavigationViewItem.Icon>
             </winui:NavigationViewItem>
 
-            <winui:NavigationViewItem Content="Log" helpers:NavHelper.NavigateTo="PhiliaContacts.App.ViewModels.LogViewModel" Visibility="{Binding IsDebug}">
+            <winui:NavigationViewItem Content="Log" helpers:NavHelper.NavigateTo="views:LogPage" Visibility="{Binding IsDebug}">
                 <winui:NavigationViewItem.Icon>
                     <iconPacks:PathIconFontAwesome Kind="ClipboardListSolid" />
                 </winui:NavigationViewItem.Icon>

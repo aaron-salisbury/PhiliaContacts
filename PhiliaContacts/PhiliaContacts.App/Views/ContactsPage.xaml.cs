@@ -10,10 +10,7 @@ namespace PhiliaContacts.App.Views
 {
     public sealed partial class ContactsPage : Page
     {
-        private ContactsViewModel ViewModel
-        {
-            get => ViewModelLocator.Current.ContactsViewModel;
-        }
+        public ContactsViewModel ViewModel { get; } = new ContactsViewModel();
 
         public ContactsPage()
         {

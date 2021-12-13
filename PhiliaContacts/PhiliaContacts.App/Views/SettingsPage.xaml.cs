@@ -6,14 +6,12 @@ namespace PhiliaContacts.App.Views
 {
     public sealed partial class SettingsPage : Page
     {
-        private SettingsViewModel ViewModel
-        {
-            get => ViewModelLocator.Current.SettingsViewModel;
-        }
+        public SettingsViewModel ViewModel { get; } = new SettingsViewModel();
 
         public SettingsPage()
         {
             InitializeComponent();
+            DataContext = ViewModel;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)

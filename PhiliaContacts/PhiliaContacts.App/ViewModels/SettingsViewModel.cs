@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using Microsoft.Toolkit.Mvvm.Input;
 using PhiliaContacts.App.Base.Extensions;
 using PhiliaContacts.App.Base.Services;
 using System.Threading.Tasks;
@@ -9,28 +8,23 @@ using Windows.UI.Xaml;
 
 namespace PhiliaContacts.App.ViewModels
 {
-    public class SettingsViewModel : ViewModelBase
+    public class SettingsViewModel : BaseViewModel
     {
         private ElementTheme _elementTheme = ThemeSelectorService.Theme;
-
         public ElementTheme ElementTheme
         {
             get { return _elementTheme; }
-
-            set { Set(ref _elementTheme, value); }
+            set { SetProperty(ref _elementTheme, value); }
         }
 
         private string _versionDescription;
-
         public string VersionDescription
         {
             get { return _versionDescription; }
-
-            set { Set(ref _versionDescription, value); }
+            set { SetProperty(ref _versionDescription, value); }
         }
 
         private ICommand _switchThemeCommand;
-
         public ICommand SwitchThemeCommand
         {
             get
@@ -49,9 +43,7 @@ namespace PhiliaContacts.App.ViewModels
             }
         }
 
-        public SettingsViewModel()
-        {
-        }
+        public SettingsViewModel() { }
 
         public async Task InitializeAsync()
         {

@@ -1,5 +1,4 @@
 ﻿using PhiliaContacts.App.Base.Services;
-using PhiliaContacts.App.ViewModels;
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
@@ -8,13 +7,11 @@ namespace PhiliaContacts.App.Base.Activation
 {
     internal class DefaultActivationHandler : ActivationHandler<IActivatedEventArgs>
     {
-        private readonly string _navElement;
-
-        public NavigationServiceEx NavigationService => ViewModelLocator.Current.NavigationService;
+        private readonly Type _navElement;
 
         public DefaultActivationHandler(Type navElement)
         {
-            _navElement = navElement.FullName;
+            _navElement = navElement;
         }
 
         protected override async Task HandleInternalAsync(IActivatedEventArgs args)

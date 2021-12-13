@@ -1,4 +1,7 @@
-﻿using PhiliaContacts.App.Base.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using PhiliaContacts.App.Base.Helpers;
+using PhiliaContacts.App.Base.Services;
+using PhiliaContacts.App.ViewModels;
 using System;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -7,8 +10,11 @@ namespace PhiliaContacts.App
 {
     public sealed partial class App : Application
     {
-        private Lazy<ActivationService> _activationService;
+        public new static App Current => (App)Application.Current;
 
+        public IServiceProvider Services { get; }
+
+        private readonly Lazy<ActivationService> _activationService;
         private ActivationService ActivationService
         {
             get { return _activationService.Value; }
@@ -16,9 +22,22 @@ namespace PhiliaContacts.App
 
         public App()
         {
+            Services = ConfigureServices();
             InitializeComponent();
             UnhandledException += OnAppUnhandledException;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
+        }
+
+        private static IServiceProvider ConfigureServices()
+        {
+            // https://docs.microsoft.com/en-us/windows/communitytoolkit/mvvm/ioc
+
+            var services = new ServiceCollection();
+
+            // Viewmodels
+            services.AddSingleton<ShellViewModel>();
+
+            return services.BuildServiceProvider();
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
@@ -46,12 +65,12 @@ namespace PhiliaContacts.App
 
         private ActivationService CreateActivationService()
         {
-            return new ActivationService(this, typeof(ViewModels.ContactsViewModel), new Lazy<UIElement>(CreateShell));
+            return new ActivationService(typeof(Views.ContactsPage), new Lazy<UIElement>(CreateShell));
         }
 
         private UIElement CreateShell()
         {
-            GalaSoft.MvvmLight.Threading.DispatcherHelper.Initialize();
+            DispatcherHelper.Initialize();
             return new ShellPage();
         }
     }

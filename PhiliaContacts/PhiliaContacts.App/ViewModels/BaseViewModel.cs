@@ -1,30 +1,18 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
-using PhiliaContacts.Core;
-using PhiliaContacts.Core.Base;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Threading.Tasks;
+using PhiliaContacts.Core;
+using PhiliaContacts.Core.Base;
 using Windows.UI.Xaml;
 
 namespace PhiliaContacts.App.ViewModels
 {
-    public class BaseViewModel : ViewModelBase
+    public class BaseViewModel : Microsoft.Toolkit.Mvvm.ComponentModel.ObservableObject
     {
-        public ViewModelLocator Locator
-        {
-            get => ViewModelLocator.Current;
-        }
+        public AppLogger AppLogger => App.Current.Services.GetService<ShellViewModel>().AppLogger;
 
-        public AppLogger AppLogger
-        {
-            get => Locator.ShellViewModel.AppLogger;
-        }
-
-        public Manager Manager
-        {
-            get => Locator.ShellViewModel.Manager;
-        }
+        public Manager Manager => App.Current.Services.GetService<ShellViewModel>().Manager;
 
         private bool _isBusy;
         public bool IsBusy
@@ -32,7 +20,7 @@ namespace PhiliaContacts.App.ViewModels
             get => _isBusy;
             set
             {
-                Set(ref _isBusy, value);
+                SetProperty(ref _isBusy, value);
                 ProgressBarVisibility = _isBusy ? Visibility.Visible : Visibility.Collapsed;
             }
         }
@@ -41,7 +29,7 @@ namespace PhiliaContacts.App.ViewModels
         public Visibility ProgressBarVisibility
         {
             get => _progressBarVisibility;
-            set => Set(ref _progressBarVisibility, value);
+            set => SetProperty(ref _progressBarVisibility, value);
         }
 
         /// <summary>
@@ -59,10 +47,10 @@ namespace PhiliaContacts.App.ViewModels
             }
             finally
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                Base.Helpers.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     IsBusy = false;
-                    taskCommand.RaiseCanExecuteChanged();
+                    taskCommand.NotifyCanExecuteChanged();
                 });
             }
         }
@@ -75,7 +63,7 @@ namespace PhiliaContacts.App.ViewModels
             {
                 bool processIsSuccessful = false;
 
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                Base.Helpers.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     processIsSuccessful = longRunningFunction.Invoke();
 
