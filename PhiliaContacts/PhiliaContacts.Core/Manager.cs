@@ -25,7 +25,7 @@ namespace PhiliaContacts.Core
                 {
                     Delete();
                     _storageFolderToken = value;
-                    Save();//TODO: If data file already exists in new location, load instead of save.
+                    TryLoad();
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace PhiliaContacts.Core
             {
                 Logger.Information("Deleting contacts.");
 
-                Task.Run(() => Data.CRUD.DeleteDataAsync<Contact>(StorageFolderToken)).Wait();
+                Task.Run(() => Data.CRUD.DeleteDataAsync<Contact>(null, StorageFolderToken)).Wait();
 
                 return true;
             }
@@ -115,6 +115,30 @@ namespace PhiliaContacts.Core
             catch (Exception e)
             {
                 Logger.Error($"Failed to load contacts: {e.Message}");
+                return false;
+            }
+        }
+
+        private bool TryLoad()
+        {
+            try
+            {
+                Logger.Information("Attempting to load potentially existing contacts.");
+
+                IEnumerable<Contact> savedContacts = Task.Run(() => Data.CRUD.ReadReplaceDomainsAsync<Contact>(StorageFolderToken)).Result;
+
+                if (savedContacts != null)
+                {
+                    Contacts = new ObservableCollection<Contact>(savedContacts);
+                    return true;
+                }
+
+                Contacts = new ObservableCollection<Contact>();
+                return false;
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Failed to load any existing contacts: {e.Message}");
                 return false;
             }
         }
