@@ -37,7 +37,7 @@ namespace PhiliaContacts.App.ViewModels
             DeleteContactCommand = new RelayCommand(() => DeleteContact());
             ImportCommand = new RelayCommand(async () => await LaunchFilePickerAndImportAsync(), () => !IsBusy);
             ExportCommand = new RelayCommand(async () => await LaunchFilePickerAndExportAsync(), () => !IsBusy);
-            SaveCommand = new RelayCommand(async () => await InitiateProcessAsync(Manager.Save, SaveCommand, WorkflowSuccessAction, WorkflowFailureAction), () => !IsBusy);
+            SaveCommand = new RelayCommand(async () => await SaveAsync(), () => !IsBusy);
         }
 
         private void AddNewContact()
@@ -50,6 +50,15 @@ namespace PhiliaContacts.App.ViewModels
             Manager.Contacts.Add(newContact);
 
             Selected = newContact;
+        }
+
+        private async Task SaveAsync()
+        {
+            Contact selected = Selected;
+
+            await InitiateProcessAsync(Manager.Save, SaveCommand, WorkflowSuccessAction, WorkflowFailureAction);
+
+            Selected = selected;
         }
 
         private void DeleteContact()

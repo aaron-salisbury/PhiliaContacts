@@ -21,24 +21,36 @@
 
     <Page.Resources>
         <DataTemplate x:Key="ItemTemplate" x:DataType="domains:Contact">
-            <Grid Height="60">
+            <Grid HorizontalAlignment="Stretch" Width="Auto">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="275" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Ellipse Grid.Column="0" VerticalAlignment="Center" Width="50" Height="50">
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{x:Bind helpers:Images.BytesToBitmapSource(Photo), Mode=OneWay}" Stretch="UniformToFill" />
-                    </Ellipse.Fill>
-                </Ellipse>
-                <StackPanel
-                    Grid.Column="1"
-                    Margin="{StaticResource SmallLeftMargin}"
-                    VerticalAlignment="Center">
-                    <TextBlock Style="{ThemeResource ListTitleStyle}" Text="{x:Bind DisplayName, Mode=OneWay}" />
-                    <TextBlock Style="{StaticResource ListSubTitleStyle}" Text="{x:Bind FormattedName, Mode=OneWay}" />
-                </StackPanel>
+
+                <Grid Grid.Column="0" Height="60" HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Ellipse Grid.Column="0" VerticalAlignment="Center" Width="50" Height="50">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{x:Bind helpers:Images.BytesToBitmapSource(Photo), Mode=OneWay}" Stretch="UniformToFill" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <StackPanel Grid.Column="1" Margin="{StaticResource SmallLeftMargin}" VerticalAlignment="Center">
+                        <TextBlock Style="{ThemeResource ListTitleStyle}" Text="{x:Bind DisplayName, Mode=OneWay}" />
+                        <TextBlock Style="{StaticResource ListSubTitleStyle}" Text="{x:Bind FormattedName, Mode=OneWay}" />
+                    </StackPanel>
+                </Grid>
+
+                <FontIcon 
+                    Grid.Column="1" 
+                    Glyph="{x:Bind FavoriteSegoeMDL2Glyph, Mode=OneWay}" 
+                    FontSize="20" 
+                    Visibility="{Binding IsFavorite}" 
+                    HorizontalAlignment="Right" />
             </Grid>
+
         </DataTemplate>
 
         <DataTemplate x:Key="DetailsTemplate">
@@ -131,7 +143,6 @@
                 </StackPanel>
             </controls:MyAppBar.AppBarButtonsPanel>
         </controls:MyAppBar>
-
 
         <Grid Grid.Row="1">
             <VisualStateManager.VisualStateGroups>
