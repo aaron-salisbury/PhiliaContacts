@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PhiliaContacts.Core
@@ -63,6 +64,8 @@ namespace PhiliaContacts.Core
             try
             {
                 Logger.Information("Saving contacts.");
+
+                Contacts = new ObservableCollection<Contact>(Contacts.OrderByDescending(c => c.IsFavorite).ThenBy(c => c.DisplayName));
 
                 Task.Run(() => Data.CRUD.UpdateDomainsAsync<Contact>(Contacts, StorageFolderToken)).Wait();
 
