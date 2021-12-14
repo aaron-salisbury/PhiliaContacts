@@ -58,7 +58,8 @@ namespace PhiliaContacts.App.ViewModels
 
             await InitiateProcessAsync(Manager.Save, SaveCommand, WorkflowSuccessAction, WorkflowFailureAction);
 
-            Selected = selected;
+            int selectedIndex = Manager.Contacts.IndexOf(selected);
+            Selected = selectedIndex >= 0 ? Manager.Contacts[selectedIndex] : null;
         }
 
         private void DeleteContact()

@@ -59,13 +59,18 @@ namespace PhiliaContacts.Core
             //LoadTestData();
         }
 
+        private void SortContacts()
+        {
+            Contacts = new ObservableCollection<Contact>(Contacts.OrderByDescending(c => c.IsFavorite).ThenBy(c => c.DisplayName));
+        }
+
         public bool Save()
         {
             try
             {
                 Logger.Information("Saving contacts.");
 
-                Contacts = new ObservableCollection<Contact>(Contacts.OrderByDescending(c => c.IsFavorite).ThenBy(c => c.DisplayName));
+                SortContacts();
 
                 Task.Run(() => Data.CRUD.UpdateDomainsAsync<Contact>(Contacts, StorageFolderToken)).Wait();
 
