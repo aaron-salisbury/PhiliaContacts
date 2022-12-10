@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="EWSoftware.PDI.Data" Version="2020.11.25" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="vCardLib.dll" Version="3.0.1" />
