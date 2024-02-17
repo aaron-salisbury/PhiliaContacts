@@ -7,7 +7,16 @@
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>Philia Contacts</AssemblyName>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Title>Philia Contacts</Title>
+    <Version>1.1.0</Version>
+    <RepositoryUrl>https://github.com/aaron-salisbury/PhiliaContacts/</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="11.0.9" />
