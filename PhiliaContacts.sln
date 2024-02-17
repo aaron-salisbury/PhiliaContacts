@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmalgamateLabs.Win10", "Phi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhiliaContacts.Data", "PhiliaContacts\PhiliaContacts.Data\PhiliaContacts.Data.csproj", "{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhiliaContacts.Business", "PhiliaContacts\PhiliaContacts.Business\PhiliaContacts.Business.csproj", "{81762434-EBF9-417E-9672-9399756F318C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,26 @@ Global
 		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|x64.Build.0 = Release|Any CPU
 		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|x86.ActiveCfg = Release|Any CPU
 		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|x86.Build.0 = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|ARM.Build.0 = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|x64.Build.0 = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Debug|x86.Build.0 = Debug|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|ARM.ActiveCfg = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|ARM.Build.0 = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|ARM64.Build.0 = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|x64.ActiveCfg = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|x64.Build.0 = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|x86.ActiveCfg = Release|Any CPU
+		{81762434-EBF9-417E-9672-9399756F318C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
