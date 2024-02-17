@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\ContactImages\default-contact-image.png" />
+    <None Remove="Resources\ContactImages\man-1.jpeg" />
+    <None Remove="Resources\ContactImages\man-2.jpeg" />
+    <None Remove="Resources\ContactImages\woman-1.jpeg" />
+    <None Remove="Resources\ContactImages\woman-2.jpeg" />
+    <None Remove="Resources\Countries.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ContactImages\default-contact-image.png" />
+    <EmbeddedResource Include="Resources\ContactImages\man-1.jpeg" />
+    <EmbeddedResource Include="Resources\ContactImages\man-2.jpeg" />
+    <EmbeddedResource Include="Resources\ContactImages\woman-1.jpeg" />
+    <EmbeddedResource Include="Resources\ContactImages\woman-2.jpeg" />
+    <EmbeddedResource Include="Resources\Countries.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+    <Folder Include="Domains\" />
+  </ItemGroup>
+
+</Project>

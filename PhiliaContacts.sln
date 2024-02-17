@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31105.61
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhiliaContacts.Core", "PhiliaContacts\PhiliaContacts.Core\PhiliaContacts.Core.csproj", "{899EA26D-2220-49F6-8462-6DE6A05867C2}"
 EndProject
@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhiliaContacts.App", "Phili
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhiliaContacts.Domains", "PhiliaContacts\PhiliaContacts.Domains\PhiliaContacts.Domains.csproj", "{0EB7B479-F714-4A4E-8556-6D48EE8C1D66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmalgamateLabs.Win10", "PhiliaContacts\AmalgamateLabs.Win10\AmalgamateLabs.Win10.csproj", "{9E5B0BC5-8977-48A8-8F16-83F8C240F349}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmalgamateLabs.Win10", "PhiliaContacts\AmalgamateLabs.Win10\AmalgamateLabs.Win10.csproj", "{9E5B0BC5-8977-48A8-8F16-83F8C240F349}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhiliaContacts.Data", "PhiliaContacts\PhiliaContacts.Data\PhiliaContacts.Data.csproj", "{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,26 @@ Global
 		{9E5B0BC5-8977-48A8-8F16-83F8C240F349}.Release|x64.Build.0 = Release|Any CPU
 		{9E5B0BC5-8977-48A8-8F16-83F8C240F349}.Release|x86.ActiveCfg = Release|Any CPU
 		{9E5B0BC5-8977-48A8-8F16-83F8C240F349}.Release|x86.Build.0 = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|ARM.Build.0 = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|x64.Build.0 = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Debug|x86.Build.0 = Debug|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|ARM.ActiveCfg = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|ARM.Build.0 = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|ARM64.Build.0 = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|x64.ActiveCfg = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|x64.Build.0 = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|x86.ActiveCfg = Release|Any CPU
+		{A77B5EF2-AAB7-4915-A484-F61E4A2EADF6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
