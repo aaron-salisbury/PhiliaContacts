@@ -1,0 +1,115 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="60"
+             x:Class="PhiliaContacts.Presentation.Base.Controls.RibbonControl"
+			 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.ViewModels"
+			 x:DataType="vm:ContactsViewModel"
+			 xmlns:material="using:Material.Icons.Avalonia"
+			 xmlns:progRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
+			 Background="Transparent"
+			 x:Name="RC">
+
+	<UserControl.Styles>
+		<Style Selector="AutoCompleteBox.contactSearchBox /template/ TextBox#PART_TextBox">
+			<Setter Property="InnerRightContent">
+				<Template>
+					<material:MaterialIcon Kind="Magnify" Margin="0,0,5,0" Foreground="{DynamicResource TextControlBorderBrush}" />
+				</Template>
+			</Setter>
+		</Style>
+
+		<Style Selector="material|MaterialIcon.workflowIcon">
+			<Setter Property="Width" Value="40" />
+			<Setter Property="Height" Value="40" />
+			<Setter Property="Opacity" Value="0" />
+		</Style>
+
+		<Style Selector="Button.ribbonBtn">
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="VerticalAlignment" Value="Center" />
+			<Setter Property="Margin" Value="0,0,5,0" />
+		</Style>
+
+		<Style Selector="Button.ribbonBtn:disabled /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="Transparent" />
+		</Style>
+
+		<Style Selector="material|MaterialIcon.buttonIcon">
+			<Setter Property="Width" Value="25" />
+			<Setter Property="Height" Value="25" />
+		</Style>
+
+		<Style Selector="TextBlock.buttonLabel">
+			<Setter Property="FontSize" Value="10" />
+			<Setter Property="HorizontalAlignment" Value="Center" />
+			<Setter Property="FontWeight" Value="Light" />
+			<Setter Property="Margin" Value="0,2,0,0" />
+		</Style>
+	</UserControl.Styles>
+
+	<Border>
+		<Grid ColumnDefinitions="Auto,*,Auto,10,Auto">
+
+			<AutoCompleteBox Grid.Column="0"
+							 x:Name="ContactSearchBox"
+							 Classes="contactSearchBox"
+							 FilterMode="ContainsOrdinal"
+							 Watermark="Search Contacts"
+							 Width="200"
+							 SelectionChanged="ContactSearchBox_OnSelectionChanged"
+							 VerticalAlignment="Center"
+							 ItemsSource="{Binding Names}"/>
+
+			<Grid Grid.Column="2" Name="WorkflowStates">
+				<progRing:ProgressRing IsActive="{Binding IsBusy}"
+									   Foreground="{DynamicResource SystemControlHighlightAccentBrush}"
+									   Height="40"
+									   Width="40"
+									   VerticalAlignment="Center" />
+
+				<material:MaterialIcon Classes="workflowIcon" x:Name="WorkflowSucessIcon" Kind="CheckCircleOutline" Foreground="{StaticResource GreenAccent}" />
+				<material:MaterialIcon Classes="workflowIcon" x:Name="WorkflowFailureIcon" Kind="AlphaXCircleOutline" Foreground="{StaticResource RedAccent}" />
+			</Grid>
+
+			<StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+				<Button Classes="ribbonBtn" Command="{Binding NewContactCommand}">
+					<StackPanel Orientation="Vertical">
+						<material:MaterialIcon Classes="buttonIcon" Kind="AccountPlusOutline" />
+						<TextBlock Classes="buttonLabel" Text="New" />
+					</StackPanel>
+				</Button>
+
+				<Button Classes="ribbonBtn" Command="{Binding DeleteContactCommand}">
+					<StackPanel Orientation="Vertical">
+						<material:MaterialIcon Classes="buttonIcon" Kind="TrashCanOutline" />
+						<TextBlock Classes="buttonLabel" Text="Delete" />
+					</StackPanel>
+				</Button>
+
+				<Button Classes="ribbonBtn" Click="ImportBtn_OnClick">
+					<StackPanel Orientation="Vertical">
+						<material:MaterialIcon Classes="buttonIcon" Kind="Import" />
+						<TextBlock Classes="buttonLabel" Text="Import" />
+					</StackPanel>
+				</Button>
+
+				<Button Classes="ribbonBtn" Click="ExportBtn_OnClick">
+					<StackPanel Orientation="Vertical">
+						<material:MaterialIcon Classes="buttonIcon" Kind="Export" />
+						<TextBlock Classes="buttonLabel" Text="Export" />
+					</StackPanel>
+				</Button>
+
+				<Button Classes="ribbonBtn" Command="{Binding SaveCommand}" IsEnabled="{Binding IsDirty}">
+					<StackPanel Orientation="Vertical">
+						<material:MaterialIcon Classes="buttonIcon" Kind="ContentSaveOutline" />
+						<TextBlock Classes="buttonLabel" Text="Save" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+
+		</Grid>
+	</Border>
+</UserControl>

@@ -1,0 +1,22 @@
+﻿Application icon "Notebook" by Flaticon: 
+https://www.flaticon.com/free-icon/notebook_1012212
+
+Page heading font "Akashi" by Ten by Twenty:
+https://www.fontspace.com/akashi-font-f14894
+
+Placeholder contact image "User" by Becris from Flaticon.
+https://www.flaticon.com/free-icon/user_848006
+
+*** Test Data Contact Images: ***
+
+By Pixabay, from Pexels.
+https://www.pexels.com/photo/adult-beard-boy-casual-220453/
+
+By Pixabay, from Pexels.
+https://www.pexels.com/photo/adult-attractive-beautiful-beauty-415829/
+
+By Andrew Dick, from Pexels.
+https://www.pexels.com/photo/photography-of-man-in-white-shirt-with-round-black-analog-watch-697509/
+
+By Anderson Guerra, from Pexels.
+https://www.pexels.com/photo/smiling-woman-wearing-silver-colored-stud-earrings-and-black-collared-top-1197132/

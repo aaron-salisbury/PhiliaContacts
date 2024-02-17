@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PhiliaContacts.Presentation.Views.ContactsView"
+			 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.ViewModels"
+			 x:DataType="vm:ContactsViewModel"
+			 xmlns:c="clr-namespace:PhiliaContacts.Presentation.Base.Controls"
+			 xmlns:m="using:PhiliaContacts.Business.Models">
+
+	<Border>
+		<Grid ColumnDefinitions="Auto,*">
+
+			<ListBox Grid.Column="0" Width="310" ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}">
+				<ListBox.ItemTemplate>
+					<DataTemplate DataType="m:Contact">
+						<c:ContactMasterItemControl />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+
+			<ContentControl Grid.Column="1" Content="{Binding SelectedContact}" Padding="50,30,10,30">
+				<ContentControl.ContentTemplate>
+					<DataTemplate DataType="m:Contact">
+						<c:ContactDetailsControl />
+					</DataTemplate>
+				</ContentControl.ContentTemplate>
+			</ContentControl>
+
+		</Grid>
+	</Border>
+</UserControl>

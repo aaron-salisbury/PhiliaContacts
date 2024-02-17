@@ -1,0 +1,341 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1350"
+             x:Class="PhiliaContacts.Presentation.Base.Controls.ContactDetailsControl"
+			 xmlns:m="using:PhiliaContacts.Business.Models"
+			 x:DataType="m:Contact"
+			 xmlns:material="using:Material.Icons.Avalonia"
+			 xmlns:cons="clr-namespace:PhiliaContacts.Presentation.Base.Converters;assembly=PhiliaContacts.Presentation"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+			 x:Name="CDC">
+
+	<UserControl.Resources>
+		<cons:BytesToBitmapConverter x:Key="bytesToBitmapConverter"/>
+		<cons:DateTimeToDateTimeOffsetConverter x:Key="dateTimeToDateTimeOffsetConverter"/>
+	</UserControl.Resources>
+
+	<UserControl.Styles>
+		<Style Selector="material|MaterialIcon.formSectionIcon">
+			<Setter Property="Width" Value="25" />
+			<Setter Property="Height" Value="25" />
+			<Setter Property="HorizontalAlignment" Value="Left" />
+			<Setter Property="VerticalAlignment" Value="Bottom" />
+			<Setter Property="Margin" Value="0,0,20,5" />
+			<Setter Property="Opacity" Value="0.5" />
+		</Style>
+
+		<Style Selector="TextBlock.label">
+			<Setter Property="FontSize" Value="12.45" />
+			<Setter Property="FontWeight" Value="Light" />
+			<Setter Property="Margin" Value="1,0,0,2" />
+		</Style>
+
+		<Style Selector="DataGrid.contactDataGrid">
+			<Setter Property="AutoGenerateColumns" Value="False" />
+			<Setter Property="MinHeight" Value="125" />
+			<Setter Property="MaxHeight" Value="125" />
+			<Setter Property="GridLinesVisibility" Value="All" />
+			<Setter Property="CornerRadius" Value="2" />
+			<Setter Property="BorderThickness" Value="1" />
+			<Setter Property="BorderBrush" Value="{DynamicResource DatePickerButtonBorderBrush}" />
+			<Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+		</Style>
+	</UserControl.Styles>
+
+	<Border>
+		<Grid RowDefinitions="Auto,*">
+			<!-- Header -->
+			<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,24">
+				<Grid>
+					<Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Height="75">
+						<Ellipse.Fill>
+							<ImageBrush Source="{Binding Photo, Converter={StaticResource bytesToBitmapConverter}}" Stretch="UniformToFill" />
+						</Ellipse.Fill>
+					</Ellipse>
+					<Grid>
+						<Ellipse Name="AddPhotoButtonBackground"
+								 HorizontalAlignment="Center"
+								 VerticalAlignment="Center"
+								 Width="77"
+								 Height="77"
+								 Fill="{DynamicResource SystemAltMediumHighColor}"
+								 Opacity="0" />
+
+						<Button Name="AddPhotoButton"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center"
+								Width="75"
+								Height="75"
+								CornerRadius="35"
+								Opacity="0"
+								ZIndex="2"
+								Click="AddPhotoBtn_OnClick">
+							<material:MaterialIcon Kind="Camera" Width="23" Height="23" />
+							<i:Interaction.Behaviors>
+								<ia:EventTriggerBehavior EventName="PointerEntered" SourceObject="AddPhotoButton">
+									<ia:ChangePropertyAction TargetObject="AddPhotoButton" PropertyName="Opacity" Value="1" />
+									<ia:ChangePropertyAction TargetObject="AddPhotoButtonBackground" PropertyName="Opacity" Value="0.8" />
+								</ia:EventTriggerBehavior>
+								<ia:EventTriggerBehavior EventName="PointerExited" SourceObject="AddPhotoButton">
+									<ia:ChangePropertyAction TargetObject="AddPhotoButton" PropertyName="Opacity" Value="0" />
+									<ia:ChangePropertyAction TargetObject="AddPhotoButtonBackground" PropertyName="Opacity" Value="0" />
+								</ia:EventTriggerBehavior>
+							</i:Interaction.Behaviors>
+						</Button>
+					</Grid>
+				</Grid>
+
+				<TextBlock Margin="15,0,0,0" VerticalAlignment="Center" Text="{Binding FormattedName}" FontSize="25" />
+				<Button Click="FavoriteBtn_OnClick" Background="Transparent" Margin="20,3,0,0">
+					<Grid>
+						<material:MaterialIcon Kind="Star" Width="25" Height="25" IsVisible="{Binding IsFavorite}" />
+						<material:MaterialIcon Kind="StarOutline" Width="25" Height="25" IsVisible="{Binding !IsFavorite}" />
+					</Grid>
+				</Button>
+			</StackPanel>
+
+			<ScrollViewer Grid.Row="1" Padding="0,0,40,0">
+				<Grid RowDefinitions="*,*">
+
+					<!-- Form -->
+					<Grid Grid.Row="0">
+						<Grid.ColumnDefinitions>
+							<!-- Icon -->
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="5" />
+							<!-- Left Field -->
+							<ColumnDefinition Width="*" MinWidth="200" />
+							<ColumnDefinition Width="15" />
+							<!-- Right Field -->
+							<ColumnDefinition Width="*" MinWidth="200" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<!-- Name 1 -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="20" />
+							<!-- Company -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="20" />
+							<!-- Email -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="10" />
+							<!-- Phone Numbers -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="20" />
+							<!-- Birthday -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="20" />
+							<!-- Url -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="10" />
+							<!-- Twitter -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="10" />
+							<!-- Facebook -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="10" />
+							<!-- LinkedIn -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="20" />
+							<!-- Notes -->
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="20" />
+						</Grid.RowDefinitions>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="0" Kind="Account" Classes="formSectionIcon" />
+						<StackPanel Grid.Column="2" Grid.Row="0" Orientation="Vertical">
+							<TextBlock Text="First Name" Classes="label" />
+							<TextBox Text="{Binding GivenName}" />
+						</StackPanel>
+						<StackPanel Grid.Column="4" Grid.Row="0" Orientation="Vertical">
+							<TextBlock Text="Last Name" Classes="label" />
+							<TextBox Text="{Binding FamilyName}" />
+						</StackPanel>
+						<StackPanel Grid.Column="2" Grid.Row="1" Orientation="Vertical" Margin="0,5,0,0" >
+							<TextBlock Text="Middle Name" Classes="label" />
+							<TextBox Text="{Binding MiddleName}" />
+						</StackPanel>
+						<StackPanel Grid.Column="4" Grid.Row="1" Orientation="Vertical" Margin="0,5,0,0" >
+							<TextBlock Text="Nickname" Classes="label" />
+							<TextBox Text="{Binding Nickname}" />
+						</StackPanel>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="3" Kind="OfficeBuilding" Classes="formSectionIcon" />
+						<StackPanel Grid.Column="2" Grid.Row="3" Orientation="Vertical">
+							<TextBlock Text="Company" Classes="label" />
+							<TextBox Text="{Binding Organization}" />
+						</StackPanel>
+						<StackPanel Grid.Column="4" Grid.Row="3" Orientation="Vertical">
+							<TextBlock Text="Job Title" Classes="label" />
+							<TextBox Text="{Binding Title}" />
+						</StackPanel>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="5" Kind="Phone" Classes="formSectionIcon" Margin="0,0,20,95" />
+						<StackPanel Grid.Column="2" Grid.Row="5" Grid.ColumnSpan="3" Orientation="Vertical">
+							<StackPanel Orientation="Horizontal" Margin="0,0,0,-4">
+								<TextBlock Text="Phone" Classes="label" Margin="0,6,0,0" />
+								<StackPanel Orientation="Horizontal" Margin="2,0,0,0">
+									<Button Click="AddPhoneBtn_OnClick" Background="Transparent">
+										<material:MaterialIcon Kind="PlusCircleOutline" Width="15" Height="15" Foreground="{StaticResource GreenAccent}" />
+									</Button>
+									<Button Click="DeletePhoneBtn_OnClick" Background="Transparent">
+										<material:MaterialIcon Kind="MinusCircleOutline" Width="15" Height="15" Foreground="{StaticResource RedAccent}" />
+									</Button>
+								</StackPanel>
+							</StackPanel>
+							<DataGrid Name="PhoneGrid" ItemsSource="{Binding PhoneNumbers}" Classes="contactDataGrid">
+								<DataGrid.Columns>
+									<DataGridTemplateColumn Header="Label">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate DataType="m:PhoneNumber">
+												<ComboBox ItemsSource="{Binding PhoneNumberTypes, ElementName=CDC}" SelectedItem="{Binding Type}" Width="125" BorderThickness="0" />
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTextColumn Header="Number" Binding="{Binding Number}" />
+								</DataGrid.Columns>
+							</DataGrid>
+						</StackPanel>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="7" Kind="Email" Classes="formSectionIcon" Margin="0,0,20,95" />
+						<StackPanel Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="3" Orientation="Vertical">
+							<StackPanel Orientation="Horizontal" Margin="0,0,0,-4">
+								<TextBlock Text="Email" Classes="label" Margin="0,6,0,0" />
+								<StackPanel Orientation="Horizontal" Margin="2,0,0,0">
+									<Button Click="AddEmailBtn_OnClick" Background="Transparent">
+										<material:MaterialIcon Kind="PlusCircleOutline" Width="15" Height="15" Foreground="{StaticResource GreenAccent}" />
+									</Button>
+									<Button Click="DeleteEmailBtn_OnClick" Background="Transparent">
+										<material:MaterialIcon Kind="MinusCircleOutline" Width="15" Height="15" Foreground="{StaticResource RedAccent}" />
+									</Button>
+								</StackPanel>
+							</StackPanel>
+							<DataGrid Name="EmailGrid" ItemsSource="{Binding EmailAddresses}" Classes="contactDataGrid">
+								<DataGrid.Columns>
+									<DataGridTemplateColumn Header="Label">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate DataType="m:EmailAddress">
+												<ComboBox ItemsSource="{Binding EmailTypes, ElementName=CDC}" SelectedItem="{Binding Type}" Width="125" BorderThickness="0" />
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTextColumn Header="Email" Binding="{Binding Email}" />
+								</DataGrid.Columns>
+							</DataGrid>
+						</StackPanel>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="9" Kind="CakeVariant" Classes="formSectionIcon" />
+						<Grid Grid.Column="2" Grid.Row="9" Grid.ColumnSpan="3">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Row="0" Text="Birthday" Classes="label" />
+
+							<Button Grid.Row="1" Grid.Column="1" Click="BirthdayClearBtn_OnClick" Background="Transparent">
+								<material:MaterialIcon Kind="Close" Height="17" Width="17" Foreground="{StaticResource RedAccent}" IsVisible="{Binding Birthday, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+							</Button>
+							<DatePicker
+								Grid.Row="1"
+								Grid.Column="0"
+								Name="BirthDatePicker"
+								SelectedDate="{Binding Birthday, Converter={StaticResource dateTimeToDateTimeOffsetConverter}}" />
+						</Grid>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="11" Kind="Web" Classes="formSectionIcon" />
+						<StackPanel Grid.Column="2" Grid.Row="11" Orientation="Vertical">
+							<TextBlock Text="URL" Classes="label" />
+							<TextBox Text="{Binding Url}" AcceptsReturn="True" TextWrapping="Wrap" />
+						</StackPanel>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="13" Kind="Twitter" Classes="formSectionIcon" />
+						<StackPanel Grid.Column="2" Grid.Row="13" Orientation="Vertical">
+							<TextBlock Text="Twitter User" Classes="label" />
+							<TextBox Text="{Binding TwitterUser}" AcceptsReturn="True" TextWrapping="Wrap" />
+						</StackPanel>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="15" Kind="Facebook" Classes="formSectionIcon" />
+						<StackPanel Grid.Column="2" Grid.Row="15" Orientation="Vertical">
+							<TextBlock Text="Facebook User" Classes="label" />
+							<TextBox Text="{Binding FacebookUser}" AcceptsReturn="True" TextWrapping="Wrap" />
+						</StackPanel>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="17" Kind="Linkedin" Classes="formSectionIcon" />
+						<StackPanel Grid.Column="2" Grid.Row="17" Orientation="Vertical">
+							<TextBlock Text="LinkedIn User" Classes="label" />
+							<TextBox Text="{Binding LinkedInUser}" AcceptsReturn="True" TextWrapping="Wrap" />
+						</StackPanel>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="19" Kind="Note" Classes="formSectionIcon" />
+						<StackPanel Grid.Column="2" Grid.Row="19" Grid.ColumnSpan="3" Orientation="Vertical">
+							<TextBlock Text="Notes" Classes="label" />
+							<TextBox Text="{Binding Notes}" AcceptsReturn="True" TextWrapping="Wrap" />
+						</StackPanel>
+					</Grid>
+
+					<!-- Address -->
+					<Grid Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<!-- Icon -->
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="5" />
+							<!-- Left Field -->
+							<ColumnDefinition Width="*" MinWidth="200" />
+							<ColumnDefinition Width="15" />
+							<!-- Right Field -->
+							<ColumnDefinition Width="*" MinWidth="200" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="5" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+
+						<material:MaterialIcon Grid.Column="0" Grid.Row="1" Kind="Home" Classes="formSectionIcon" />
+
+						<StackPanel Grid.Column="2" Grid.Row="1" Orientation="Vertical" Margin="0,0,0,4">
+							<TextBlock Text="Address" Classes="label" />
+							<TextBox Text="{Binding Street}" Watermark="Street" />
+						</StackPanel>
+
+						<StackPanel Grid.Column="4" Grid.Row="1" Orientation="Vertical">
+							<TextBlock Text="Address Type" Classes="label" />
+							<ComboBox ItemsSource="{Binding AddressTypes, ElementName=CDC}" SelectedItem="{Binding AddressType}" MinWidth="100" />
+						</StackPanel>
+
+						<TextBox Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="1" Text="{Binding City}" Watermark="City" Margin="0,0,0,4" />
+
+						<Grid Grid.Column="2" Grid.Row="3" Margin="0,0,0,4">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*" />
+								<ColumnDefinition Width="5" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<TextBox Grid.Column="0" Text="{Binding Zip}" Watermark="Zip" />
+
+							<TextBox Grid.Column="2" Text="{Binding State}" Watermark="State" />
+						</Grid>
+
+						<AutoCompleteBox Grid.Column="2"
+										 Grid.Row="4"
+										 ItemsSource="{Binding CountryNames, ElementName=CDC}"
+										 Watermark="Country or Region"
+										 Text="{Binding CountryRegion}"/>
+					</Grid>
+
+				</Grid>
+			</ScrollViewer>
+		</Grid>
+	</Border>
+</UserControl>

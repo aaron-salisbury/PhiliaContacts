@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PhiliaContacts.Presentation.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="480"
+             x:Class="PhiliaContacts.Presentation.Views.MainView"
+             x:DataType="vm:MainViewModel"
+			 xmlns:v="clr-namespace:PhiliaContacts.Presentation.Views"
+			 xmlns:material="using:Material.Icons.Avalonia"
+			 xmlns:c="clr-namespace:PhiliaContacts.Presentation.Base.Controls">
+
+	<UserControl.Styles>
+		<Style Selector="material|MaterialIcon.navBtnIcon">
+			<Setter Property="Width" Value="20" />
+			<Setter Property="Height" Value="20" />
+		</Style>
+
+		<Style Selector="Border.viewBackground">
+			<Setter Property="Background" Value="{DynamicResource SystemRegionColor}" />
+			<Setter Property="Margin" Value="0" />
+		</Style>
+	</UserControl.Styles>
+
+	<TabControl TabStripPlacement="Left" Padding="0" Background="{DynamicResource SystemChromeLowColor}">
+
+		<!-- Icons: https://pictogrammers.com/library/mdi/ -->
+
+		<TabItem>
+			<TabItem.Header>
+				<material:MaterialIcon Classes="navBtnIcon" Kind="CardAccountPhoneOutline" />
+			</TabItem.Header>
+			<Border Classes="viewBackground">
+				<Grid RowDefinitions="Auto,*">
+					<c:ViewHeaderControl Grid.Row="0">
+						<c:ViewHeaderControl.RibbonContent>
+							<c:RibbonControl />
+						</c:ViewHeaderControl.RibbonContent>
+					</c:ViewHeaderControl>
+					<v:ContactsView Grid.Row="1" />
+				</Grid>
+			</Border>
+		</TabItem>
+
+		<TabItem Name="SettingsTabItem">
+			<TabItem.Header>
+				<material:MaterialIcon Classes="navBtnIcon" Kind="CogOutline" />
+			</TabItem.Header>
+			<Border Classes="viewBackground">
+				<Grid RowDefinitions="Auto,*">
+					<c:ViewHeaderControl Grid.Row="0" FriendlyPageName="Settings" />
+					<v:SettingsView Grid.Row="1" Margin="20" />
+				</Grid>
+			</Border>
+		</TabItem>
+
+	</TabControl>
+</UserControl>

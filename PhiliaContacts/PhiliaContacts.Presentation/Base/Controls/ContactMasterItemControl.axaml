@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="150"
+             x:Class="PhiliaContacts.Presentation.Base.Controls.ContactMasterItemControl"
+			 xmlns:m="using:PhiliaContacts.Business.Models"
+			 x:DataType="m:Contact"
+			 xmlns:material="using:Material.Icons.Avalonia"
+			 xmlns:cons="clr-namespace:PhiliaContacts.Presentation.Base.Converters;assembly=PhiliaContacts.Presentation">
+
+	<UserControl.Resources>
+		<cons:BytesToBitmapConverter x:Key="bytesToBitmapConverter"/>
+	</UserControl.Resources>
+
+	<Border>
+		<Grid ColumnDefinitions="250,Auto,10">
+
+			<Grid Grid.Column="0" ColumnDefinitions="Auto,7,Auto">
+				<Ellipse Grid.Column="0" VerticalAlignment="Center" Width="50" Height="50">
+					<Ellipse.Fill>
+						<ImageBrush Source="{Binding Photo, Converter={StaticResource bytesToBitmapConverter}}" Stretch="UniformToFill" />
+					</Ellipse.Fill>
+				</Ellipse>
+
+				<StackPanel Grid.Column="2" VerticalAlignment="Center">
+					<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" FontWeight="Heavy" />
+					<TextBlock Text="{Binding FormattedName}" TextTrimming="CharacterEllipsis" />
+				</StackPanel>
+			</Grid>
+
+			<material:MaterialIcon Grid.Column="1"
+								   Kind="Star"
+								   Width="25"
+								   Height="25"
+								   HorizontalAlignment="Right"
+								   IsVisible="{Binding IsFavorite}" />
+
+		</Grid>
+	</Border>
+</UserControl>
