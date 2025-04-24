@@ -32,11 +32,8 @@ namespace PhiliaContacts.Presentation.ViewModels
         [ObservableProperty]
         private bool _isDirty;
 
-        private readonly IAgnosticDispatcher _dispatcher;
-
-        public ContactsViewModel(IAgnosticDispatcher dispatcher)
+        public ContactsViewModel()
         {
-            _dispatcher = dispatcher;
             _contacts = GetOrderedObservableContacts(Task.Run(() => Manager.GetContactsAsync()).Result);
             _names = GetContactNames();
             _selectedContact = _contacts.FirstOrDefault();
@@ -55,7 +52,7 @@ namespace PhiliaContacts.Presentation.ViewModels
                     using StreamReader streamReader = new(virtualContactFileStream);
                     string fileContent = await streamReader.ReadToEndAsync();
 
-                    List<Contact>? newContacts = (await InitiateLongRunningProcessAsync(() => Importer.Import(fileContent), _dispatcher))?.ToList();
+                    List<Contact>? newContacts = (await InitiateLongRunningProcessAsync(() => Importer.Import(fileContent)))?.ToList();
 
                     if (newContacts != null)
                     {
@@ -77,7 +74,7 @@ namespace PhiliaContacts.Presentation.ViewModels
             {
                 try
                 {
-                    string? virtualContactFileText = await InitiateLongRunningProcessAsync(() => Exporter.Export(Contacts), _dispatcher);
+                    string? virtualContactFileText = await InitiateLongRunningProcessAsync(() => Exporter.Export(Contacts));
 
                     if (virtualContactFileText != null)
                     {
@@ -96,7 +93,9 @@ namespace PhiliaContacts.Presentation.ViewModels
         {
             try
             {
-                if ((await InitiateLongRunningProcessAsync(async () => await Manager.SaveAsync(Contacts), _dispatcher)).Result)
+                bool saveSuccessful = await InitiateLongRunningProcessAsync(() => Manager.SaveAsync(Contacts));
+
+                if (saveSuccessful)
                 {
                     Contacts = GetOrderedObservableContacts(Contacts);
 

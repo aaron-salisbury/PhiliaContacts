@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PhiliaContacts.Presentation.Base.Services;
 using System;
 using System.Threading.Tasks;
 
@@ -18,35 +17,37 @@ namespace PhiliaContacts.Presentation.Base
         public virtual void RemoveModelEvents() { }
 
         /// <summary>
-        /// Execute long running process without locking the UI thread.
+        /// Execute long running asynchronous process without locking the UI thread.
         /// </summary>
         /// <param name="longRunningFunction">Function to execute. If its process fails, it needs to return false or null.</param>
-        internal async Task<T> InitiateLongRunningProcessAsync<T>(Func<T> longRunningFunction, IAgnosticDispatcher dispatcher)
+        internal async Task<T> InitiateLongRunningProcessAsync<T>(Func<Task<T>> longRunningFunction)
         {
             try
             {
                 IsBusy = true;
 
-                return await dispatcher.InvokeOnBackgroundAsync(() => 
-                {
-                    TaskCompletionSource<T> tcs = new();
+                // Run the asynchronous function
+                T result = await longRunningFunction();
 
-                    Task.Run(() =>
-                    {
-                        T result = longRunningFunction.Invoke();
-                        tcs.SetResult(result);
-                    }).ConfigureAwait(false);
+                // Update the success flag
+                LongRunningProcessSuccessful = (result is bool boolResult) ? boolResult : result != null;
 
-                    LongRunningProcessSuccessful = (tcs.Task.Result is bool boolResult) ? boolResult : tcs.Task.Result != null;
-
-                    return tcs.Task;
-                });
+                return result;
             }
             finally
             {
                 IsBusy = false;
                 LongRunningProcessSuccessful = null;
             }
+        }
+
+        /// <summary>
+        /// Execute long running synchronous process without locking the UI thread.
+        /// </summary>
+        /// <param name="longRunningFunction">Function to execute. If its process fails, it needs to return false or null.</param>
+        internal async Task<T> InitiateLongRunningProcessAsync<T>(Func<T> longRunningFunction)
+        {
+            return await InitiateLongRunningProcessAsync(() => Task.Run(longRunningFunction));
         }
     }
 }
