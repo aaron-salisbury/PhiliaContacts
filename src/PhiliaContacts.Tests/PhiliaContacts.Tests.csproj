@@ -1,0 +1,14 @@
+﻿<Project Sdk="MSTest.Sdk/4.0.2">
+
+  <PropertyGroup>
+    <Description>Unit tests for the PhiliaContacts application.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PhiliaContacts.Business\PhiliaContacts.Business.csproj" />
+    <ProjectReference Include="..\PhiliaContacts.Data\PhiliaContacts.Data.csproj" />
+    <ProjectReference Include="..\PhiliaContacts.Integrations\PhiliaContacts.Integrations.csproj" />
+    <ProjectReference Include="..\PhiliaContacts.Presentation.Desktop\PhiliaContacts.Presentation.Desktop.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Business tier of application.</Description>
+  </PropertyGroup>
+
+  <!-- Let our unit tests access and verify the behavior of internal classes, methods, and properties. -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>PhiliaContacts.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="RunnethOverStudio.AppToolkit" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Base\Extensions\" />
+    <Folder Include="Modules\" />
+  </ItemGroup>
+
+</Project>

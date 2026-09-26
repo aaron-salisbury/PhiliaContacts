@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="PhiliaContacts.Business/PhiliaContacts.Business.csproj" />
+  <Project Path="PhiliaContacts.Data/PhiliaContacts.Data.csproj" />
+  <Project Path="PhiliaContacts.Integrations/PhiliaContacts.Integrations.csproj" />
+  <Project Path="PhiliaContacts.Presentation.Desktop/PhiliaContacts.Presentation.Desktop.csproj" />
+  <Project Path="PhiliaContacts.DesktopApp/PhiliaContacts.DesktopApp.csproj" />
+  <Project Path="PhiliaContacts.Tests/PhiliaContacts.Tests.csproj" />
+</Solution>

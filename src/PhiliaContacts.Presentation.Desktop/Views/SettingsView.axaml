@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:integrations="clr-namespace:PhiliaContacts.Business.Modules.Integrations;assembly=PhiliaContacts.Business"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
+             x:Class="PhiliaContacts.Presentation.Desktop.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="1000"
+             d:DesignHeight="750">
+
+    <ScrollViewer>
+        <StackPanel Spacing="18">
+
+            <StackPanel>
+                <TextBlock Text="About this Application" FontSize="18" FontWeight="Bold" Margin="0,0,0,6" />
+                <TextBlock Text="{Binding ApplicationInfo}" Margin="0,0,0,8" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <TextBlock Text="© " />
+                    <TextBlock Text="{Binding CopyHolder}" />
+                </StackPanel>
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding AppDescription}" />
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <HyperlinkButton Content="Privacy Statement" NavigateUri="{Binding PrivacyURL}" />
+                    <HyperlinkButton Content="Issues" NavigateUri="{Binding IssuesURL}" Margin="5,0,0,0" />
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
