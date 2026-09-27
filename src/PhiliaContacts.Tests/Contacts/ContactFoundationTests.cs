@@ -1,3 +1,4 @@
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PhiliaContacts.Business;
@@ -92,6 +93,7 @@ public sealed class ContactFoundationTests
         }
         finally
         {
+            SqliteConnection.ClearAllPools();
             Directory.Delete(directory, true);
         }
     }
@@ -113,6 +115,7 @@ public sealed class ContactFoundationTests
         }
         finally
         {
+            SqliteConnection.ClearAllPools();
             Directory.Delete(directory, true);
         }
     }

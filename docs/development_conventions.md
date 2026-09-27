@@ -622,6 +622,21 @@ Unless solution documentation defines a more specific convention, generally foll
 [Microsoft C# Coding
 Conventions](https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/coding-conventions).
 
+### Tests
+
+Flow `TestContext.CancellationToken` to asynchronous operations in MSTest
+methods. The test-project rule `MSTEST0049` is set to warning in
+`.editorconfig` so the default `dotnet format` severity includes its code
+fix. To apply just that fix, run:
+
+```text
+dotnet format analyzers src/PhiliaContacts.Tests/PhiliaContacts.Tests.csproj --diagnostics MSTEST0049
+```
+
+When deleting a temporary SQLite database in a test, close connections and
+clear the SQLite connection pools first. A disposed pooled connection may
+still hold the file open on Windows.
+
 ### HTTP Clients
 
 Prefer `IHttpClientFactory` for application and integration code that performs HTTP 

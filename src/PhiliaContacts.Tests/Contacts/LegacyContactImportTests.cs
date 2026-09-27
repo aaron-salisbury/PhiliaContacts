@@ -54,6 +54,7 @@ public sealed class LegacyContactImportTests
         }
         finally
         {
+            SqliteConnection.ClearAllPools();
             Directory.Delete(directory, true);
         }
     }
@@ -83,6 +84,7 @@ public sealed class LegacyContactImportTests
         }
         finally
         {
+            SqliteConnection.ClearAllPools();
             Directory.Delete(directory, true);
         }
     }
@@ -129,6 +131,7 @@ public sealed class LegacyContactImportTests
         }
         finally
         {
+            SqliteConnection.ClearAllPools();
             Directory.Delete(directory, true);
         }
     }
@@ -157,6 +160,7 @@ public sealed class LegacyContactImportTests
         }
         finally
         {
+            SqliteConnection.ClearAllPools();
             Directory.Delete(directory, true);
         }
     }
