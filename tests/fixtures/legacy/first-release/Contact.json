@@ -1,0 +1,12 @@
+[
+  {
+    "GivenName": "Historical",
+    "FamilyName": "Example",
+    "Nickname": null,
+    "EmailAddresses": [],
+    "PhoneNumbers": [{ "Number": "555-0103", "Type": 2 }],
+    "Photo": null,
+    "AddressType": 6,
+    "IsFavorite": false
+  }
+]
