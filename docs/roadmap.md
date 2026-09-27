@@ -35,7 +35,7 @@ The `src` solution, layer projects, Avalonia shell and composition root already 
 
 **Gate:** 1.x data survives an in-place update and all supported migration variants; failures retain the original source and explain recovery.
 
-**Implementation status:** The branch `phase-2-legacy-migration` adds discovery, exact-byte backups, atomic SQLite imports and an idempotence ledger, plus an explicit import/export API. See [Phase 2 storage and migration](phase-2-storage-migration.md). The gate remains open pending live 1.0.8.0 custom-folder validation, Phase 3 user-facing import/recovery controls and the Phase 5 in-place Store update test.
+**Implementation status:** The branch `phase-2-legacy-migration` adds discovery, exact-byte backups, atomic SQLite imports and an idempotence ledger, plus an explicit import/export API. See [Phase 2 storage and migration](phase-2-storage-migration.md). Live 1.0.8.0 testing confirmed a successful Documents save, an access-denied custom Local AppData save and destructive folder-switch behavior. The gate remains open pending comparison with the actual 1.0.8.0 JSON bytes, packaged settings/token access, Phase 3 user-facing import/recovery controls and the Phase 5 in-place Store update test.
 
 ## Phase 3 — Contact operations and Avalonia UI
 
