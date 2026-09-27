@@ -1,6 +1,6 @@
 # Philia Contacts 2.0 roadmap
 
-Status: planning on `avalonia-convert`. This is a personal Aaron Salisbury release, independent of Runneth Over Studio. The old UWP application remains the reference implementation until its behavior and user data are covered.
+Status: Phase 0 source and Store identity inventory in progress on `phase-0-inventory` (branched from `avalonia-convert`). See [Phase 0 compatibility inventory](phase-0-compatibility.md). This is a personal Aaron Salisbury release, independent of Runneth Over Studio. The old UWP application remains the reference implementation until its behavior and user data are covered.
 
 ## Release definition
 
@@ -10,12 +10,14 @@ A 2.0 release preserves existing Store customers' contacts, provides a usable Wi
 
 - Audit the UWP projects, contact fields, defaults, settings, photo representation, import/export behavior, existing test data and Store identity. Record a field-by-field mapping and expected behavior for contacts, multiple phone numbers/emails, addresses, notes, favorites and images.
 - Inventory all legacy storage locations: UWP LocalState, `PhiliaContacts.json`, first-release `Contact.json`, and the user-selected folder tracked by a Windows FutureAccessList token. Determine actual on-disk paths and whether older releases used distinct JSON shapes. Collect anonymized fixtures from each supported variant.
-- Capture the latest *published* Store package identity and version in Partner Center. The checked-in UWP manifest says `60826AaronSalisbury.PhiliaContacts`, publisher `CN=7DEA5566-0BC8-4D89-BAB5-AA36A27E4938`, application ID `App`, version `1.0.8.0`; GitHub's latest published release is 1.0.7.0. Confirm which version customers actually have.
+- Capture the latest *published* Store package identity and version in Partner Center. Partner Center screenshots confirm submitted package version `1.0.8.0`, identity name `60826AaronSalisbury.PhiliaContacts`, publisher `CN=7DEA5566-0BC8-4D89-BAB5-AA36A27E4938`, package family `60826AaronSalisbury.PhiliaContacts_gc14fakmyh3dc`, and Aaron Salisbury as publisher. The UWP manifest uses application ID `App`; GitHub's last release is 1.0.7.0. Check live rollout and any later submissions in Partner Center before packaging.
 - Write acceptance cases for import, edit, save/restart, export/reimport, update in place, recovery and Linux launch. Use synthetic contacts that exercise non-ASCII names, multiline notes, multiple values, photo formats and malformed input.
 
 **Gate:** documented data formats and package identity; representative migration fixtures without private contact data.
 
 ## Phase 1 — Establish the product solution
+
+The `src` solution, layer projects, Avalonia shell and composition root already exist on `avalonia-convert`. Contact behavior is not ported, and copied Helm domain/data code remains. Design the contact schema and migration contract here as needed to make the business and data boundaries concrete; Phase 2 implements and validates the migration.
 
 - Keep `src/PhiliaContacts.slnx` and the Helm-shaped Business, Data, Integrations, Presentation.Desktop, DesktopApp and Tests projects. Keep the executable as composition root, business contracts in Business, SQLite/Dapper in Data, and platform or external implementations in Integrations. Use the established .NET LTS, DI, migration and test conventions.
 - Remove copied Helm modules that do not serve contacts: Goals, LifeDomains, Projects, Relationships, CalDAV, WebDAV and credential infrastructure. Retain useful scaffolding only after adapting names, database paths, registration, navigation and tests. In particular, remove remaining `HelmDatabase` and `HelmDataInitialization` identifiers and migrations.
