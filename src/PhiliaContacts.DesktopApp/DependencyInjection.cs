@@ -27,7 +27,7 @@ internal static class DependencyInjection
         services.AddLogging(configure => configure.AddSerilog(Serilog.Log.Logger));
         services.RegisterInternalDataServices(applicationDataDirectory)
             .RegisterInternalBusinessServices()
-            .RegisterInternalIntegrationsServices()
+            .RegisterInternalIntegrationsServices(applicationDataDirectory)
             .RegisterInternalPresentationServices();
 
         return services;

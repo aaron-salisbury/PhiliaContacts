@@ -1,0 +1,17 @@
+# Phase 2 storage and legacy migration
+
+The version 1 contact tables store each contact's ordered phone, email and address values, with photos as exact SQLite BLOB bytes. The version 2 migration adds an import ledger keyed by the normalized source path. Writes of every imported contact and the ledger entry share one SQLite transaction. An 8 MiB per-photo limit applies to new saves and imports; a legacy source file is limited to 64 MiB.
+
+On Windows, startup looks in the original package family LocalState directory (`60826AaronSalisbury.PhiliaContacts_gc14fakmyh3dc`) and the application's own data directory for both `Contact.json` and `PhiliaContacts.json`. It does not run the old application's storage methods or delete source files. A single populated source may be imported automatically into an empty contact database. Multiple populated sources, or an already populated database without a matching import ledger entry, require explicit selection. Empty arrays are ignored. A changed previously imported source is reported as `ChangedSource` and never merged automatically.
+
+The import service exposes `DiscoverAsync` and `ImportAsync(path)` for the Phase 3 file picker. An explicit import adds each legacy record as a separate contact, preserving duplicates and child order. The UI must show the source candidates and explain the risk of importing overlapping files before calling `ImportAsync`. The old FutureAccessList token is bound to UWP application settings and may be unavailable to a full-trust process; users can select `Contact.json` or `PhiliaContacts.json` from a custom folder manually. The importer accepts either filename at any absolute path. Do not silently infer a custom directory from the old JSON setting without testing that setting in a real packaged installation.
+
+Before writing to SQLite, the importer parses and validates the complete JSON array and writes an exact byte copy into `LegacyBackups` under the new app-data directory. It preserves the old source and its original encoding bytes. A failed database transaction leaves the backup in place and rolls back the contacts and marker. Startup logs outcomes and errors without logging contact contents; import failure does not stop the app from opening. Use `IContactExportService.ExportAsync(path)` to produce a human-readable JSON snapshot independent of SQLite; it refuses to overwrite an existing file. Backup files and exports contain personal information and should be handled accordingly.
+
+## Verification still needed on Windows
+
+1. Save a synthetic contact with a running 1.0.8.0 installation, inspect the actual file and verify that its schema matches the synthetic later-release fixture. Add a sanitized fixture for any difference.
+2. Save to a custom directory in the old app. Inspect `AppStorageLocation`, check whether the new full-trust package can read the setting and FutureAccessList token, and exercise the explicit file picker with this source.
+3. In Phase 5, update an installed Store package in place with the matching full-trust MSIX identity. Confirm that LocalState is accessible, source files survive, and contact counts and photos match. Do not claim the Store update gate until that check passes.
+
+An export is a 2.0 JSON snapshot with IDs and is not intended as a 1.x import file. The Phase 3 UI must provide import status and recovery instructions; startup currently logs the result but has no user-facing status view.

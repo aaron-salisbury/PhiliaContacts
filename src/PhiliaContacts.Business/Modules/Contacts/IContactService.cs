@@ -25,3 +25,42 @@ public interface ILegacyContactReader
 {
     IReadOnlyList<Contact> Read(string json);
 }
+
+public enum LegacyImportOutcome
+{
+    Imported,
+    AlreadyImported,
+    Empty,
+    ChangedSource,
+    NeedsSelection
+}
+
+public sealed record LegacyImportResult(string SourcePath, LegacyImportOutcome Outcome, int ContactCount, string? BackupPath = null);
+
+public interface ILegacyContactImportStore
+{
+    Task<bool> HasContactsAsync(CancellationToken cancellationToken = default);
+    Task<LegacyImportOutcome?> GetStatusAsync(string sourcePath, string sha256, CancellationToken cancellationToken = default);
+    Task<LegacyImportOutcome> ImportAsync(string sourcePath, string sha256, IReadOnlyList<Contact> contacts, CancellationToken cancellationToken = default);
+}
+
+public interface ILegacyContactImportService
+{
+    Task<IReadOnlyList<string>> DiscoverAsync(CancellationToken cancellationToken = default);
+    Task<LegacyImportResult> ImportAsync(string sourcePath, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<LegacyImportResult>> ImportDiscoveredAsync(CancellationToken cancellationToken = default);
+}
+
+public sealed record LegacyContactFile(string SourcePath, string Json, string Sha256, byte[] Bytes);
+
+public interface ILegacyContactFiles
+{
+    Task<IReadOnlyList<string>> DiscoverAsync(CancellationToken cancellationToken = default);
+    Task<LegacyContactFile> ReadAsync(string sourcePath, CancellationToken cancellationToken = default);
+    Task<string> BackupAsync(LegacyContactFile file, CancellationToken cancellationToken = default);
+}
+
+public interface IContactExportService
+{
+    Task ExportAsync(string destinationPath, CancellationToken cancellationToken = default);
+}
