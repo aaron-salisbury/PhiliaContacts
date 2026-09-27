@@ -1,6 +1,6 @@
 # Phase 0: legacy compatibility inventory
 
-Recorded 2026-09-27 against `phase-0-inventory`, branched from `avalonia-convert`. These observations describe the checked-in legacy source, two Partner Center screenshots and a user-supplied saved file containing one fake contact from release 1.0.6.0. No production contacts were inspected.
+Recorded 2026-09-27 against `phase-0-inventory`, branched from `avalonia-convert`. These observations describe the checked-in legacy source, two Partner Center screenshots, a user-supplied saved file containing one fake contact from release 1.0.6.0, and a subsequent launch of the 1.0.8.0 solution against the same LocalState. No production contacts were inspected.
 
 ## Existing product and package
 
@@ -30,7 +30,7 @@ Some Phase 2 design must happen in Phase 1: a contact schema, mapping and legacy
 
 | Variant | Source and behavior | Required handling |
 | --- | --- | --- |
-| Default current data | `PhiliaContacts.json` in `ApplicationData.Current.LocalFolder`; an array of `Contact` objects serialized by Newtonsoft.Json | Read in place, copy/backup, validate, migrate |
+| Later-release default data | `PhiliaContacts.json` in `ApplicationData.Current.LocalFolder`; an array of `Contact` objects serialized by Newtonsoft.Json. Presence of a saved 1.0.8.0 file remains unverified | Read in place, copy/backup, validate, migrate |
 | First public filename | `Contact.json` confirmed from release 1.0.6.0 in UWP LocalState. `ReadReplaceDomainsAsync` only checks this name during a folder-location change | Search without changing/deleting the file; actual 1.0.6.0 field shape now represented by anonymized fixture |
 | Custom folder | `AppStorageLocation` in UWP `ApplicationData.Current.LocalSettings` is a JSON-serialized absolute path. `FutureAccessList` stores the chosen folder under `StorageFolderPath.GetHashString()` | Use settings and token for discovery if accessible; offer manual picker if not; never assume token is transferable |
 | UWP settings | `AppStorageLocation`, `AppBackgroundRequestedTheme` in LocalSettings | Preserve useful preferences after verifying actual values; do not interpret these as contact records |
@@ -38,7 +38,7 @@ Some Phase 2 design must happen in Phase 1: a contact schema, mapping and legacy
 
 **Important code path:** `StorageLocationService.SaveStorageLocationInSettingsAsync` calls the Manager's `StorageFolderToken` setter. That setter calls `Delete()` on the *old* location before loading the new one; `ReadReplaceDomainsAsync` deletes `Contact.json` before deserializing it and writing `PhiliaContacts.json`. The migration must never call these legacy methods as a way to discover or convert data. Preserve files in both locations and treat conflicting copies as separate sources for user review.
 
-`Manager.Load()` reads only `PhiliaContacts.json`. If it is missing, it presents an empty contact collection even if `Contact.json` exists. A user-supplied `Contact.json` created by the oldest GitHub release (1.0.6.0) confirms this filename, path and field shape. It contains one fake contact, including computed fields serialized by Newtonsoft.Json. The supplied image is a PNG stored as a base64 JSON string (94,532 decoded bytes), despite the exporter always labeling photos as JPEG. Its timestamped birthday includes time and seven fractional digits, so conversion to a date-only field must be an explicit decision. The first-release fixture below has been anonymized and uses a generated one-pixel PNG; the original file and its personal path are **not** committed. Custom-folder data and other historical versions remain unverified.
+`Manager.Load()` reads only `PhiliaContacts.json`. If it is missing, it presents an empty contact collection even if `Contact.json` exists. **Observed reproduction:** after creating a fake contact in release 1.0.6.0 and saving `Contact.json` to `C:\\Users\\<user>\\AppData\\Local\\Packages\\60826AaronSalisbury.PhiliaContacts_gc14fakmyh3dc\\LocalState`, the publisher closed that solution and launched the 1.0.8.0 solution without changing its settings. The later app displayed the same default LocalState path but its Contacts view was empty. No write or folder change in 1.0.8.0 has been reported. This matches the source's filename mismatch; the observation does not prove how an in-place Store update behaves, nor that the original file survives every subsequent save. A user-supplied `Contact.json` created by the oldest GitHub release (1.0.6.0) confirms this filename, path and field shape. It contains one fake contact, including computed fields serialized by Newtonsoft.Json. The supplied image is a PNG stored as a base64 JSON string (94,532 decoded bytes), despite the exporter always labeling photos as JPEG. Its timestamped birthday includes time and seven fractional digits, so conversion to a date-only field must be an explicit decision. The first-release fixture below has been anonymized and uses a generated one-pixel PNG; the original file and its personal path are **not** committed. Custom-folder data and other historical versions remain unverified.
 
 ## Persisted field mapping
 
@@ -74,7 +74,7 @@ Legacy numeric enum values: `AddressType` Work=0, Home=1, Domestic=2, Internatio
 
 | Scenario | Expected result |
 | --- | --- |
-| First run without legacy data | New empty SQLite database, no import completion marker for absent data |
+| First run without legacy data | New empty SQLite database, no import completion marker for absent data |\n| 1.0.6.0 `Contact.json` followed by 1.0.8.0 empty view | 2.0 discovers and migrates the file despite the prior app showing zero contacts; it never interprets the empty view as an authoritative empty source |
 | Current JSON in UWP LocalFolder | Non-destructive copy and migration; count, field values, child order and photos match; source remains readable |
 | First-release filename | Parse anonymized 1.0.6.0-shape fixture, backup first, do not delete source |
 | Custom folder and LocalFolder both contain data | Detect both and offer conflict-aware selection/import; never delete either automatically |
@@ -89,4 +89,4 @@ Legacy numeric enum values: `AddressType` Work=0, Home=1, Domestic=2, Internatio
 
 `tests/fixtures/legacy/current/PhiliaContacts.json` is a synthetic fixture matching the visible legacy contact fields and default JSON shapes. `tests/fixtures/legacy/first-release/Contact.json` is an anonymized, structurally faithful fixture informed by a user-supplied 1.0.6.0 saved file. It retains every observed property, numeric enum shape, timestamp form, ordered child arrays and base64 PNG photo representation while replacing all entered values. The fixture names reflect the two code paths. Keep real data out of Git.
 
-Before completing Phase 0, inspect on a Windows test profile: a 1.0.8.0 install with normal LocalState and a custom-folder install. The oldest 1.0.6.0 saved-file format and LocalState path have now been observed. Capture anonymized field shapes and validate that a full-trust MSIX using the same package family can access the actual old location. Record any difference as a new fixture and update the matrix. These environment-dependent checks are explicitly outstanding; the source inventory and publisher identity are complete.
+Before completing Phase 0, inspect a saved 1.0.8.0 file and a custom-folder install on a Windows test profile. A 1.0.8.0 launch against a 1.0.6.0 file has been observed to show an empty view while retaining the default LocalState path; verify the file itself remains intact after this launch. Also test a real Store update and a full-trust MSIX with the same package family. The oldest 1.0.6.0 saved-file format and LocalState path have now been observed. Capture anonymized field shapes and validate that a full-trust MSIX using the same package family can access the actual old location. Record any difference as a new fixture and update the matrix. These environment-dependent checks are explicitly outstanding; the source inventory and publisher identity are complete.
