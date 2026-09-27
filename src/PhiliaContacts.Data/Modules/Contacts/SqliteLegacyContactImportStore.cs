@@ -22,6 +22,7 @@ internal sealed class SqliteLegacyContactImportStore : ILegacyContactImportStore
     public async Task<bool> HasContactsAsync(CancellationToken cancellationToken = default)
     {
         await using SqliteConnection connection = await _database.OpenConnectionAsync(cancellationToken);
+
         return await connection.ExecuteScalarAsync<long>(new CommandDefinition(
             "SELECT EXISTS(SELECT 1 FROM Contact)", cancellationToken: cancellationToken)) != 0;
     }
@@ -32,6 +33,7 @@ internal sealed class SqliteLegacyContactImportStore : ILegacyContactImportStore
         await using SqliteConnection connection = await _database.OpenConnectionAsync(cancellationToken);
         string? recordedHash = await connection.QuerySingleOrDefaultAsync<string>(new CommandDefinition(
             "SELECT Sha256 FROM LegacyContactImport WHERE SourcePath = @sourcePath", new { sourcePath }, cancellationToken: cancellationToken));
+
         return recordedHash is null ? null : HashStatus(recordedHash, sha256);
     }
 
@@ -40,6 +42,7 @@ internal sealed class SqliteLegacyContactImportStore : ILegacyContactImportStore
         sourcePath = NormalizePath(sourcePath);
         ArgumentException.ThrowIfNullOrWhiteSpace(sha256);
         ArgumentNullException.ThrowIfNull(contacts);
+
         if (contacts.Count == 0)
         {
             return LegacyImportOutcome.Empty;
@@ -49,6 +52,7 @@ internal sealed class SqliteLegacyContactImportStore : ILegacyContactImportStore
         await using SqliteTransaction transaction = connection.BeginTransaction();
         string? recordedHash = await connection.QuerySingleOrDefaultAsync<string>(new CommandDefinition(
             "SELECT Sha256 FROM LegacyContactImport WHERE SourcePath = @sourcePath", new { sourcePath }, transaction, cancellationToken: cancellationToken));
+
         if (recordedHash is not null)
         {
             return HashStatus(recordedHash, sha256);
@@ -62,7 +66,9 @@ internal sealed class SqliteLegacyContactImportStore : ILegacyContactImportStore
         await connection.ExecuteAsync(new CommandDefinition(
             "INSERT INTO LegacyContactImport (SourcePath, Sha256, ContactCount, ImportedAtUtc) VALUES (@sourcePath, @sha256, @count, CURRENT_TIMESTAMP)",
             new { sourcePath, sha256, count = contacts.Count }, transaction, cancellationToken: cancellationToken));
+
         await transaction.CommitAsync(cancellationToken);
+
         return LegacyImportOutcome.Imported;
     }
 
@@ -76,6 +82,7 @@ internal sealed class SqliteLegacyContactImportStore : ILegacyContactImportStore
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
         string fullPath = Path.GetFullPath(sourcePath);
+
         return OperatingSystem.IsWindows() ? fullPath.ToUpperInvariant() : fullPath;
     }
 }

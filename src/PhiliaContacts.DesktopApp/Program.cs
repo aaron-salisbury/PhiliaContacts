@@ -1,10 +1,10 @@
 using Avalonia;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using PhiliaContacts.Data.Database;
-using PhiliaContacts.Business.Modules.Contacts;
-using PhiliaContacts.Presentation.Desktop;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using PhiliaContacts.Business.Modules.Contacts;
+using PhiliaContacts.Data.Database;
+using PhiliaContacts.Presentation.Desktop;
 using Serilog;
 using System;
 using System.Threading.Tasks;

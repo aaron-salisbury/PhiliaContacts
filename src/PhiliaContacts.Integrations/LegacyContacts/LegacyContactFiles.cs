@@ -29,18 +29,21 @@ internal sealed class LegacyContactFiles : ILegacyContactFiles
     public Task<IReadOnlyList<string>> DiscoverAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
         IReadOnlyList<string> paths = [.. _searchDirectories
             .Where(Directory.Exists)
             .SelectMany(directory => FileNames.Select(fileName => Path.Combine(directory, fileName)))
             .Where(File.Exists)
             .Select(Path.GetFullPath)
             .Distinct(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)];
+
         return Task.FromResult(paths);
     }
 
     public async Task<LegacyContactFile> ReadAsync(string sourcePath, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourcePath);
+
         string path = Path.GetFullPath(sourcePath);
         if (!FileNames.Contains(Path.GetFileName(path), StringComparer.OrdinalIgnoreCase))
         {
@@ -63,6 +66,7 @@ internal sealed class LegacyContactFiles : ILegacyContactFiles
 
         string json = new UTF8Encoding(false, true).GetString(bytes);
         string hash = Convert.ToHexString(SHA256.HashData(bytes));
+
         return new(path, json, hash, bytes);
     }
 
@@ -76,6 +80,7 @@ internal sealed class LegacyContactFiles : ILegacyContactFiles
         await using FileStream stream = new(backupPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, 81920, FileOptions.Asynchronous);
         await stream.WriteAsync(file.Bytes, cancellationToken);
         await stream.FlushAsync(cancellationToken);
+
         return backupPath;
     }
 }

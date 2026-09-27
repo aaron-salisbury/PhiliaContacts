@@ -1,6 +1,6 @@
 using Dapper;
-using PhiliaContacts.Data.Database.Migrations;
 using Microsoft.Data.Sqlite;
+using PhiliaContacts.Data.Database.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -88,9 +88,23 @@ internal sealed class SqliteContactStore : IContactStore
 
         await connection.ExecuteAsync(new CommandDefinition(sql, new
         {
-            Id = key, contact.GivenName, contact.MiddleName, contact.FamilyName, contact.Nickname, contact.Prefix,
-            contact.Suffix, contact.Birthday, contact.Title, contact.Organization, contact.Photo, contact.TwitterUser,
-            contact.FacebookUser, contact.LinkedInUser, contact.Url, contact.Notes, contact.IsFavorite
+            Id = key,
+            contact.GivenName,
+            contact.MiddleName,
+            contact.FamilyName,
+            contact.Nickname,
+            contact.Prefix,
+            contact.Suffix,
+            contact.Birthday,
+            contact.Title,
+            contact.Organization,
+            contact.Photo,
+            contact.TwitterUser,
+            contact.FacebookUser,
+            contact.LinkedInUser,
+            contact.Url,
+            contact.Notes,
+            contact.IsFavorite
         }, transaction, cancellationToken: cancellationToken));
 
         await connection.ExecuteAsync(new CommandDefinition("DELETE FROM ContactValue WHERE ContactId = @key; DELETE FROM ContactAddress WHERE ContactId = @key", new { key }, transaction, cancellationToken: cancellationToken));
