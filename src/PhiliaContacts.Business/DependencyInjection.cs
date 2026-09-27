@@ -11,6 +11,7 @@ public static class DependencyInjection
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddScoped<IContactService, ContactService>();
+        services.AddScoped<ILegacyContactImportService, LegacyContactImportService>();
 
         return services;
     }

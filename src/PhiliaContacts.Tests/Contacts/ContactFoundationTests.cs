@@ -1,3 +1,4 @@
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PhiliaContacts.Business;
@@ -41,9 +42,31 @@ public sealed class ContactFoundationTests
         using ServiceProvider provider = new ServiceCollection().RegisterInternalIntegrationsServices().BuildServiceProvider();
         ILegacyContactReader reader = provider.GetRequiredService<ILegacyContactReader>();
         Assert.ThrowsExactly<JsonException>(() => reader.Read("{}"));
-        Contact[] contacts = reader.Read("[{\"GivenName\":\"Same\"},{\"GivenName\":\"Same\"}]").ToArray();
+        Contact[] contacts = [.. reader.Read("[{\"GivenName\":\"Same\"},{\"GivenName\":\"Same\"}]")];
         Assert.HasCount(2, contacts);
         Assert.AreNotEqual(contacts[0].Id, contacts[1].Id);
+    }
+
+    [TestMethod]
+    public void LegacyReader_ParsesObservedLaterReleaseShapeWithFavoriteFirst()
+    {
+        using ServiceProvider provider = new ServiceCollection().RegisterInternalIntegrationsServices().BuildServiceProvider();
+        ILegacyContactReader reader = provider.GetRequiredService<ILegacyContactReader>();
+        string earlierJson = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "fixtures", "legacy", "first-release", "Contact.json"));
+        string laterJson = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "fixtures", "legacy", "current", "observed-1.0.8.0", "PhiliaContacts.json"));
+        using JsonDocument document = JsonDocument.Parse(laterJson);
+        Assert.AreEqual("IsFavorite", document.RootElement[0].EnumerateObject().First().Name);
+
+        Contact earlier = reader.Read(earlierJson).Single();
+        Contact later = reader.Read(laterJson).Single();
+        Assert.AreEqual(earlier.GivenName, later.GivenName);
+        Assert.AreEqual(earlier.FamilyName, later.FamilyName);
+        Assert.AreEqual(earlier.Birthday, later.Birthday);
+        Assert.AreEqual(earlier.IsFavorite, later.IsFavorite);
+        CollectionAssert.AreEqual(earlier.EmailAddresses.ToArray(), later.EmailAddresses.ToArray());
+        CollectionAssert.AreEqual(earlier.PhoneNumbers.ToArray(), later.PhoneNumbers.ToArray());
+        CollectionAssert.AreEqual(earlier.Addresses.ToArray(), later.Addresses.ToArray());
+        CollectionAssert.AreEqual(earlier.Photo!, later.Photo!);
     }
 
     [TestMethod]
@@ -56,38 +79,43 @@ public sealed class ContactFoundationTests
             ServiceCollection services = new();
             services.RegisterInternalDataServices(directory).RegisterInternalBusinessServices();
             using ServiceProvider provider = services.BuildServiceProvider();
-            await provider.InitializePhiliaContactsDataAsync();
+            await provider.InitializePhiliaContactsDataAsync(TestContext.CancellationToken);
             IContactService service = provider.GetRequiredService<IContactService>();
             Contact first = new()
             {
-                Id = ContactId.New(), GivenName = "First", FamilyName = "Test", IsFavorite = true,
-                Birthday = "2000-01-01T13:03:02.7850172", Photo = [1, 2, 3],
+                Id = ContactId.New(),
+                GivenName = "First",
+                FamilyName = "Test",
+                IsFavorite = true,
+                Birthday = "2000-01-01T13:03:02.7850172",
+                Photo = [1, 2, 3],
                 PhoneNumbers = [new ContactValue("+1 555-0100", "Cell"), new ContactValue("555-0101", "Home")],
                 EmailAddresses = [new ContactValue("first@example.invalid", "Internet")],
                 Addresses = [new ContactAddress("Home", "Street", "City", "WI", "00000", "US")]
             };
             Contact second = new() { Id = ContactId.New(), GivenName = "Second" };
-            await service.SaveAsync(first);
-            await service.SaveAsync(second);
-            Contact loaded = (await service.GetAsync(first.Id))!;
+            await service.SaveAsync(first, TestContext.CancellationToken);
+            await service.SaveAsync(second, TestContext.CancellationToken);
+            Contact loaded = (await service.GetAsync(first.Id, TestContext.CancellationToken))!;
             Assert.HasCount(2, loaded.PhoneNumbers);
             Assert.AreEqual("555-0101", loaded.PhoneNumbers[1].Value);
             Assert.AreEqual("Street", loaded.Addresses.Single().Street);
             CollectionAssert.AreEqual(new byte[] { 1, 2, 3 }, loaded.Photo!);
             Assert.AreEqual(first.Birthday, loaded.Birthday);
 
-            await service.SaveAsync(first with { PhoneNumbers = [new ContactValue("555-0111", "Work")], Photo = null });
-            loaded = (await service.GetAsync(first.Id))!;
+            await service.SaveAsync(first with { PhoneNumbers = [new ContactValue("555-0111", "Work")], Photo = null }, TestContext.CancellationToken);
+            loaded = (await service.GetAsync(first.Id, TestContext.CancellationToken))!;
             Assert.HasCount(1, loaded.PhoneNumbers);
             Assert.IsNull(loaded.Photo);
-            Assert.HasCount(2, await service.ListAsync());
-            Assert.IsTrue(await service.DeleteAsync(first.Id));
-            Assert.IsNull(await service.GetAsync(first.Id));
-            Assert.IsNotNull(await service.GetAsync(second.Id));
-            Assert.IsFalse(await service.DeleteAsync(first.Id));
+            Assert.HasCount(2, await service.ListAsync(TestContext.CancellationToken));
+            Assert.IsTrue(await service.DeleteAsync(first.Id, TestContext.CancellationToken));
+            Assert.IsNull(await service.GetAsync(first.Id, TestContext.CancellationToken));
+            Assert.IsNotNull(await service.GetAsync(second.Id, TestContext.CancellationToken));
+            Assert.IsFalse(await service.DeleteAsync(first.Id, TestContext.CancellationToken));
         }
         finally
         {
+            SqliteConnection.ClearAllPools();
             Directory.Delete(directory, true);
         }
     }
@@ -102,14 +130,17 @@ public sealed class ContactFoundationTests
             ServiceCollection services = new();
             services.RegisterInternalDataServices(directory).RegisterInternalBusinessServices();
             using ServiceProvider provider = services.BuildServiceProvider();
-            await provider.InitializePhiliaContactsDataAsync();
+            await provider.InitializePhiliaContactsDataAsync(TestContext.CancellationToken);
             IContactService service = provider.GetRequiredService<IContactService>();
-            await Assert.ThrowsExactlyAsync<ArgumentException>(() => service.SaveAsync(new Contact { Id = ContactId.New() }));
-            Assert.IsEmpty(await service.ListAsync());
+            await Assert.ThrowsExactlyAsync<ArgumentException>(() => service.SaveAsync(new Contact { Id = ContactId.New() }, TestContext.CancellationToken));
+            Assert.IsEmpty(await service.ListAsync(TestContext.CancellationToken));
         }
         finally
         {
+            SqliteConnection.ClearAllPools();
             Directory.Delete(directory, true);
         }
     }
+
+    public TestContext TestContext { get; set; }
 }

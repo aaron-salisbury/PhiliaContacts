@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the current development conventions for Philia Contacts. 
+This document defines the current development conventions for Philia Contacts.
 It is intended for both human contributors and AI coding assistants.
 
 These conventions are defaults, not dogma. They should promote clarity,
@@ -72,21 +72,21 @@ consume a non-LTS release without a compelling reason.
 
 ## 3. Solution Architecture
 
-Follows a modified three-tier architecture centered on **Business**, with 
-**Data** and **Integrations** treated as implementation boundaries that 
+Follows a modified three-tier architecture centered on **Business**, with
+**Data** and **Integrations** treated as implementation boundaries that
 satisfy application-facing contracts defined by Business.
 
-The familiar Data, Business, and Presentation responsibilities remain, but 
-dependencies across persistence and external-provider boundaries should 
-follow the **Dependency Inversion Principle**. Business defines the 
-capabilities the application requires; Data and Integrations reference 
+The familiar Data, Business, and Presentation responsibilities remain, but
+dependencies across persistence and external-provider boundaries should
+follow the **Dependency Inversion Principle**. Business defines the
+capabilities the application requires; Data and Integrations reference
 Business and implement those contracts.
 
-A dedicated executable application project acts as the **composition root**. 
-For the desktop application this is `*.DesktopApp`. It owns startup, 
-dependency-injection composition, application lifetime, and initialization 
-that necessarily coordinates concrete implementations. Presentation projects 
-remain presentation libraries rather than acquiring composition-root 
+A dedicated executable application project acts as the **composition root**.
+For the desktop application this is `*.DesktopApp`. It owns startup,
+dependency-injection composition, application lifetime, and initialization
+that necessarily coordinates concrete implementations. Presentation projects
+remain presentation libraries rather than acquiring composition-root
 responsibilities merely because they provide a user interface.
 
 ```text
@@ -131,9 +131,9 @@ Conceptually:
     initialization, and owns the application lifetime.
 ```
 
-Business remains the architectural center. The composition root has broad 
-technical visibility because assembling the application is its 
-responsibility; that visibility does not change the architectural 
+Business remains the architectural center. The composition root has broad
+technical visibility because assembling the application is its
+responsibility; that visibility does not change the architectural
 ownership of Business, Data, Integrations, or Presentation behavior.
 
 ### Business
@@ -355,7 +355,7 @@ DTOs should:
 -   Be POCOs.
 -   Generally be C# records.
 -   Contain data rather than complex behavior.
--   Represent the contract that the application intends to expose rather 
+-   Represent the contract that the application intends to expose rather
 than blindly mirror persistence or provider representations.
 
 Example:
@@ -368,7 +368,7 @@ public sealed record CreateGoalDto(
 ```
 
 External integrations may have provider-specific DTOs in addition to
-PhiliaContacts-facing DTOs. Do not expose an external provider DTO 
+PhiliaContacts-facing DTOs. Do not expose an external provider DTO
 directly merely to avoid writing a mapping.
 
 ### Domains / Business Concepts
@@ -385,8 +385,8 @@ representations. Prefer focused business services/processes for
 non-trivial behavior rather than automatically placing complex behavior
 on the objects themselves.
 
-Useful DDD ideas may be adopted when they solve a concrete problem, but 
-this solution does not require DDD terminology or rich domain objects by 
+Useful DDD ideas may be adopted when they solve a concrete problem, but
+this solution does not require DDD terminology or rich domain objects by
 default.
 
 ### Models
@@ -420,8 +420,8 @@ ceremony.
 
 ### Prefer Focused Processes and Services
 
-The solution generally favors restrained behavior on data-oriented objects. 
-Non-trivial operations should normally live in focused services/processes 
+The solution generally favors restrained behavior on data-oriented objects.
+Non-trivial operations should normally live in focused services/processes
 near the capability they implement.
 
 For example:
@@ -622,11 +622,19 @@ Unless solution documentation defines a more specific convention, generally foll
 [Microsoft C# Coding
 Conventions](https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/coding-conventions).
 
+### Tests
+
+Flow `TestContext.CancellationToken` to asynchronous operations in MSTest methods.
+
+When deleting a temporary SQLite database in a test, close connections and
+clear the SQLite connection pools first. A disposed pooled connection may
+still hold the file open on Windows.
+
 ### HTTP Clients
 
-Prefer `IHttpClientFactory` for application and integration code that performs HTTP 
-requests. Register HTTP client configuration in the executable composition root and 
-inject `IHttpClientFactory` into long-lived consumers rather than registering or 
+Prefer `IHttpClientFactory` for application and integration code that performs HTTP
+requests. Register HTTP client configuration in the executable composition root and
+inject `IHttpClientFactory` into long-lived consumers rather than registering or
 capturing an unconfigured singleton `HttpClient`.
 
 Create clients when an operation needs them:
@@ -635,18 +643,18 @@ Create clients when an operation needs them:
 HttpClient httpClient = _httpClientFactory.CreateClient();
 ```
 
-Creating an `HttpClient` through the factory is inexpensive because the factory 
-manages and pools the underlying handlers. Named or typed clients may be used 
+Creating an `HttpClient` through the factory is inexpensive because the factory
+manages and pools the underlying handlers. Named or typed clients may be used
 when a concrete integration needs stable provider-specific HTTP configuration.
 
-A long-lived `HttpClient` is not inherently incorrect. It can be appropriate 
-when deliberately configured with connection-lifetime management such as 
-`SocketsHttpHandler.PooledConnectionLifetime`. Prefer that approach only when 
-its lifetime and handler policy are intentional and provide a concrete advantage 
+A long-lived `HttpClient` is not inherently incorrect. It can be appropriate
+when deliberately configured with connection-lifetime management such as
+`SocketsHttpHandler.PooledConnectionLifetime`. Prefer that approach only when
+its lifetime and handler policy are intentional and provide a concrete advantage
 over the application's existing `IHttpClientFactory` infrastructure.
 
-Do not create a separate HTTP lifetime policy inside an integration merely 
-because it needs HTTP access. The composition root owns application-level HTTP 
+Do not create a separate HTTP lifetime policy inside an integration merely
+because it needs HTTP access. The composition root owns application-level HTTP
 infrastructure; integration code owns provider/protocol behavior.
 
 ### Library Design

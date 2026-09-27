@@ -65,7 +65,12 @@ internal sealed class SqliteContactStore : IContactStore
     {
         await using SqliteConnection connection = await _database.OpenConnectionAsync(cancellationToken);
         await using SqliteTransaction transaction = connection.BeginTransaction();
+        await WriteAsync(connection, transaction, contact, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+    }
 
+    internal static async Task WriteAsync(SqliteConnection connection, SqliteTransaction transaction, Contact contact, CancellationToken cancellationToken)
+    {
         string key = contact.Id.Value.ToString("D");
 
         const string sql = """
@@ -83,9 +88,23 @@ internal sealed class SqliteContactStore : IContactStore
 
         await connection.ExecuteAsync(new CommandDefinition(sql, new
         {
-            Id = key, contact.GivenName, contact.MiddleName, contact.FamilyName, contact.Nickname, contact.Prefix,
-            contact.Suffix, contact.Birthday, contact.Title, contact.Organization, contact.Photo, contact.TwitterUser,
-            contact.FacebookUser, contact.LinkedInUser, contact.Url, contact.Notes, contact.IsFavorite
+            Id = key,
+            contact.GivenName,
+            contact.MiddleName,
+            contact.FamilyName,
+            contact.Nickname,
+            contact.Prefix,
+            contact.Suffix,
+            contact.Birthday,
+            contact.Title,
+            contact.Organization,
+            contact.Photo,
+            contact.TwitterUser,
+            contact.FacebookUser,
+            contact.LinkedInUser,
+            contact.Url,
+            contact.Notes,
+            contact.IsFavorite
         }, transaction, cancellationToken: cancellationToken));
 
         await connection.ExecuteAsync(new CommandDefinition("DELETE FROM ContactValue WHERE ContactId = @key; DELETE FROM ContactAddress WHERE ContactId = @key", new { key }, transaction, cancellationToken: cancellationToken));
@@ -110,7 +129,6 @@ internal sealed class SqliteContactStore : IContactStore
                 transaction, cancellationToken: cancellationToken));
         }
 
-        await transaction.CommitAsync(cancellationToken);
     }
 
     public async Task<bool> DeleteAsync(ContactId id, CancellationToken cancellationToken = default)

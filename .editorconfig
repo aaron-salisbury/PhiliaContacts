@@ -119,3 +119,7 @@ dotnet_diagnostic.MVVMTK0042.severity = none
 
 # XML documentation
 dotnet_diagnostic.CS1591.severity = suggestion
+
+# Test analyzers
+[src/PhiliaContacts.Tests/**.cs]
+dotnet_diagnostic.MSTEST0049.severity = warning

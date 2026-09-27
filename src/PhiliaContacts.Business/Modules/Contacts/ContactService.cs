@@ -37,6 +37,18 @@ internal sealed class ContactService : IContactService
 
     public Task SaveAsync(Contact contact, CancellationToken cancellationToken = default)
     {
+        ContactValidation.Validate(contact);
+
+        return _store.UpsertAsync(contact, cancellationToken);
+    }
+}
+
+internal static class ContactValidation
+{
+    internal const int MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+
+    internal static void Validate(Contact contact)
+    {
         ArgumentNullException.ThrowIfNull(contact);
 
         if (contact.Id.Value == Guid.Empty)
@@ -59,6 +71,9 @@ internal sealed class ContactService : IContactService
             throw new ArgumentException("Contact collections must contain valid entries.", nameof(contact));
         }
 
-        return _store.UpsertAsync(contact, cancellationToken);
+        if (contact.Photo?.Length > MAX_PHOTO_BYTES)
+        {
+            throw new ArgumentException("Contact photo exceeds the 8 MiB limit.", nameof(contact));
+        }
     }
 }
