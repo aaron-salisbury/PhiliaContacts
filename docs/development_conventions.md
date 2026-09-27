@@ -569,9 +569,56 @@ Use PascalCase.
 public required DateTime TimeStamp { get; set; }
 ```
 
+### Collection Expressions
+
+Prefer collection expressions when constructing a collection or materializing a
+sequence into a compatible target type. For example:
+
+```csharp
+IReadOnlyList<Contact> contacts = [.. results.Select(MapContact)];
+IReadOnlyList<Contact> emptyContacts = [];
+```
+
+Prefer `[.. sequence]` to `sequence.ToArray()` when the target type and
+behavior are equivalent. Preserve eager or deferred evaluation and concrete
+collection requirements when selecting an expression.
+
+### Control Flow Blocks
+
+Use braces for `if`, `else`, `for`, `foreach`, and `while` bodies, even
+when the body contains only one statement:
+
+```csharp
+if (contact is null)
+{
+    return null;
+}
+
+for (int index = 0; index < contacts.Count; index++)
+{
+    Save(contacts[index]);
+}
+```
+
+### Method Bodies
+
+Use block bodies for named methods and local functions, including methods
+containing a single return or forwarding call:
+
+```csharp
+public Task<Contact?> GetAsync(Guid id)
+{
+    return _repository.GetAsync(id);
+}
+```
+
+Short expression-bodied properties and accessors may remain on one line as
+configured in `.editorconfig`. Keep expressions on one line when they remain
+easy to read; wrap them when that improves clarity.
+
 ### General C# Style
 
-Unless soluciotn documentation defines a more specific convention, generally follow
+Unless solution documentation defines a more specific convention, generally follow
 [Microsoft C# Coding
 Conventions](https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/coding-conventions).
 
