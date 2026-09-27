@@ -1,6 +1,6 @@
 # Phase 0: legacy compatibility inventory
 
-Recorded 2026-09-27 against `phase-0-inventory`, branched from `avalonia-convert`. These observations describe the checked-in legacy source and the two Partner Center screenshots supplied by the publisher. No production contacts were inspected.
+Recorded 2026-09-27 against `phase-0-inventory`, branched from `avalonia-convert`. These observations describe the checked-in legacy source, two Partner Center screenshots and a user-supplied saved file containing one fake contact from release 1.0.6.0. No production contacts were inspected.
 
 ## Existing product and package
 
@@ -31,14 +31,14 @@ Some Phase 2 design must happen in Phase 1: a contact schema, mapping and legacy
 | Variant | Source and behavior | Required handling |
 | --- | --- | --- |
 | Default current data | `PhiliaContacts.json` in `ApplicationData.Current.LocalFolder`; an array of `Contact` objects serialized by Newtonsoft.Json | Read in place, copy/backup, validate, migrate |
-| First public filename | `Contact.json` in an eligible folder. `ReadReplaceDomainsAsync` only checks this name during a folder-location change | Search without changing/deleting the file; verify structure from an actual old install |
+| First public filename | `Contact.json` confirmed from release 1.0.6.0 in UWP LocalState. `ReadReplaceDomainsAsync` only checks this name during a folder-location change | Search without changing/deleting the file; actual 1.0.6.0 field shape now represented by anonymized fixture |
 | Custom folder | `AppStorageLocation` in UWP `ApplicationData.Current.LocalSettings` is a JSON-serialized absolute path. `FutureAccessList` stores the chosen folder under `StorageFolderPath.GetHashString()` | Use settings and token for discovery if accessible; offer manual picker if not; never assume token is transferable |
 | UWP settings | `AppStorageLocation`, `AppBackgroundRequestedTheme` in LocalSettings | Preserve useful preferences after verifying actual values; do not interpret these as contact records |
 | Imported vCards | External `.vcf` parsed into contacts; not a separate automatic local-storage format | Keep separate from startup migration; test import/export compatibility |
 
 **Important code path:** `StorageLocationService.SaveStorageLocationInSettingsAsync` calls the Manager's `StorageFolderToken` setter. That setter calls `Delete()` on the *old* location before loading the new one; `ReadReplaceDomainsAsync` deletes `Contact.json` before deserializing it and writing `PhiliaContacts.json`. The migration must never call these legacy methods as a way to discover or convert data. Preserve files in both locations and treat conflicting copies as separate sources for user review.
 
-`Manager.Load()` reads only `PhiliaContacts.json`. If it is missing, it presents an empty contact collection even if `Contact.json` exists. The repo does not include a sample of the first-release JSON or a custom-folder export; those variants remain unverified until fixtures from real historical builds are obtained. Synthetic fixtures below reproduce the current model, not a claim that all installed 1.x versions share its exact shape.
+`Manager.Load()` reads only `PhiliaContacts.json`. If it is missing, it presents an empty contact collection even if `Contact.json` exists. A user-supplied `Contact.json` created by the oldest GitHub release (1.0.6.0) confirms this filename, path and field shape. It contains one fake contact, including computed fields serialized by Newtonsoft.Json. The supplied image is a PNG stored as a base64 JSON string (94,532 decoded bytes), despite the exporter always labeling photos as JPEG. Its timestamped birthday includes time and seven fractional digits, so conversion to a date-only field must be an explicit decision. The first-release fixture below has been anonymized and uses a generated one-pixel PNG; the original file and its personal path are **not** committed. Custom-folder data and other historical versions remain unverified.
 
 ## Persisted field mapping
 
@@ -50,9 +50,9 @@ Source: `PhiliaContacts.Domains.Contact`, `EmailAddress`, `PhoneNumber`, seriali
 | `FormattedName`, `DisplayName` | computed strings | Recompute for UI; do not trust as source of truth |
 | `EmailAddresses` | array of `{ Email, Type }` | Ordered child values with independent identity; preserve duplicates until deliberate merge |
 | `PhoneNumbers` | array of `{ Number, Type }` | Same; do not normalize away punctuation or leading `+` |
-| `Birthday` | nullable serialized `DateTime` | Calendar date; test time-zone and yearless-date behavior before conversion |
+| `Birthday` | nullable serialized `DateTime`; observed `2000-01-01T13:03:02.7850172` shape | Calendar date; preserve or explicitly discard time after tests and decide how to handle time-zone/yearless dates |
 | `Title`, `Organization`, `Url`, `Notes` | strings/null | Preserve text and line breaks |
-| `Photo` | `byte[]` (base64 string in JSON), null | Preserve exact bytes, inspect content type separately; distinguish legacy placeholder from user image |
+| `Photo` | `byte[]` (base64 string in JSON), null; observed PNG despite JPEG exporter label | Preserve exact bytes, inspect content type separately; distinguish legacy placeholder from user image |
 | `TwitterUser`, `FacebookUser`, `LinkedInUser` | strings/null | Preserve social identifiers, even if UI support changes |
 | `AddressType` | enum serialized numerically by default | Single legacy address type, retain original value; no assumption of multiple addresses |
 | `Street`, `City`, `State`, `Zip`, `CountryRegion` | strings/null | Single legacy address, mapped to 2.0 address record only when data exists |
@@ -76,7 +76,7 @@ Legacy numeric enum values: `AddressType` Work=0, Home=1, Domestic=2, Internatio
 | --- | --- |
 | First run without legacy data | New empty SQLite database, no import completion marker for absent data |
 | Current JSON in UWP LocalFolder | Non-destructive copy and migration; count, field values, child order and photos match; source remains readable |
-| First-release filename | Parse actual old fixture, backup first, do not delete source |
+| First-release filename | Parse anonymized 1.0.6.0-shape fixture, backup first, do not delete source |
 | Custom folder and LocalFolder both contain data | Detect both and offer conflict-aware selection/import; never delete either automatically |
 | Relaunch after migration | No duplicate contacts; IDs and data stable |
 | Corrupt JSON, invalid enum or partially missing fields | Actionable error and intact source/backup; no replacement of valid destination data |
@@ -87,6 +87,6 @@ Legacy numeric enum values: `AddressType` Work=0, Home=1, Domestic=2, Internatio
 
 ## Synthetic fixtures and next discovery
 
-`tests/fixtures/legacy/current/PhiliaContacts.json` is a synthetic fixture matching the visible legacy contact fields and default JSON shapes. `tests/fixtures/legacy/first-release/Contact.json` is a filename-discovery fixture using that *same known shape*; it does not certify the original release schema. The fixture names reflect the two code paths. Keep real data out of Git.
+`tests/fixtures/legacy/current/PhiliaContacts.json` is a synthetic fixture matching the visible legacy contact fields and default JSON shapes. `tests/fixtures/legacy/first-release/Contact.json` is an anonymized, structurally faithful fixture informed by a user-supplied 1.0.6.0 saved file. It retains every observed property, numeric enum shape, timestamp form, ordered child arrays and base64 PNG photo representation while replacing all entered values. The fixture names reflect the two code paths. Keep real data out of Git.
 
-Before completing Phase 0, inspect on a Windows test profile: a 1.0.8.0 install with normal LocalState, any available first-release data, and a custom-folder install. Capture anonymized field shapes and validate that a full-trust MSIX using the same package family can access the actual old location. Record any difference as a new fixture and update the matrix. These environment-dependent checks are explicitly outstanding; the source inventory and publisher identity are complete.
+Before completing Phase 0, inspect on a Windows test profile: a 1.0.8.0 install with normal LocalState and a custom-folder install. The oldest 1.0.6.0 saved-file format and LocalState path have now been observed. Capture anonymized field shapes and validate that a full-trust MSIX using the same package family can access the actual old location. Record any difference as a new fixture and update the matrix. These environment-dependent checks are explicitly outstanding; the source inventory and publisher identity are complete.
