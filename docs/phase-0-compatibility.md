@@ -1,0 +1,92 @@
+# Phase 0: legacy compatibility inventory
+
+Recorded 2026-09-27 against `phase-0-inventory`, branched from `avalonia-convert`. These observations describe the checked-in legacy source and the two Partner Center screenshots supplied by the publisher. No production contacts were inspected.
+
+## Existing product and package
+
+| Item | Confirmed value | Evidence |
+| --- | --- | --- |
+| Publisher | Aaron Salisbury (personal publisher) | Partner Center identity screenshot; UWP manifest |
+| Store ID | `9MXHT996K5ST` | Partner Center |
+| Published package | `PhiliaContacts.App_1.0.8.0_x86_x64_arm_bundle.msixupload` | Partner Center packages screenshot |
+| Published package version | `1.0.8.0`, neutral bundle, Windows.Universal minimum 10.0.18362.0 | Partner Center packages screenshot |
+| Package Identity Name | `60826AaronSalisbury.PhiliaContacts` | Partner Center identity screenshot |
+| Package Identity Publisher | `CN=7DEA5566-0BC8-4D89-BAB5-AA36A27E4938` | Partner Center identity screenshot |
+| PublisherDisplayName | `Aaron Salisbury` | Partner Center identity screenshot |
+| Package Family Name | `60826AaronSalisbury.PhiliaContacts_gc14fakmyh3dc` | Partner Center identity screenshot |
+| UWP Application ID | `App` | `PhiliaContacts/PhiliaContacts.App/Package.appxmanifest` |
+| GitHub's last release | `1.0.7.0` | GitHub releases; the Store's submitted package is newer |
+| Copyright | © Aaron Salisbury | `StoreListings/listingData9MXHT996K5ST-1152921505693350919.csv` |
+
+The next Store package must exceed the installed version, preserve the existing package family and be tested as an in-place update. The screenshot confirms a submission package/version; confirm the product's live availability/rollout and any later private submissions directly in Partner Center when packaging begins. Do not publish under Runneth Over Studio.
+
+## Current solution and Phase 1 overlap
+
+The new `src/PhiliaContacts.slnx` and Business, Data, Integrations, Presentation.Desktop, DesktopApp and Tests projects already exist. There is a renamed Avalonia composition root and navigation shell. `HomeView.axaml` is empty; contact functionality still lives in the root UWP projects. The new Data project still has `HelmDatabase`, `HelmDataInitialization` and migrations for unrelated Helm domains. This scaffold is Phase 1 progress, not a working port. The root `PhiliaContacts.sln` and UWP projects must remain accessible until migration and feature parity are verified.
+
+Some Phase 2 design must happen in Phase 1: a contact schema, mapping and legacy-reader interface are needed to choose business contracts and data boundaries. Treat the phases as dependency-oriented checkpoints, not strict fences.
+
+## Actual local data variants
+
+| Variant | Source and behavior | Required handling |
+| --- | --- | --- |
+| Default current data | `PhiliaContacts.json` in `ApplicationData.Current.LocalFolder`; an array of `Contact` objects serialized by Newtonsoft.Json | Read in place, copy/backup, validate, migrate |
+| First public filename | `Contact.json` in an eligible folder. `ReadReplaceDomainsAsync` only checks this name during a folder-location change | Search without changing/deleting the file; verify structure from an actual old install |
+| Custom folder | `AppStorageLocation` in UWP `ApplicationData.Current.LocalSettings` is a JSON-serialized absolute path. `FutureAccessList` stores the chosen folder under `StorageFolderPath.GetHashString()` | Use settings and token for discovery if accessible; offer manual picker if not; never assume token is transferable |
+| UWP settings | `AppStorageLocation`, `AppBackgroundRequestedTheme` in LocalSettings | Preserve useful preferences after verifying actual values; do not interpret these as contact records |
+| Imported vCards | External `.vcf` parsed into contacts; not a separate automatic local-storage format | Keep separate from startup migration; test import/export compatibility |
+
+**Important code path:** `StorageLocationService.SaveStorageLocationInSettingsAsync` calls the Manager's `StorageFolderToken` setter. That setter calls `Delete()` on the *old* location before loading the new one; `ReadReplaceDomainsAsync` deletes `Contact.json` before deserializing it and writing `PhiliaContacts.json`. The migration must never call these legacy methods as a way to discover or convert data. Preserve files in both locations and treat conflicting copies as separate sources for user review.
+
+`Manager.Load()` reads only `PhiliaContacts.json`. If it is missing, it presents an empty contact collection even if `Contact.json` exists. The repo does not include a sample of the first-release JSON or a custom-folder export; those variants remain unverified until fixtures from real historical builds are obtained. Synthetic fixtures below reproduce the current model, not a claim that all installed 1.x versions share its exact shape.
+
+## Persisted field mapping
+
+Source: `PhiliaContacts.Domains.Contact`, `EmailAddress`, `PhoneNumber`, serialized with default Newtonsoft.Json settings. Public calculated properties may also appear in JSON; ignore and recompute them. There is **no persistent contact ID** in the legacy model. The new app must assign stable IDs and keep source ordering/occurrence information during migration rather than merging equal-looking records automatically.
+
+| Legacy JSON field | Shape | Proposed 2.0 mapping and validation |
+| --- | --- | --- |
+| `GivenName`, `MiddleName`, `FamilyName`, `Nickname`, `Prefix`, `Suffix` | strings/null | Contact name components; preserve empty and Unicode values |
+| `FormattedName`, `DisplayName` | computed strings | Recompute for UI; do not trust as source of truth |
+| `EmailAddresses` | array of `{ Email, Type }` | Ordered child values with independent identity; preserve duplicates until deliberate merge |
+| `PhoneNumbers` | array of `{ Number, Type }` | Same; do not normalize away punctuation or leading `+` |
+| `Birthday` | nullable serialized `DateTime` | Calendar date; test time-zone and yearless-date behavior before conversion |
+| `Title`, `Organization`, `Url`, `Notes` | strings/null | Preserve text and line breaks |
+| `Photo` | `byte[]` (base64 string in JSON), null | Preserve exact bytes, inspect content type separately; distinguish legacy placeholder from user image |
+| `TwitterUser`, `FacebookUser`, `LinkedInUser` | strings/null | Preserve social identifiers, even if UI support changes |
+| `AddressType` | enum serialized numerically by default | Single legacy address type, retain original value; no assumption of multiple addresses |
+| `Street`, `City`, `State`, `Zip`, `CountryRegion` | strings/null | Single legacy address, mapped to 2.0 address record only when data exists |
+| `IsFavorite` | boolean | Favorite flag |
+| `FavoriteSegoeMDL2Glyph`, `IsValid` | computed UI/validation properties | Do not persist; recompute or replace |
+
+Legacy numeric enum values: `AddressType` Work=0, Home=1, Domestic=2, International=3, Postal=4, Parcel=5, None=6; `EmailAddress.Type` Work=0, Internet=1, Home=2, AOL=3, Applelink=4, IBMMail=5, None=6; `PhoneNumber.Type` Work=0, Cell=1, Home=2, Voice=3, Text=4, Fax=5, Pager=6, Video=7, TextPhone=8, MainNumber=9, BBS=10, Modem=11, Car=12, ISDN=13, None=14. Include an unknown-value policy rather than silently remapping out-of-range numbers.
+
+## Existing contact behaviors and risks
+
+- Browse sorts favorites first, then `DisplayName`. `DisplayName` chooses nickname or family name, not full name. The screen exposes selection, new, delete, save, vCard import and vCard export. Deleting a contact removes it in memory; saving writes the *entire collection* to one JSON file.
+- A new contact gets the placeholder image bytes. `IsValid` requires at least one of given name, family name or nickname. `Writer` silently skips invalid contacts, so export counts may differ from stored counts.
+- Import parses with `EWSoftware.PDI`, then unions a `HashSet<Contact>` with existing records. `Contact` has no custom equality implementation, so equivalent new objects can be duplicated. Import does not itself call `Manager.Save()`; persistence depends on a later save.
+- The writer emits vCard 3.0 manually. It does not escape all text/structured values; line folding counts C# characters rather than UTF-8 octets; it writes `PHOTO:TYPE=JPEG;ENCODING=BASE64` regardless of photo bytes and compares byte arrays by reference to suppress the placeholder. It uses `Environment.NewLine`. These details warrant round-trip tests, not an assumption of compatibility.
+- The active parser imports one preferred address, first URL/note, selected social identifiers, categories containing `starred`, phones/emails and photo. Photo conversion has special cases for JPEG/base64 and otherwise attempts URL retrieval; errors substitute a placeholder. Alternate `VCardLibVCFService` exists but is not selected by `Importer`.
+- Contacts are sensitive personal data. Test fixtures must be fictitious and CI logs must not include contact content.
+
+## Acceptance matrix for the port
+
+| Scenario | Expected result |
+| --- | --- |
+| First run without legacy data | New empty SQLite database, no import completion marker for absent data |
+| Current JSON in UWP LocalFolder | Non-destructive copy and migration; count, field values, child order and photos match; source remains readable |
+| First-release filename | Parse actual old fixture, backup first, do not delete source |
+| Custom folder and LocalFolder both contain data | Detect both and offer conflict-aware selection/import; never delete either automatically |
+| Relaunch after migration | No duplicate contacts; IDs and data stable |
+| Corrupt JSON, invalid enum or partially missing fields | Actionable error and intact source/backup; no replacement of valid destination data |
+| Multiple phones/emails, Unicode, multiline notes, birthdays and images | Data survives edit, save, restart and vCard round trip |
+| New contact after editing another | No shared mutable phone/email/photo references; changes to one cannot mutate the other |
+| 1.0.8.0 Store install updated to 2.0 MSIX | Same product and package family; existing data located or recoverable; Store update and launch succeed |
+| Linux fresh install and update | XDG path respected; data retained across upgrades |
+
+## Synthetic fixtures and next discovery
+
+`tests/fixtures/legacy/current/PhiliaContacts.json` is a synthetic fixture matching the visible legacy contact fields and default JSON shapes. `tests/fixtures/legacy/first-release/Contact.json` is a filename-discovery fixture using that *same known shape*; it does not certify the original release schema. The fixture names reflect the two code paths. Keep real data out of Git.
+
+Before completing Phase 0, inspect on a Windows test profile: a 1.0.8.0 install with normal LocalState, any available first-release data, and a custom-folder install. Capture anonymized field shapes and validate that a full-trust MSIX using the same package family can access the actual old location. Record any difference as a new fixture and update the matrix. These environment-dependent checks are explicitly outstanding; the source inventory and publisher identity are complete.
