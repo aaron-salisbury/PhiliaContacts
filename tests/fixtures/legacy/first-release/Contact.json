@@ -1,12 +1,46 @@
 [
   {
     "GivenName": "Historical",
+    "MiddleName": "Q.",
     "FamilyName": "Example",
-    "Nickname": null,
-    "EmailAddresses": [],
-    "PhoneNumbers": [{ "Number": "555-0103", "Type": 2 }],
-    "Photo": null,
-    "AddressType": 6,
-    "IsFavorite": false
+    "Nickname": "Sample",
+    "Prefix": null,
+    "Suffix": null,
+    "FormattedName": "Historical Example",
+    "DisplayName": "Sample",
+    "EmailAddresses": [
+      {
+        "Email": "sample@example.invalid",
+        "Type": 1
+      },
+      {
+        "Email": "sample@work.invalid",
+        "Type": 6
+      }
+    ],
+    "PhoneNumbers": [
+      {
+        "Number": "555-0103",
+        "Type": 2
+      }
+    ],
+    "Birthday": "2000-01-01T13:03:02.7850172",
+    "Title": "Tester",
+    "Organization": "Example Organization",
+    "Photo": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgYGBgAAAABQABpfZFQAAAAABJRU5ErkJggg==",
+    "TwitterUser": "example",
+    "FacebookUser": "example",
+    "LinkedInUser": "example",
+    "Url": "https://example.invalid/",
+    "Notes": "Synthetic first-release test record",
+    "AddressType": 1,
+    "Street": "123 Example Street",
+    "City": "Exampleton",
+    "State": "WI",
+    "Zip": "00000",
+    "CountryRegion": "US",
+    "IsFavorite": false,
+    "FavoriteSegoeMDL2Glyph": "",
+    "IsValid": true
   }
 ]
