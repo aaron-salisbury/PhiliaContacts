@@ -48,6 +48,28 @@ public sealed class ContactFoundationTests
     }
 
     [TestMethod]
+    public void LegacyReader_ParsesObservedLaterReleaseShapeWithFavoriteFirst()
+    {
+        using ServiceProvider provider = new ServiceCollection().RegisterInternalIntegrationsServices().BuildServiceProvider();
+        ILegacyContactReader reader = provider.GetRequiredService<ILegacyContactReader>();
+        string earlierJson = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "fixtures", "legacy", "first-release", "Contact.json"));
+        string laterJson = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "fixtures", "legacy", "current", "observed-1.0.8.0", "PhiliaContacts.json"));
+        using JsonDocument document = JsonDocument.Parse(laterJson);
+        Assert.AreEqual("IsFavorite", document.RootElement[0].EnumerateObject().First().Name);
+
+        Contact earlier = reader.Read(earlierJson).Single();
+        Contact later = reader.Read(laterJson).Single();
+        Assert.AreEqual(earlier.GivenName, later.GivenName);
+        Assert.AreEqual(earlier.FamilyName, later.FamilyName);
+        Assert.AreEqual(earlier.Birthday, later.Birthday);
+        Assert.AreEqual(earlier.IsFavorite, later.IsFavorite);
+        CollectionAssert.AreEqual(earlier.EmailAddresses.ToArray(), later.EmailAddresses.ToArray());
+        CollectionAssert.AreEqual(earlier.PhoneNumbers.ToArray(), later.PhoneNumbers.ToArray());
+        CollectionAssert.AreEqual(earlier.Addresses.ToArray(), later.Addresses.ToArray());
+        CollectionAssert.AreEqual(earlier.Photo!, later.Photo!);
+    }
+
+    [TestMethod]
     public async Task ContactStore_SavesChildrenAndPhotosAtomicallyAndDeletesOnlySelectedContact()
     {
         string directory = Path.Combine(Path.GetTempPath(), $"PhiliaContacts-{Guid.NewGuid():N}");
