@@ -8,18 +8,16 @@ namespace PhiliaContacts.Integrations.LegacyContacts;
 
 internal sealed class LegacyJsonContactReader : ILegacyContactReader
 {
-    private static readonly string[] PhoneTypes =
-    ["Work", "Cell", "Home", "Voice", "Text", "Fax", "Pager", "Video", "TextPhone", "MainNumber", "BBS", "Modem", "Car", "ISDN", "None"];
+    private static readonly string[] PhoneTypes = ["Work", "Cell", "Home", "Voice", "Text", "Fax", "Pager", "Video", "TextPhone", "MainNumber", "BBS", "Modem", "Car", "ISDN", "None"];
     private static readonly string[] EmailTypes = ["Work", "Internet", "Home", "AOL", "Applelink", "IBMMail", "None"];
     private static readonly string[] AddressTypes = ["Work", "Home", "Domestic", "International", "Postal", "Parcel", "None"];
 
     public IReadOnlyList<Contact> Read(string json)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(json);
-        LegacyContact[] records = JsonSerializer.Deserialize<LegacyContact[]>(json) ??
-            throw new JsonException("The legacy contact file must contain an array.");
+        LegacyContact[] records = JsonSerializer.Deserialize<LegacyContact[]>(json) ?? throw new JsonException("The legacy contact file must contain an array.");
 
-        return records.Select(record => Convert(record ?? throw new JsonException("Null contact in legacy data."))).ToArray();
+        return [.. records.Select(record => Convert(record ?? throw new JsonException("Null contact in legacy data.")))];
     }
 
     private static Contact Convert(LegacyContact source)
@@ -43,23 +41,27 @@ internal sealed class LegacyJsonContactReader : ILegacyContactReader
             Url = source.Url,
             Notes = source.Notes,
             IsFavorite = source.IsFavorite,
-            EmailAddresses = (source.EmailAddresses ?? []).Select(item =>
-                new ContactValue(item?.Email ?? throw new JsonException("Null email entry."), TypeName(item.Type, EmailTypes))).ToArray(),
-            PhoneNumbers = (source.PhoneNumbers ?? []).Select(item =>
-                new ContactValue(item?.Number ?? throw new JsonException("Null phone entry."), TypeName(item.Type, PhoneTypes))).ToArray(),
+            EmailAddresses = [.. (source.EmailAddresses ?? []).Select(item =>
+                new ContactValue(item?.Email ?? throw new JsonException("Null email entry."), TypeName(item.Type, EmailTypes)))],
+            PhoneNumbers = [.. (source.PhoneNumbers ?? []).Select(item =>
+                new ContactValue(item?.Number ?? throw new JsonException("Null phone entry."), TypeName(item.Type, PhoneTypes)))],
             Addresses = HasAddress(source)
                 ? [new ContactAddress(TypeName(source.AddressType, AddressTypes), source.Street, source.City, source.State, source.Zip, source.CountryRegion)]
                 : []
         };
     }
 
-    private static bool HasAddress(LegacyContact contact) =>
-        !string.IsNullOrEmpty(contact.Street) || !string.IsNullOrEmpty(contact.City) ||
-        !string.IsNullOrEmpty(contact.State) || !string.IsNullOrEmpty(contact.Zip) ||
-        !string.IsNullOrEmpty(contact.CountryRegion);
+    private static bool HasAddress(LegacyContact contact)
+    {
+        return !string.IsNullOrEmpty(contact.Street) || !string.IsNullOrEmpty(contact.City) ||
+            !string.IsNullOrEmpty(contact.State) || !string.IsNullOrEmpty(contact.Zip) ||
+            !string.IsNullOrEmpty(contact.CountryRegion);
+    }
 
-    private static string TypeName(int value, string[] values) =>
-        value >= 0 && value < values.Length ? values[value] : $"legacy:{value}";
+    private static string TypeName(int value, string[] values)
+    {
+        return value >= 0 && value < values.Length ? values[value] : $"legacy:{value}";
+    }
 
     private sealed class LegacyContact
     {

@@ -15,27 +15,50 @@ internal sealed class ContactService : IContactService
         _store = store ?? throw new ArgumentNullException(nameof(store));
     }
 
-    public Task<IReadOnlyList<Contact>> ListAsync(CancellationToken cancellationToken = default) => _store.ListAsync(cancellationToken);
+    public Task<IReadOnlyList<Contact>> ListAsync(CancellationToken cancellationToken = default)
+    {
+        return _store.ListAsync(cancellationToken);
+    }
 
-    public Task<Contact?> GetAsync(ContactId id, CancellationToken cancellationToken = default) => _store.GetAsync(id, cancellationToken);
+    public Task<Contact?> GetAsync(ContactId id, CancellationToken cancellationToken = default)
+    {
+        return _store.GetAsync(id, cancellationToken);
+    }
 
     public Task<bool> DeleteAsync(ContactId id, CancellationToken cancellationToken = default)
     {
-        if (id.Value == Guid.Empty) throw new ArgumentException("A contact ID is required.", nameof(id));
+        if (id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("A contact ID is required.", nameof(id));
+        }
+
         return _store.DeleteAsync(id, cancellationToken);
     }
 
     public Task SaveAsync(Contact contact, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(contact);
-        if (contact.Id.Value == Guid.Empty) throw new ArgumentException("A contact ID is required.", nameof(contact));
+
+        if (contact.Id.Value == Guid.Empty)
+        {
+            throw new ArgumentException("A contact ID is required.", nameof(contact));
+        }
+
         if (string.IsNullOrWhiteSpace(contact.GivenName) && string.IsNullOrWhiteSpace(contact.FamilyName) && string.IsNullOrWhiteSpace(contact.Nickname))
+        {
             throw new ArgumentException("A given name, family name or nickname is required.", nameof(contact));
-        if (contact.EmailAddresses is null || contact.PhoneNumbers is null || contact.Addresses is null ||
+        }
+
+        bool notAllEntriesAreValid = contact.EmailAddresses is null || contact.PhoneNumbers is null || contact.Addresses is null ||
             contact.EmailAddresses.Any(value => value is null || string.IsNullOrWhiteSpace(value.Value)) ||
             contact.PhoneNumbers.Any(value => value is null || string.IsNullOrWhiteSpace(value.Value)) ||
-            contact.Addresses.Any(address => address is null))
+            contact.Addresses.Any(address => address is null);
+
+        if (notAllEntriesAreValid)
+        {
             throw new ArgumentException("Contact collections must contain valid entries.", nameof(contact));
+        }
+
         return _store.UpsertAsync(contact, cancellationToken);
     }
 }

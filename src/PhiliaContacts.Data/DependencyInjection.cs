@@ -14,6 +14,7 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(applicationDataDirectory);
+
         if (!Directory.Exists(applicationDataDirectory))
         {
             throw new DirectoryNotFoundException($"The application data directory '{applicationDataDirectory}' does not exist.");
@@ -24,6 +25,7 @@ public static class DependencyInjection
         services.AddSingleton<PhiliaContactsDatabaseInitializer>(provider => new PhiliaContactsDatabaseInitializer(
             provider.GetRequiredService<IPhiliaContactsDatabase>(), [new CreateContactsMigration()]));
         services.AddScoped<IContactStore, SqliteContactStore>();
+
         return services;
     }
 }

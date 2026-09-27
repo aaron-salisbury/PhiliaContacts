@@ -18,6 +18,7 @@ internal static class DependencyInjection
     internal static IServiceCollection BuildServiceCollection()
     {
         string applicationDataDirectory = GetApplicationDataDirectory();
+
         Serilog.Log.Logger = new LoggerConfiguration()
             .WriteTo.File(Path.Combine(applicationDataDirectory, "log.txt"), rollingInterval: RollingInterval.Day)
             .CreateLogger();
@@ -28,6 +29,7 @@ internal static class DependencyInjection
             .RegisterInternalBusinessServices()
             .RegisterInternalIntegrationsServices()
             .RegisterInternalPresentationServices();
+
         return services;
     }
 
@@ -36,6 +38,7 @@ internal static class DependencyInjection
         using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddProvider(NullLoggerProvider.Instance));
         FileSystemAccess fileSystemAccess = new(loggerFactory.CreateLogger<IFileSystemAccess>());
         ProcessResult<string> result = fileSystemAccess.GetOrCreateAppDirectoryPath();
+
         return result.IsSuccessful ? result.Value : throw new InvalidOperationException("Failed to create application data directory.", result.Error);
     }
 }

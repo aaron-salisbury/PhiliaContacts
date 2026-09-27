@@ -5,6 +5,8 @@ namespace PhiliaContacts.Business.Modules.Contacts;
 
 internal static class ContactCollections
 {
-    internal static IEnumerable<string> WhereNotBlank(this IEnumerable<string?> values) =>
-        values.Where(value => !string.IsNullOrWhiteSpace(value)).Select(value => value!);
+    internal static IEnumerable<string> WhereNotBlank(this IEnumerable<string?> values)
+    {
+        return values.Where(value => !string.IsNullOrWhiteSpace(value)).Select(value => value!);
+    }
 }

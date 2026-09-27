@@ -5,7 +5,10 @@ namespace PhiliaContacts.Business.Modules.Contacts;
 
 public readonly record struct ContactId(Guid Value)
 {
-    public static ContactId New() => new(Guid.NewGuid());
+    public static ContactId New()
+    {
+        return new(Guid.NewGuid());
+    }
 }
 
 public sealed record ContactValue(string Value, string Type);

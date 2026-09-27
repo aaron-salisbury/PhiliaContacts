@@ -22,28 +22,42 @@ internal sealed class SqliteContactStore : IContactStore
     public async Task<IReadOnlyList<Contact>> ListAsync(CancellationToken cancellationToken = default)
     {
         await using SqliteConnection connection = await _database.OpenConnectionAsync(cancellationToken);
+
         IEnumerable<ContactRow> rows = await connection.QueryAsync<ContactRow>(new CommandDefinition(
             "SELECT * FROM Contact ORDER BY IsFavorite DESC, FamilyName COLLATE NOCASE, GivenName COLLATE NOCASE, Id", cancellationToken: cancellationToken));
+
         IEnumerable<ValueRow> values = await connection.QueryAsync<ValueRow>(new CommandDefinition(
             "SELECT * FROM ContactValue ORDER BY ContactId, Kind, Position", cancellationToken: cancellationToken));
+
         IEnumerable<AddressRow> addresses = await connection.QueryAsync<AddressRow>(new CommandDefinition(
             "SELECT * FROM ContactAddress ORDER BY ContactId, Position", cancellationToken: cancellationToken));
+
         ILookup<string, ValueRow> groupedValues = values.ToLookup(value => value.ContactId);
         ILookup<string, AddressRow> groupedAddresses = addresses.ToLookup(address => address.ContactId);
-        return rows.Select(row => Map(row, groupedValues[row.Id], groupedAddresses[row.Id])).ToArray();
+
+        return [.. rows.Select(row => Map(row, groupedValues[row.Id], groupedAddresses[row.Id]))];
     }
 
     public async Task<Contact?> GetAsync(ContactId id, CancellationToken cancellationToken = default)
     {
         await using SqliteConnection connection = await _database.OpenConnectionAsync(cancellationToken);
+
         string key = id.Value.ToString("D");
+
         ContactRow? row = await connection.QuerySingleOrDefaultAsync<ContactRow>(new CommandDefinition(
             "SELECT * FROM Contact WHERE Id = @key", new { key }, cancellationToken: cancellationToken));
-        if (row is null) return null;
+
+        if (row is null)
+        {
+            return null;
+        }
+
         IEnumerable<ValueRow> values = await connection.QueryAsync<ValueRow>(new CommandDefinition(
             "SELECT * FROM ContactValue WHERE ContactId = @key ORDER BY Kind, Position", new { key }, cancellationToken: cancellationToken));
+
         IEnumerable<AddressRow> addresses = await connection.QueryAsync<AddressRow>(new CommandDefinition(
             "SELECT * FROM ContactAddress WHERE ContactId = @key ORDER BY Position", new { key }, cancellationToken: cancellationToken));
+
         return Map(row, values, addresses);
     }
 
@@ -51,7 +65,9 @@ internal sealed class SqliteContactStore : IContactStore
     {
         await using SqliteConnection connection = await _database.OpenConnectionAsync(cancellationToken);
         await using SqliteTransaction transaction = connection.BeginTransaction();
+
         string key = contact.Id.Value.ToString("D");
+
         const string sql = """
             INSERT INTO Contact (Id, GivenName, MiddleName, FamilyName, Nickname, Prefix, Suffix, Birthday, Title,
                 Organization, Photo, TwitterUser, FacebookUser, LinkedInUser, Url, Notes, IsFavorite)
@@ -64,25 +80,36 @@ internal sealed class SqliteContactStore : IContactStore
                 TwitterUser=excluded.TwitterUser, FacebookUser=excluded.FacebookUser, LinkedInUser=excluded.LinkedInUser,
                 Url=excluded.Url, Notes=excluded.Notes, IsFavorite=excluded.IsFavorite;
             """;
+
         await connection.ExecuteAsync(new CommandDefinition(sql, new
         {
             Id = key, contact.GivenName, contact.MiddleName, contact.FamilyName, contact.Nickname, contact.Prefix,
             contact.Suffix, contact.Birthday, contact.Title, contact.Organization, contact.Photo, contact.TwitterUser,
             contact.FacebookUser, contact.LinkedInUser, contact.Url, contact.Notes, contact.IsFavorite
         }, transaction, cancellationToken: cancellationToken));
+
         await connection.ExecuteAsync(new CommandDefinition("DELETE FROM ContactValue WHERE ContactId = @key; DELETE FROM ContactAddress WHERE ContactId = @key", new { key }, transaction, cancellationToken: cancellationToken));
+
         for (int i = 0; i < contact.EmailAddresses.Count; i++)
+        {
             await InsertValueAsync(connection, transaction, key, "email", i, contact.EmailAddresses[i], cancellationToken);
+        }
+
         for (int i = 0; i < contact.PhoneNumbers.Count; i++)
+        {
             await InsertValueAsync(connection, transaction, key, "phone", i, contact.PhoneNumbers[i], cancellationToken);
+        }
+
         for (int i = 0; i < contact.Addresses.Count; i++)
         {
             ContactAddress address = contact.Addresses[i];
+
             await connection.ExecuteAsync(new CommandDefinition(
                 "INSERT INTO ContactAddress (ContactId, Position, Type, Street, City, Region, PostalCode, Country) VALUES (@ContactId, @Position, @Type, @Street, @City, @Region, @PostalCode, @Country)",
                 new { ContactId = key, Position = i, address.Type, address.Street, address.City, address.Region, address.PostalCode, address.Country },
                 transaction, cancellationToken: cancellationToken));
         }
+
         await transaction.CommitAsync(cancellationToken);
     }
 
@@ -93,22 +120,39 @@ internal sealed class SqliteContactStore : IContactStore
         return count != 0;
     }
 
-    private static Task InsertValueAsync(SqliteConnection connection, SqliteTransaction transaction, string id, string kind, int position, ContactValue value, CancellationToken cancellationToken) =>
-        connection.ExecuteAsync(new CommandDefinition(
+    private static Task<int> InsertValueAsync(SqliteConnection connection, SqliteTransaction transaction, string id, string kind, int position, ContactValue value, CancellationToken cancellationToken)
+    {
+        return connection.ExecuteAsync(new CommandDefinition(
             "INSERT INTO ContactValue (ContactId, Kind, Position, Value, Type) VALUES (@ContactId, @Kind, @Position, @Value, @Type)",
             new { ContactId = id, Kind = kind, Position = position, value.Value, value.Type }, transaction, cancellationToken: cancellationToken));
+    }
 
-    private static Contact Map(ContactRow row, IEnumerable<ValueRow> values, IEnumerable<AddressRow> addresses) => new()
+    private static Contact Map(ContactRow row, IEnumerable<ValueRow> values, IEnumerable<AddressRow> addresses)
     {
-        Id = new ContactId(Guid.Parse(row.Id)), GivenName = row.GivenName, MiddleName = row.MiddleName,
-        FamilyName = row.FamilyName, Nickname = row.Nickname, Prefix = row.Prefix, Suffix = row.Suffix,
-        Birthday = row.Birthday, Title = row.Title, Organization = row.Organization, Photo = row.Photo,
-        TwitterUser = row.TwitterUser, FacebookUser = row.FacebookUser, LinkedInUser = row.LinkedInUser,
-        Url = row.Url, Notes = row.Notes, IsFavorite = row.IsFavorite,
-        EmailAddresses = values.Where(value => value.Kind == "email").Select(value => new ContactValue(value.Value, value.Type)).ToArray(),
-        PhoneNumbers = values.Where(value => value.Kind == "phone").Select(value => new ContactValue(value.Value, value.Type)).ToArray(),
-        Addresses = addresses.Select(address => new ContactAddress(address.Type, address.Street, address.City, address.Region, address.PostalCode, address.Country)).ToArray()
-    };
+        return new()
+        {
+            Id = new ContactId(Guid.Parse(row.Id)),
+            GivenName = row.GivenName,
+            MiddleName = row.MiddleName,
+            FamilyName = row.FamilyName,
+            Nickname = row.Nickname,
+            Prefix = row.Prefix,
+            Suffix = row.Suffix,
+            Birthday = row.Birthday,
+            Title = row.Title,
+            Organization = row.Organization,
+            Photo = row.Photo,
+            TwitterUser = row.TwitterUser,
+            FacebookUser = row.FacebookUser,
+            LinkedInUser = row.LinkedInUser,
+            Url = row.Url,
+            Notes = row.Notes,
+            IsFavorite = row.IsFavorite,
+            EmailAddresses = [.. values.Where(value => value.Kind == "email").Select(value => new ContactValue(value.Value, value.Type))],
+            PhoneNumbers = [.. values.Where(value => value.Kind == "phone").Select(value => new ContactValue(value.Value, value.Type))],
+            Addresses = [.. addresses.Select(address => new ContactAddress(address.Type, address.Street, address.City, address.Region, address.PostalCode, address.Country))]
+        };
+    }
 
     private sealed class ContactRow
     {
