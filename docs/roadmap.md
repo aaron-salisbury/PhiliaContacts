@@ -1,6 +1,6 @@
 # Philia Contacts 2.0 roadmap
 
-Status: Phase 0 source and Store identity inventory in progress on `phase-0-inventory` (branched from `avalonia-convert`). See [Phase 0 compatibility inventory](phase-0-compatibility.md). This is a personal Aaron Salisbury release, independent of Runneth Over Studio. The old UWP application remains the reference implementation until its behavior and user data are covered.
+Status: Phase 0 inventory complete on `phase-0-inventory` (branched from `avalonia-convert`); environment-dependent migration and Store update checks are assigned to Phases 2 and 5. See [Phase 0 compatibility inventory](phase-0-compatibility.md). This is a personal Aaron Salisbury release, independent of Runneth Over Studio. The old UWP application remains the reference implementation until its behavior and user data are covered.
 
 ## Release definition
 
@@ -9,11 +9,11 @@ A 2.0 release preserves existing Store customers' contacts, provides a usable Wi
 ## Phase 0 — Inventory and compatibility contract
 
 - Audit the UWP projects, contact fields, defaults, settings, photo representation, import/export behavior, existing test data and Store identity. Record a field-by-field mapping and expected behavior for contacts, multiple phone numbers/emails, addresses, notes, favorites and images.
-- Inventory all legacy storage locations: UWP LocalState, `PhiliaContacts.json`, first-release `Contact.json`, and the user-selected folder tracked by a Windows FutureAccessList token. Determine actual on-disk paths and whether older releases used distinct JSON shapes. Collect anonymized fixtures from each supported variant.
+- Inventory legacy storage paths from source: UWP LocalState, `PhiliaContacts.json`, first-release `Contact.json`, and the user-selected folder tracked by a Windows FutureAccessList token. Confirm the 1.0.6.0 file and path from an actual saved sample, and add anonymized representative fixtures; validate 1.0.8.0 saves and custom-folder behavior during Phase 2.
 - Capture the latest *published* Store package identity and version in Partner Center. Partner Center screenshots confirm submitted package version `1.0.8.0`, identity name `60826AaronSalisbury.PhiliaContacts`, publisher `CN=7DEA5566-0BC8-4D89-BAB5-AA36A27E4938`, package family `60826AaronSalisbury.PhiliaContacts_gc14fakmyh3dc`, and Aaron Salisbury as publisher. The UWP manifest uses application ID `App`; GitHub's last release is 1.0.7.0. Check live rollout and any later submissions in Partner Center before packaging.
 - Write acceptance cases for import, edit, save/restart, export/reimport, update in place, recovery and Linux launch. Use synthetic contacts that exercise non-ASCII names, multiline notes, multiple values, photo formats and malformed input.
 
-**Gate:** documented data formats and package identity; representative migration fixtures without private contact data.
+**Gate: complete.** Source data formats and package identity documented; anonymized 1.0.6.0-shaped and synthetic later-release fixtures added without private contact data. Actual 1.0.8.0 saves and custom-folder behavior are Phase 2 checks; a packaged Store update is a Phase 5 check.
 
 ## Phase 1 — Establish the product solution
 
