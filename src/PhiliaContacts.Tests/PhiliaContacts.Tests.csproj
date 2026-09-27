@@ -1,8 +1,12 @@
-﻿<Project Sdk="MSTest.Sdk/4.0.2">
+<Project Sdk="MSTest.Sdk/4.0.2">
 
   <PropertyGroup>
     <Description>Unit tests for the PhiliaContacts application.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="../../tests/fixtures/legacy/**/*.json" Link="fixtures/legacy/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PhiliaContacts.Business\PhiliaContacts.Business.csproj" />

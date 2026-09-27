@@ -1,6 +1,6 @@
 # Philia Contacts 2.0 roadmap
 
-Status: Phase 0 inventory complete on `phase-0-inventory` (branched from `avalonia-convert`); environment-dependent migration and Store update checks are assigned to Phases 2 and 5. See [Phase 0 compatibility inventory](phase-0-compatibility.md). This is a personal Aaron Salisbury release, independent of Runneth Over Studio. The old UWP application remains the reference implementation until its behavior and user data are covered.
+Status: Phase 0 complete; Phase 1 contact foundation implemented on `phase-1-contact-foundation`. Runtime migration and Store update checks remain in Phases 2 and 5. See [Phase 0 compatibility inventory](phase-0-compatibility.md). This is a personal Aaron Salisbury release, independent of Runneth Over Studio. The old UWP application remains the reference implementation until its behavior and user data are covered.
 
 ## Release definition
 
@@ -24,7 +24,7 @@ The `src` solution, layer projects, Avalonia shell and composition root already 
 - Define contact domain types and operations in Business (including stable contact IDs and independent child value IDs where useful). Model repeatable phone/email/address values, favorites, photos, display names and groups without leaking Avalonia controls, UWP objects or database rows across boundaries. Put provider interfaces there; put vCard, file/location and platform implementations in Integrations; keep persistence mappings in Data.
 - Build the new application in isolation while keeping the UWP project for comparison. Delete the old root `.sln` and root-level project folders only after the new solution and migration have passed release gates. Preserve history in Git.
 
-**Gate:** new solution builds cleanly with no borrowed Helm domain behavior or root-solution dependency.
+**Gate: complete.** The new solution builds and its contact/architecture tests pass. Business now defines contact snapshots, typed IDs, validation and storage/legacy-reader contracts; Data implements transactional SQLite contact tables; Integrations reads legacy JSON through System.Text.Json. Borrowed Helm domains, providers, registrations and migrations have been removed. The UI remains a shell: contact editing and import flow are Phase 3 and Phase 2 work, respectively.
 
 ## Phase 2 — Storage and migration before routine editing
 
