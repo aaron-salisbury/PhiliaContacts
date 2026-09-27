@@ -1,6 +1,6 @@
 # Phase 0: legacy compatibility inventory
 
-Recorded 2026-09-27 against `phase-0-inventory`, branched from `avalonia-convert`. These observations describe the checked-in legacy source, two Partner Center screenshots, a user-supplied saved file containing one fake contact from release 1.0.6.0, and a subsequent launch of the 1.0.8.0 solution against the same LocalState. No production contacts were inspected.
+Phase 0 source inventory complete 2026-09-27 on `phase-0-inventory`, branched from `avalonia-convert`. These observations describe the checked-in legacy source, two Partner Center screenshots, a user-supplied saved file containing one fake contact from release 1.0.6.0, and a subsequent launch of the 1.0.8.0 solution against the same LocalState. No production contacts were inspected.
 
 ## Existing product and package
 
@@ -85,8 +85,8 @@ Compatibility details for `System.Text.Json`: preserve the original PascalCase p
 | 1.0.8.0 Store install updated to 2.0 MSIX | Same product and package family; existing data located or recoverable; Store update and launch succeed |
 | Linux fresh install and update | XDG path respected; data retained across upgrades |
 
-## Synthetic fixtures and next discovery
+## Fixtures and implementation checks
 
 `tests/fixtures/legacy/current/PhiliaContacts.json` is a synthetic fixture matching the visible legacy contact fields and default JSON shapes. `tests/fixtures/legacy/first-release/Contact.json` is an anonymized, structurally faithful fixture informed by a user-supplied 1.0.6.0 saved file. It retains every observed property, numeric enum shape, timestamp form, ordered child arrays and base64 PNG photo representation while replacing all entered values. The fixture names reflect the two code paths. Keep real data out of Git.
 
-Before completing Phase 0, inspect a saved 1.0.8.0 file and a custom-folder install on a Windows test profile. A 1.0.8.0 launch against a 1.0.6.0 file has been observed to show an empty view while retaining the default LocalState path; the file has been verified byte-for-byte intact after this launch. Also test a real Store update and a full-trust MSIX with the same package family. The oldest 1.0.6.0 saved-file format and LocalState path have now been observed. Capture anonymized field shapes and validate that a full-trust MSIX using the same package family can access the actual old location. Record any difference as a new fixture and update the matrix. These environment-dependent checks are explicitly outstanding; the source inventory and publisher identity are complete.
+The 1.0.8.0 launch against a 1.0.6.0 file has been observed to show an empty view while retaining the default LocalState path; the file remained byte-for-byte intact. The oldest 1.0.6.0 saved-file format, LocalState path and Partner Center identity have been observed. This completes the Phase 0 source inventory and acceptance contract.\n\n**Required implementation checks, not yet performed:** When implementing migration in Phase 2, save a fake contact in 1.0.8.0 and inspect its JSON shape; test a custom-folder install and settings/token access; add anonymized fixtures for any differing schema or location behavior. Do not claim these variants are verified from source alone. During Windows packaging in Phase 5, validate a real in-place Store update and that a full-trust MSIX with the same package family can access the old LocalState. Keep the Phase 2 and Phase 5 release gates blocked until those respective checks pass.
