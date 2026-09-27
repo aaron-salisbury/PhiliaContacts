@@ -93,6 +93,7 @@ internal sealed class LegacyContactImportService : ILegacyContactImportService
 
         string backupPath = await _files.BackupAsync(file, cancellationToken);
         LegacyImportOutcome outcome = await _store.ImportAsync(file.SourcePath, file.Sha256, contacts, cancellationToken);
+
         return new(file.SourcePath, outcome, contacts.Count, backupPath);
     }
 }
