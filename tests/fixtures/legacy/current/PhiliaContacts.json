@@ -1,0 +1,60 @@
+[
+  {
+    "GivenName": "José",
+    "MiddleName": "M.",
+    "FamilyName": "Example",
+    "Nickname": "Pepe",
+    "Prefix": "Dr.",
+    "Suffix": "Jr.",
+    "EmailAddresses": [
+      { "Email": "jose@example.invalid", "Type": 2 },
+      { "Email": "j.example@work.invalid", "Type": 0 }
+    ],
+    "PhoneNumbers": [
+      { "Number": "+1 (555) 010-0001", "Type": 1 },
+      { "Number": "555-0102", "Type": 0 }
+    ],
+    "Birthday": "1985-02-28T00:00:00",
+    "Title": "Editor",
+    "Organization": "Example Organization",
+    "Photo": null,
+    "TwitterUser": null,
+    "FacebookUser": null,
+    "LinkedInUser": null,
+    "Url": "https://example.invalid/",
+    "Notes": "First line\r\nSecond line; comma, and backslash \\",
+    "AddressType": 1,
+    "Street": "123 Example Street",
+    "City": "Testville",
+    "State": "WI",
+    "Zip": "00000",
+    "CountryRegion": "US",
+    "IsFavorite": true
+  },
+  {
+    "GivenName": null,
+    "MiddleName": null,
+    "FamilyName": "Example",
+    "Nickname": "Other Example",
+    "Prefix": null,
+    "Suffix": null,
+    "EmailAddresses": [],
+    "PhoneNumbers": [],
+    "Birthday": null,
+    "Title": null,
+    "Organization": null,
+    "Photo": null,
+    "TwitterUser": null,
+    "FacebookUser": null,
+    "LinkedInUser": null,
+    "Url": null,
+    "Notes": null,
+    "AddressType": 6,
+    "Street": null,
+    "City": null,
+    "State": null,
+    "Zip": null,
+    "CountryRegion": null,
+    "IsFavorite": false
+  }
+]

@@ -1,6 +1,6 @@
 # Philia Contacts 2.0 roadmap
 
-Status: planning on `avalonia-convert`. This is a personal Aaron Salisbury release, independent of Runneth Over Studio. The old UWP application remains the reference implementation until its behavior and user data are covered.
+Status: Phase 0 inventory complete on `phase-0-inventory` (branched from `avalonia-convert`); environment-dependent migration and Store update checks are assigned to Phases 2 and 5. See [Phase 0 compatibility inventory](phase-0-compatibility.md). This is a personal Aaron Salisbury release, independent of Runneth Over Studio. The old UWP application remains the reference implementation until its behavior and user data are covered.
 
 ## Release definition
 
@@ -9,13 +9,15 @@ A 2.0 release preserves existing Store customers' contacts, provides a usable Wi
 ## Phase 0 — Inventory and compatibility contract
 
 - Audit the UWP projects, contact fields, defaults, settings, photo representation, import/export behavior, existing test data and Store identity. Record a field-by-field mapping and expected behavior for contacts, multiple phone numbers/emails, addresses, notes, favorites and images.
-- Inventory all legacy storage locations: UWP LocalState, `PhiliaContacts.json`, first-release `Contact.json`, and the user-selected folder tracked by a Windows FutureAccessList token. Determine actual on-disk paths and whether older releases used distinct JSON shapes. Collect anonymized fixtures from each supported variant.
-- Capture the latest *published* Store package identity and version in Partner Center. The checked-in UWP manifest says `60826AaronSalisbury.PhiliaContacts`, publisher `CN=7DEA5566-0BC8-4D89-BAB5-AA36A27E4938`, application ID `App`, version `1.0.8.0`; GitHub's latest published release is 1.0.7.0. Confirm which version customers actually have.
+- Inventory legacy storage paths from source: UWP LocalState, `PhiliaContacts.json`, first-release `Contact.json`, and the user-selected folder tracked by a Windows FutureAccessList token. Confirm the 1.0.6.0 file and path from an actual saved sample, and add anonymized representative fixtures; validate 1.0.8.0 saves and custom-folder behavior during Phase 2.
+- Capture the latest *published* Store package identity and version in Partner Center. Partner Center screenshots confirm submitted package version `1.0.8.0`, identity name `60826AaronSalisbury.PhiliaContacts`, publisher `CN=7DEA5566-0BC8-4D89-BAB5-AA36A27E4938`, package family `60826AaronSalisbury.PhiliaContacts_gc14fakmyh3dc`, and Aaron Salisbury as publisher. The UWP manifest uses application ID `App`; GitHub's last release is 1.0.7.0. Check live rollout and any later submissions in Partner Center before packaging.
 - Write acceptance cases for import, edit, save/restart, export/reimport, update in place, recovery and Linux launch. Use synthetic contacts that exercise non-ASCII names, multiline notes, multiple values, photo formats and malformed input.
 
-**Gate:** documented data formats and package identity; representative migration fixtures without private contact data.
+**Gate: complete.** Source data formats and package identity documented; anonymized 1.0.6.0-shaped and synthetic later-release fixtures added without private contact data. Actual 1.0.8.0 saves and custom-folder behavior are Phase 2 checks; a packaged Store update is a Phase 5 check.
 
 ## Phase 1 — Establish the product solution
+
+The `src` solution, layer projects, Avalonia shell and composition root already exist on `avalonia-convert`. Contact behavior is not ported, and copied Helm domain/data code remains. Design the contact schema and migration contract here as needed to make the business and data boundaries concrete; Phase 2 implements and validates the migration.
 
 - Keep `src/PhiliaContacts.slnx` and the Helm-shaped Business, Data, Integrations, Presentation.Desktop, DesktopApp and Tests projects. Keep the executable as composition root, business contracts in Business, SQLite/Dapper in Data, and platform or external implementations in Integrations. Use the established .NET LTS, DI, migration and test conventions.
 - Remove copied Helm modules that do not serve contacts: Goals, LifeDomains, Projects, Relationships, CalDAV, WebDAV and credential infrastructure. Retain useful scaffolding only after adapting names, database paths, registration, navigation and tests. In particular, remove remaining `HelmDatabase` and `HelmDataInitialization` identifiers and migrations.
@@ -27,7 +29,7 @@ A 2.0 release preserves existing Store customers' contacts, provides a usable Wi
 ## Phase 2 — Storage and migration before routine editing
 
 - Implement a normalized SQLite schema and versioned migrations for contacts and repeatable fields, through Dapper. Define explicit photo storage and limits, a predictable per-user app-data path, transactional writes and failure recovery.
-- Create an idempotent legacy importer for both JSON filenames and known schemas. Read without deleting the source; make a timestamped backup before import; validate counts and mapped fields; commit to SQLite atomically; record completed imports to avoid duplicates. An empty or invalid source must never overwrite populated data.
+- Create an idempotent legacy importer for both JSON filenames and known schemas using `System.Text.Json` with explicit legacy DTOs or `JsonDocument`; do not add Newtonsoft.Json to the new solution merely to read old files. Preserve the legacy numeric enums, PascalCase fields, date representation and base64 photos through compatibility tests. Read without deleting the source; make a timestamped backup before import; validate counts and mapped fields; commit to SQLite atomically; record completed imports to avoid duplicates. An empty or invalid source must never overwrite populated data.
 - On Windows, detect data from the existing UWP package under the same package identity. Investigate access to old LocalState from the new full-trust MSIX and the historical custom-folder token. A token may be unavailable to a desktop process; offer an explicit “Import older Philia Contacts data” file/folder picker and clear recovery instructions as fallback. Test upgrades without uninstalling the old Store package.
 - Test upgrade from each real storage variant, repeat launch, partial/corrupt JSON, duplicate contacts, images and rollback from an interrupted migration. Verify backup/restore and readable export independent of SQLite.
 
