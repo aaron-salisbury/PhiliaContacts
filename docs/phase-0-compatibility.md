@@ -42,7 +42,7 @@ Some Phase 2 design must happen in Phase 1: a contact schema, mapping and legacy
 
 ## Persisted field mapping
 
-Source: `PhiliaContacts.Domains.Contact`, `EmailAddress`, `PhoneNumber`, serialized with default Newtonsoft.Json settings. Public calculated properties may also appear in JSON; ignore and recompute them. There is **no persistent contact ID** in the legacy model. The new app must assign stable IDs and keep source ordering/occurrence information during migration rather than merging equal-looking records automatically.
+Source: `PhiliaContacts.Domains.Contact`, `EmailAddress`, `PhoneNumber`, historically serialized with default Newtonsoft.Json settings. **The 2.0 migration reader will use only `System.Text.Json`; do not add a Newtonsoft.Json dependency to the new solution.** Use explicit legacy DTOs or `JsonDocument`/`JsonElement` to interpret the observed wire shape, instead of deserializing directly into new domain types. Public calculated properties may also appear in JSON; ignore and recompute them. There is **no persistent contact ID** in the legacy model. The new app must assign stable IDs and keep source ordering/occurrence information during migration rather than merging equal-looking records automatically.
 
 | Legacy JSON field | Shape | Proposed 2.0 mapping and validation |
 | --- | --- | --- |
@@ -59,7 +59,7 @@ Source: `PhiliaContacts.Domains.Contact`, `EmailAddress`, `PhoneNumber`, seriali
 | `IsFavorite` | boolean | Favorite flag |
 | `FavoriteSegoeMDL2Glyph`, `IsValid` | computed UI/validation properties | Do not persist; recompute or replace |
 
-Legacy numeric enum values: `AddressType` Work=0, Home=1, Domestic=2, International=3, Postal=4, Parcel=5, None=6; `EmailAddress.Type` Work=0, Internet=1, Home=2, AOL=3, Applelink=4, IBMMail=5, None=6; `PhoneNumber.Type` Work=0, Cell=1, Home=2, Voice=3, Text=4, Fax=5, Pager=6, Video=7, TextPhone=8, MainNumber=9, BBS=10, Modem=11, Car=12, ISDN=13, None=14. Include an unknown-value policy rather than silently remapping out-of-range numbers.
+Compatibility details for `System.Text.Json`: preserve the original PascalCase property names or configure them explicitly; treat absent and null optional properties deliberately; parse the numeric enum values against the historical mapping (including a defined unknown-value outcome); decode `Photo` as base64 and validate bytes/content type; read the serialized `Birthday` without silently shifting its date by time zone. Include a byte-backed 1.0.6.0-shaped fixture, empty arrays, nulls and malformed JSON in migration tests. The serializer that originally wrote the file does not need to be installed to read its standard JSON representation.\n\nLegacy numeric enum values: `AddressType` Work=0, Home=1, Domestic=2, International=3, Postal=4, Parcel=5, None=6; `EmailAddress.Type` Work=0, Internet=1, Home=2, AOL=3, Applelink=4, IBMMail=5, None=6; `PhoneNumber.Type` Work=0, Cell=1, Home=2, Voice=3, Text=4, Fax=5, Pager=6, Video=7, TextPhone=8, MainNumber=9, BBS=10, Modem=11, Car=12, ISDN=13, None=14. Include an unknown-value policy rather than silently remapping out-of-range numbers.
 
 ## Existing contact behaviors and risks
 
