@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	<Description>Avalonia desktop presentation for PhiliaContacts.</Description>
   </PropertyGroup>
@@ -11,12 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Remove="Base\Assets\Attributions.txt" />
+    <AvaloniaResource Remove="Base\Assets\Attributions.md" />
     <AvaloniaResource Remove="Base\Assets\Fonts\akashi-font\info.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Base\Assets\Attributions.txt" />
+    <Content Include="Base\Assets\Attributions.md" />
     <Content Include="Base\Assets\Fonts\akashi-font\info.txt" />
   </ItemGroup>
 

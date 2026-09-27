@@ -1,3 +1,5 @@
+using PhiliaContacts.Presentation.Desktop.Base;
+using RunnethOverStudio.AppToolkit.Modules.ComponentModel;
 namespace PhiliaContacts.Presentation.Desktop.ViewModels;
 
 public partial class SettingsViewModel : BaseViewModel

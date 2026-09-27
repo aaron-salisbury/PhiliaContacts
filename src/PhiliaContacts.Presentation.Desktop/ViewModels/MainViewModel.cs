@@ -1,3 +1,9 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using PhiliaContacts.Presentation.Desktop.Models;
+using RunnethOverStudio.AppToolkit.Modules.ComponentModel;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace PhiliaContacts.Presentation.Desktop.ViewModels;
@@ -49,7 +55,7 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async System.Threading.Tasks.Task SettingsAsync()
     {
-        await _settingsViewModel.RefreshAsync();
+        await _settingsViewModel.InitializeAsync();
         SelectedPaneItem = null;
         CurrentContent = _settingsViewModel;
         PageTitle = "Settings";
