@@ -10,7 +10,7 @@ namespace PhiliaContacts.Presentation.Desktop.ViewModels;
 
 public partial class EditableValue : ObservableObject
 {
-    [ObservableProperty] private string _value = "";
+    [ObservableProperty] private string _value = string.Empty;
     [ObservableProperty] private string _type = "Home";
 
     public EditableValue() { }

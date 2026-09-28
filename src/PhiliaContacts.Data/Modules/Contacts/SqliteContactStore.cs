@@ -192,7 +192,7 @@ internal sealed class SqliteContactStore : IContactStore
 
     private sealed class ContactRow
     {
-        public string Id { get; set; } = "";
+        public string Id { get; set; } = string.Empty;
         public string? GivenName { get; set; }
         public string? MiddleName { get; set; }
         public string? FamilyName { get; set; }
@@ -215,16 +215,16 @@ internal sealed class SqliteContactStore : IContactStore
 
     private sealed class ValueRow
     {
-        public string ContactId { get; set; } = "";
-        public string Kind { get; set; } = "";
-        public string Value { get; set; } = "";
-        public string Type { get; set; } = "";
+        public string ContactId { get; set; } = string.Empty;
+        public string Kind { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
     }
 
     private sealed class AddressRow
     {
-        public string ContactId { get; set; } = "";
-        public string Type { get; set; } = "";
+        public string ContactId { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
         public string? Street { get; set; }
         public string? City { get; set; }
         public string? Region { get; set; }
@@ -234,7 +234,7 @@ internal sealed class SqliteContactStore : IContactStore
 
     private sealed class VCardPropertyRow
     {
-        public string ContactId { get; set; } = "";
-        public string Content { get; set; } = "";
+        public string ContactId { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
     }
 }

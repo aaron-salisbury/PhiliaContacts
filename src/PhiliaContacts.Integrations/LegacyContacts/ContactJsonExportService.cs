@@ -10,6 +10,7 @@ namespace PhiliaContacts.Integrations.LegacyContacts;
 internal sealed class ContactJsonExportService : IContactExportService
 {
     private readonly IContactService _contacts;
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
 
     public ContactJsonExportService(IContactService contacts)
     {
@@ -30,8 +31,7 @@ internal sealed class ContactJsonExportService : IContactExportService
         {
             await using (FileStream stream = new(temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             {
-                await JsonSerializer.SerializeAsync(stream, await _contacts.ListAsync(cancellationToken),
-                    new JsonSerializerOptions { WriteIndented = true }, cancellationToken);
+                await JsonSerializer.SerializeAsync(stream, await _contacts.ListAsync(cancellationToken), _jsonSerializerOptions, cancellationToken);
                 await stream.FlushAsync(cancellationToken);
             }
 
@@ -49,8 +49,8 @@ internal sealed class ContactJsonExportService : IContactExportService
     public async Task ExportAsync(Stream destination, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(destination);
-        await JsonSerializer.SerializeAsync(destination, await _contacts.ListAsync(cancellationToken),
-            new JsonSerializerOptions { WriteIndented = true }, cancellationToken);
+
+        await JsonSerializer.SerializeAsync(destination, await _contacts.ListAsync(cancellationToken), _jsonSerializerOptions, cancellationToken);
         await destination.FlushAsync(cancellationToken);
     }
 }

@@ -4,6 +4,9 @@
              xmlns:contacts="clr-namespace:PhiliaContacts.Business.Modules.Contacts;assembly=PhiliaContacts.Business"
              x:Class="PhiliaContacts.Presentation.Desktop.Views.HomeView"
              x:DataType="vm:HomeViewModel">
+
+	<!-- TODO: https://docs.avaloniaui.net/docs/data-binding/master-detail -->
+	
     <Grid ColumnDefinitions="290,*" RowDefinitions="*,Auto" ColumnSpacing="16">
         <Border Grid.Column="0" Background="{DynamicResource SystemListLowColor}" CornerRadius="8" Padding="10">
             <DockPanel>

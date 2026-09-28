@@ -38,12 +38,12 @@ public partial class HomeViewModel : BaseViewModel
 
     [ObservableProperty] private Contact? _selectedContact;
     [ObservableProperty] private ContactEditorViewModel _editor = new();
-    [ObservableProperty] private string _searchText = "";
+    [ObservableProperty] private string _searchText = string.Empty;
     [ObservableProperty] private string _status = "Loading contacts…";
     [ObservableProperty] private bool _hasContacts;
     [ObservableProperty] private bool _hasPreview;
     [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private string _previewTitle = "";
+    [ObservableProperty] private string _previewTitle = string.Empty;
 
     public ObservableCollection<Contact> Contacts { get; } = [];
     public ObservableCollection<Contact> VisibleContacts { get; } = [];
@@ -263,7 +263,7 @@ public partial class HomeViewModel : BaseViewModel
             LegacyImportResult result = await _legacy.ImportAsync(path);
             await RefreshAsync();
             Status = $"Older data: {result.Outcome} ({result.ContactCount} contacts)." +
-                (result.BackupPath is null ? "" : $" Backup: {result.BackupPath}");
+                (result.BackupPath is null ? string.Empty : $" Backup: {result.BackupPath}");
         }
         catch (Exception error)
         {

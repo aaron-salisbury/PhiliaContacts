@@ -10,6 +10,8 @@ namespace PhiliaContacts.Integrations.LegacyContacts;
 // vCard 3.0 interchange. The parser accepts common 4.0 text fields and data-URI photos too.
 internal sealed class VCardContactService : IVCardContactService
 {
+    //TODO: We're throwing exceptions for non-extraordinary scenarios. Possibly just skip invalid vCards or return error data so caller can gracefully fallback and report to user.
+
     public IReadOnlyList<Contact> Read(string vcf)
     {
         ArgumentNullException.ThrowIfNull(vcf);
@@ -104,7 +106,7 @@ internal sealed class VCardContactService : IVCardContactService
                 case "NICKNAME": nickname = Unescape(raw); break;
                 case "X-PHONETIC-FIRST-NAME": case "X-PHONETIC-GIVEN-NAME": phoneticGiven = Unescape(raw); break;
                 case "X-PHONETIC-LAST-NAME": case "X-PHONETIC-FAMILY-NAME": phoneticFamily = Unescape(raw); break;
-                case "TEL": phones.Add(new(Unescape(raw).Replace("tel:", "", StringComparison.OrdinalIgnoreCase), Type(head))); break;
+                case "TEL": phones.Add(new(Unescape(raw).Replace("tel:", string.Empty, StringComparison.OrdinalIgnoreCase), Type(head))); break;
                 case "EMAIL": emails.Add(new(Unescape(raw), Type(head))); break;
                 case "ADR":
                     string[] address = SplitStructured(raw);
@@ -176,8 +178,8 @@ internal sealed class VCardContactService : IVCardContactService
     public string Write(IReadOnlyList<Contact> contacts)
     {
         ArgumentNullException.ThrowIfNull(contacts);
-        StringBuilder output = new();
 
+        StringBuilder output = new();
         foreach (Contact contact in contacts)
         {
             Add(output, "BEGIN:VCARD"); Add(output, "VERSION:3.0");
@@ -252,14 +254,14 @@ internal sealed class VCardContactService : IVCardContactService
 
     private static string Escape(string? text)
     {
-        return (text ?? "").Replace("\\", "\\\\").Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\\n").Replace(",", "\\,").Replace(";", "\\;");
+        return (text ?? string.Empty).Replace("\\", "\\\\").Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\\n").Replace(",", "\\,").Replace(";", "\\;");
     }
 
     private static string Unescape(string? text)
     {
         if (text is null)
         {
-            return "";
+            return string.Empty;
         }
 
         StringBuilder result = new();
@@ -314,7 +316,7 @@ internal sealed class VCardContactService : IVCardContactService
         {
             if (line.StartsWith(' ') || line.StartsWith('\t'))
             {
-                previous = (previous ?? "") + line[1..];
+                previous = (previous ?? string.Empty) + line[1..];
             }
             else
             {
