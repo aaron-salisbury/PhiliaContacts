@@ -10,6 +10,7 @@ namespace PhiliaContacts.Integrations.LegacyContacts;
 // vCard 3.0 interchange. The parser accepts common 4.0 text fields and data-URI photos too.
 internal sealed class VCardContactService : IVCardContactService
 {
+    //TODO: This class is in the LegacyContacts namespace, but it does not pertain to the legacy JSON implementation.
     //TODO: We're throwing exceptions for non-extraordinary scenarios. Possibly just skip invalid vCards or return error data so caller can gracefully fallback and report to user.
 
     public IReadOnlyList<Contact> Read(string vcf)
