@@ -44,7 +44,7 @@ public partial class EditableAddress : ObservableObject
     }
 }
 
-public partial class ContactEditorViewModel : ObservableObject, IDisposable
+public partial class ContactDetailViewModel : ObservableObject, IDisposable
 {
     private readonly ContactId _id;
     private readonly string[] _vCardProperties = [];
@@ -78,7 +78,7 @@ public partial class ContactEditorViewModel : ObservableObject, IDisposable
     public ObservableCollection<EditableValue> EmailAddresses { get; } = [];
     public ObservableCollection<EditableAddress> Addresses { get; } = [];
 
-    public ContactEditorViewModel(Contact? contact = null)
+    public ContactDetailViewModel(Contact? contact = null)
     {
         _id = contact?.Id ?? ContactId.New();
 

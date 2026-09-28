@@ -1,0 +1,138 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
+			 x:Class="PhiliaContacts.Presentation.Desktop.Views.ContactDetailView"
+			 x:DataType="vm:ContactsViewModel"
+			 xmlns:i="using:Material.Icons.Avalonia">
+
+	<UserControl.Styles>
+		<Style Selector="i|MaterialIcon.section-icon">
+			<Setter Property="Width" Value="24"/>
+			<Setter Property="Height" Value="24"/>
+			<Setter Property="Opacity" Value="0.5"/>
+		</Style>
+	</UserControl.Styles>
+	
+	<StackPanel Spacing="12">
+
+		<!-- Name -->
+		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="AccountOutline" Classes="section-icon" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Given name" Text="{Binding Detail.GivenName}" AutomationProperties.Name="Given name" />
+			<TextBox Grid.Row="0" Grid.Column="2" Watermark="Family name" Text="{Binding Detail.FamilyName}" AutomationProperties.Name="Family name" />
+			<TextBox Grid.Row="1" Grid.Column="1" Watermark="Phonetic given name" Text="{Binding Detail.PhoneticGivenName}" />
+			<TextBox Grid.Row="1" Grid.Column="2" Watermark="Phonetic family name" Text="{Binding Detail.PhoneticFamilyName}" />
+			<TextBox Grid.Row="2" Grid.Column="1" Watermark="Middle name" Text="{Binding Detail.MiddleName}" />
+			<TextBox Grid.Row="2" Grid.Column="2" Watermark="Nickname" Text="{Binding Detail.Nickname}" />
+			<TextBox Grid.Row="3" Grid.Column="1" Watermark="Prefix" Text="{Binding Detail.Prefix}" />
+			<TextBox Grid.Row="3" Grid.Column="2" Watermark="Suffix" Text="{Binding Detail.Suffix}" />
+		</Grid>
+
+		<!-- Work -->
+		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="OfficeBuildingOutline" Classes="section-icon" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Organization" Text="{Binding Detail.Organization}" />
+			<TextBox Grid.Row="0" Grid.Column="2" Watermark="Title" Text="{Binding Detail.Title}" />
+		</Grid>
+
+		<!-- Birthday -->
+		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="CakeVariantOutline" Classes="section-icon" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Birthday (YYYY-MM-DD or original date/time)" Text="{Binding Detail.Birthday}" />
+		</Grid>
+
+		<!-- Phone Numbers -->
+		<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="Cellphone" Classes="section-icon" />
+			<TextBlock Grid.Row="0" Grid.Column="1" Text="Phone Numbers" FontWeight="SemiBold" />
+			<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+				<Button Content="Add phone number" Command="{Binding AddPhoneCommand}" />
+				<Button Content="Remove selected phone" Command="{Binding RemovePhoneCommand}" />
+			</StackPanel>
+			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Detail.PhoneNumbers}" SelectedItem="{Binding Detail.SelectedPhone}" MaxHeight="175">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="vm:EditableValue">
+						<StackPanel Orientation="Horizontal" Spacing="8" Margin="2">
+							<TextBox Width="115" Watermark="Type (Home, Cell…)" Text="{Binding Type}" />
+							<TextBox Width="290" Watermark="Phone number" Text="{Binding Value}" />
+						</StackPanel>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Grid>
+
+		<!-- Email Addresses -->
+		<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="EmailOutline" Classes="section-icon" />
+			<TextBlock Grid.Row="0" Grid.Column="1" Text="Email Addresses" FontWeight="SemiBold" />
+			<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+				<Button Content="Add email address" Command="{Binding AddEmailCommand}" />
+				<Button Content="Remove selected email" Command="{Binding RemoveEmailCommand}" />
+			</StackPanel>
+			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Detail.EmailAddresses}" SelectedItem="{Binding Detail.SelectedEmail}" MaxHeight="175">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="vm:EditableValue">
+						<StackPanel Orientation="Horizontal" Spacing="8" Margin="2">
+							<TextBox Width="115" Watermark="Type" Text="{Binding Type}" />
+							<TextBox Width="290" Watermark="Email" Text="{Binding Value}" />
+						</StackPanel>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Grid>
+
+		<!-- Addresses -->
+		<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="HomeCityOutline" Classes="section-icon" />
+			<TextBlock Grid.Row="0" Grid.Column="1" Text="Addresses" FontWeight="SemiBold" />
+			<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="6">
+				<Button Content="Add address" Command="{Binding AddAddressCommand}" />
+				<Button Content="Remove selected address" Command="{Binding RemoveAddressCommand}" />
+			</StackPanel>
+			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Detail.Addresses}" SelectedItem="{Binding Detail.SelectedAddress}" MaxHeight="260">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="vm:EditableAddress">
+						<StackPanel Spacing="4" Margin="2,5">
+							<StackPanel Orientation="Horizontal" Spacing="6">
+								<TextBox Width="100" Watermark="Type" Text="{Binding Type}" />
+								<TextBox Width="300" Watermark="Street" Text="{Binding Street}" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" Spacing="6">
+								<TextBox Width="120" Watermark="City" Text="{Binding City}" />
+								<TextBox Width="85" Watermark="State/region" Text="{Binding Region}" />
+								<TextBox Width="90" Watermark="Postal code" Text="{Binding PostalCode}" />
+								<TextBox Width="90" Watermark="Country" Text="{Binding Country}" />
+							</StackPanel>
+						</StackPanel>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</Grid>
+
+		<!-- URL -->
+		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="Web" Classes="section-icon" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Website" Text="{Binding Detail.Url}" />
+		</Grid>
+
+		<!-- Notes -->
+		<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="NoteMultipleOutline" Classes="section-icon" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Notes" Text="{Binding Detail.Notes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="75" />
+		</Grid>
+
+		<!-- Socials -->
+		<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
+			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Classes="section-icon" />
+			<Expander Grid.Row="0" Grid.Column="1" Header="Social profiles">
+				<StackPanel Spacing="5">
+					<TextBox Watermark="X" Text="{Binding Detail.TwitterUser}" />
+					<TextBox Watermark="Facebook" Text="{Binding Detail.FacebookUser}" />
+					<TextBox Watermark="LinkedIn" Text="{Binding Detail.LinkedInUser}" />
+				</StackPanel>
+			</Expander>
+		</Grid>
+
+	</StackPanel>
+
+</UserControl>

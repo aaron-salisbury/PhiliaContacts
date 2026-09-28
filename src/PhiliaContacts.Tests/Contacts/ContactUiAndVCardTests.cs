@@ -13,7 +13,7 @@ namespace PhiliaContacts.Tests.Contacts;
 public sealed class ContactUiAndVCardTests
 {
     [TestMethod]
-    public void ContactEditorsOwnTheirCollectionsAndPhotoBytes()
+    public void ContactDetailsOwnTheirCollectionsAndPhotoBytes()
     {
         Contact original = new()
         {
@@ -25,8 +25,8 @@ public sealed class ContactUiAndVCardTests
             Addresses = [new ContactAddress("Home", "Street", "City", "WI", "00000", "US")]
         };
 
-        using ContactEditorViewModel first = new(original);
-        using ContactEditorViewModel second = new(original);
+        using ContactDetailViewModel first = new(original);
+        using ContactDetailViewModel second = new(original);
 
         first.PhoneNumbers[0].Value = "555-0199";
         first.EmailAddresses.Clear();
@@ -39,7 +39,7 @@ public sealed class ContactUiAndVCardTests
         Assert.AreEqual("Street", second.Addresses[0].Street);
         Assert.AreEqual("Original", original.GivenName);
         Assert.AreEqual("555-0199", first.ToContact().PhoneNumbers.Single().Value);
-        using ContactEditorViewModel newContact = new();
+        using ContactDetailViewModel newContact = new();
         Assert.IsEmpty(newContact.PhoneNumbers);
         Assert.AreNotEqual(original.Id, newContact.ToContact().Id);
     }

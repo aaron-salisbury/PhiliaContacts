@@ -8,8 +8,8 @@
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
-        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
-            <v:HomeView />
+        <DataTemplate DataType="{x:Type vm:ContactsViewModel}">
+            <v:ContactsView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
             <v:SettingsView />

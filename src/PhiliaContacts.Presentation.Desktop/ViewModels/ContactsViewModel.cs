@@ -28,7 +28,7 @@ public partial class ImportCandidate : ObservableObject
     }
 }
 
-public partial class HomeViewModel : BaseViewModel
+public partial class ContactsViewModel : BaseViewModel
 {
     private readonly IContactService _contacts;
     private readonly ILegacyContactImportService _legacy;
@@ -37,7 +37,7 @@ public partial class HomeViewModel : BaseViewModel
     private bool _loaded;
 
     [ObservableProperty] private Contact? _selectedContact;
-    [ObservableProperty] private ContactEditorViewModel _editor = new();
+    [ObservableProperty] private ContactDetailViewModel _detail = new();
     [ObservableProperty] private string _searchText = string.Empty;
     [ObservableProperty] private string _status = "Loading contacts…";
     [ObservableProperty] private bool _hasContacts;
@@ -49,7 +49,7 @@ public partial class HomeViewModel : BaseViewModel
     public ObservableCollection<Contact> VisibleContacts { get; } = [];
     public ObservableCollection<ImportCandidate> Candidates { get; } = [];
 
-    public HomeViewModel(IContactService contacts, ILegacyContactImportService legacy, IContactExportService export, IVCardContactService vCards)
+    public ContactsViewModel(IContactService contacts, ILegacyContactImportService legacy, IContactExportService export, IVCardContactService vCards)
     {
         _contacts = contacts;
         _legacy = legacy;
@@ -84,8 +84,8 @@ public partial class HomeViewModel : BaseViewModel
 
     partial void OnSelectedContactChanged(Contact? value)
     {
-        Editor.Dispose();
-        Editor = new ContactEditorViewModel(value);
+        Detail.Dispose();
+        Detail = new ContactDetailViewModel(value);
     }
 
     partial void OnSearchTextChanged(string value) => Filter();
@@ -139,8 +139,8 @@ public partial class HomeViewModel : BaseViewModel
     private void NewContact()
     {
         SelectedContact = null;
-        Editor.Dispose();
-        Editor = new ContactEditorViewModel();
+        Detail.Dispose();
+        Detail = new ContactDetailViewModel();
         Status = "New contact. Save when finished.";
     }
 
@@ -150,7 +150,7 @@ public partial class HomeViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            Contact contact = Editor.ToContact();
+            Contact contact = Detail.ToContact();
             await _contacts.SaveAsync(contact);
             await RefreshAsync();
             SelectedContact = Contacts.First(item => item.Id == contact.Id);
@@ -195,49 +195,49 @@ public partial class HomeViewModel : BaseViewModel
     [RelayCommand]
     private void AddPhone()
     {
-        Editor.PhoneNumbers.Add(new EditableValue());
+        Detail.PhoneNumbers.Add(new EditableValue());
     }
 
     [RelayCommand] private void RemovePhone()
     {
-        if (Editor.SelectedPhone is { } item)
+        if (Detail.SelectedPhone is { } item)
         {
-            Editor.PhoneNumbers.Remove(item);
+            Detail.PhoneNumbers.Remove(item);
         }
     }
 
     [RelayCommand]
     private void AddEmail()
     {
-        Editor.EmailAddresses.Add(new EditableValue());
+        Detail.EmailAddresses.Add(new EditableValue());
     }
 
     [RelayCommand] private void RemoveEmail()
     {
-        if (Editor.SelectedEmail is { } item)
+        if (Detail.SelectedEmail is { } item)
         {
-            Editor.EmailAddresses.Remove(item);
+            Detail.EmailAddresses.Remove(item);
         }
     }
 
     [RelayCommand]
     private void AddAddress()
     {
-        Editor.Addresses.Add(new EditableAddress());
+        Detail.Addresses.Add(new EditableAddress());
     }
 
     [RelayCommand] private void RemoveAddress()
     {
-        if (Editor.SelectedAddress is { } item)
+        if (Detail.SelectedAddress is { } item)
         {
-            Editor.Addresses.Remove(item);
+            Detail.Addresses.Remove(item);
         }
     }
 
     [RelayCommand]
     private void RemovePhoto()
     {
-        Editor.SetPhoto(null);
+        Detail.SetPhoto(null);
     }
 
     public async Task SetPhotoAsync(Stream stream)
@@ -246,7 +246,7 @@ public partial class HomeViewModel : BaseViewModel
         {
             using MemoryStream buffer = new();
             await stream.CopyToAsync(buffer);
-            Editor.SetPhoto(buffer.ToArray());
+            Detail.SetPhoto(buffer.ToArray());
             Status = "Photo selected. Save the contact to keep it.";
         }
         catch (Exception error)

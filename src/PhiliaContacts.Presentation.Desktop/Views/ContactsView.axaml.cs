@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace PhiliaContacts.Presentation.Desktop.Views;
 
-public partial class HomeView : UserControl
+public partial class ContactsView : UserControl
 {
-    public HomeView()
+    public ContactsView()
     {
         InitializeComponent();
 
         AttachedToVisualTree += async (_, _) =>
         {
-            if (DataContext is HomeViewModel model)
+            if (DataContext is ContactsViewModel model)
             {
                 await model.InitializeAsync();
             }
@@ -28,7 +28,7 @@ public partial class HomeView : UserControl
     {
         IStorageFile? file = await PickAsync("Choose an older Philia Contacts JSON file", "JSON", "*.json");
 
-        if (file is not null && DataContext is HomeViewModel model &&
+        if (file is not null && DataContext is ContactsViewModel model &&
             await ConfirmAsync("Import older data", "Import contacts from this file? Another source may contain overlapping contacts. The original file will be retained and backed up."))
         {
             await model.ImportOlderAsync(file.Path.LocalPath);
@@ -37,7 +37,7 @@ public partial class HomeView : UserControl
 
     private async void Delete_Click(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is HomeViewModel model && model.SelectedContact is { } contact &&
+        if (DataContext is ContactsViewModel model && model.SelectedContact is { } contact &&
             await ConfirmAsync("Delete contact", $"Permanently delete {contact.DisplayName}?"))
         {
             await model.DeleteCommand.ExecuteAsync(null);
@@ -47,7 +47,7 @@ public partial class HomeView : UserControl
     private async void ImportVCard_Click(object? sender, RoutedEventArgs e)
     {
         IStorageFile? file = await PickAsync("Choose a vCard file", "vCard", "*.vcf");
-        if (file is not null && DataContext is HomeViewModel model)
+        if (file is not null && DataContext is ContactsViewModel model)
         {
             await using Stream stream = await file.OpenReadAsync();
             await model.PreviewVCardAsync(stream);
@@ -57,7 +57,7 @@ public partial class HomeView : UserControl
     private async void ChoosePhoto_Click(object? sender, RoutedEventArgs e)
     {
         IStorageFile? file = await PickAsync("Choose a JPEG or PNG photo", "Images", "*.png", "*.jpg", "*.jpeg");
-        if (file is not null && DataContext is HomeViewModel model)
+        if (file is not null && DataContext is ContactsViewModel model)
         {
             await using Stream stream = await file.OpenReadAsync();
             await model.SetPhotoAsync(stream);
@@ -67,7 +67,7 @@ public partial class HomeView : UserControl
     private async void ExportJson_Click(object? sender, RoutedEventArgs e)
     {
         IStorageFile? file = await SaveAsync("Export contacts as JSON", "PhiliaContacts-export.json", "JSON", "json");
-        if (file is not null && DataContext is HomeViewModel model)
+        if (file is not null && DataContext is ContactsViewModel model)
         {
             await using Stream stream = await file.OpenWriteAsync();
             stream.SetLength(0);
@@ -78,7 +78,7 @@ public partial class HomeView : UserControl
     private async void ExportVCard_Click(object? sender, RoutedEventArgs e)
     {
         IStorageFile? file = await SaveAsync("Export contacts as vCard", "PhiliaContacts.vcf", "vCard", "vcf");
-        if (file is not null && DataContext is HomeViewModel model)
+        if (file is not null && DataContext is ContactsViewModel model)
         {
             await using Stream stream = await file.OpenWriteAsync();
             stream.SetLength(0);
