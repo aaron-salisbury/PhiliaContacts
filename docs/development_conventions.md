@@ -583,6 +583,11 @@ Prefer `[.. sequence]` to `sequence.ToArray()` when the target type and
 behavior are equivalent. Preserve eager or deferred evaluation and concrete
 collection requirements when selecting an expression.
 
+### Empty Strings
+
+Use `string.Empty` instead of `""` in C# code when an empty string value is
+needed. Keep string literals where a compile-time constant is required.
+
 ### Control Flow Blocks
 
 Use braces for `if`, `else`, `for`, `foreach`, and `while` bodies, even
