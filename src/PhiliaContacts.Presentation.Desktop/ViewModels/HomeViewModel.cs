@@ -17,6 +17,7 @@ public partial class ImportCandidate : ObservableObject
     public Contact Contact { get; }
     public string Name => Contact.DisplayName;
     public string Hint { get; }
+
     [ObservableProperty] private bool _isSelected;
 
     public ImportCandidate(Contact contact, bool possibleDuplicate)
@@ -56,17 +57,29 @@ public partial class HomeViewModel : BaseViewModel
         _vCards = vCards;
     }
 
-    public async Task InitializeAsync()
+    public override async Task InitializeAsync()
     {
-        if (_loaded) return;
+        if (_loaded)
+        {
+            return;
+        }
+
         _loaded = true;
+
         await RefreshAsync();
+
         try
         {
             IReadOnlyList<string> sources = await _legacy.DiscoverAsync();
-            if (sources.Count > 1) Status += " Multiple legacy files were found; choose one under Import older data.";
+            if (sources.Count > 1)
+            {
+                Status += " Multiple legacy files were found; choose one under Import older data.";
+            }
         }
-        catch (Exception error) { Status = "Legacy data search failed: " + error.Message; }
+        catch (Exception error)
+        {
+            Status = "Legacy data search failed: " + error.Message;
+        }
     }
 
     partial void OnSelectedContactChanged(Contact? value)
@@ -83,9 +96,11 @@ public partial class HomeViewModel : BaseViewModel
         VisibleContacts.Clear();
         foreach (Contact contact in Contacts)
         {
-            if (query.Length == 0 || new[] { contact.GivenName, contact.FamilyName, contact.Nickname, contact.Organization,
+            if (query.Length == 0 || new[]{ contact.GivenName, contact.FamilyName, contact.Nickname, contact.Organization,
                 contact.PhoneticGivenName, contact.PhoneticFamilyName }.Any(value => value?.Contains(query, StringComparison.OrdinalIgnoreCase) == true))
+            {
                 VisibleContacts.Add(contact);
+            }
         }
     }
 
@@ -93,19 +108,31 @@ public partial class HomeViewModel : BaseViewModel
     private async Task RefreshAsync()
     {
         ContactId? selectedId = SelectedContact?.Id;
+
         try
         {
             IsBusy = true;
             IReadOnlyList<Contact> items = await _contacts.ListAsync();
             Contacts.Clear();
-            foreach (Contact contact in items) Contacts.Add(contact);
+
+            foreach (Contact contact in items)
+            {
+                Contacts.Add(contact);
+            }
+
             Filter();
             HasContacts = Contacts.Count > 0;
             SelectedContact = selectedId is null ? null : Contacts.FirstOrDefault(contact => contact.Id == selectedId);
             Status = Contacts.Count == 0 ? "No contacts yet. Add one or import older data." : $"{Contacts.Count} contacts";
         }
-        catch (Exception error) { Status = "Could not load contacts: " + error.Message; }
-        finally { IsBusy = false; }
+        catch (Exception error)
+        {
+            Status = "Could not load contacts: " + error.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
@@ -129,14 +156,24 @@ public partial class HomeViewModel : BaseViewModel
             SelectedContact = Contacts.First(item => item.Id == contact.Id);
             Status = "Contact saved.";
         }
-        catch (Exception error) { Status = "Could not save: " + error.Message; }
-        finally { IsBusy = false; }
+        catch (Exception error)
+        {
+            Status = "Could not save: " + error.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
     private async Task DeleteAsync()
     {
-        if (SelectedContact is null) { Status = "Select a saved contact to delete."; return; }
+        if (SelectedContact is null)
+        {
+            Status = "Select a saved contact to delete."; return;
+        }
+
         try
         {
             IsBusy = true;
@@ -145,17 +182,63 @@ public partial class HomeViewModel : BaseViewModel
             await RefreshAsync();
             Status = "Contact deleted.";
         }
-        catch (Exception error) { Status = "Could not delete: " + error.Message; }
-        finally { IsBusy = false; }
+        catch (Exception error)
+        {
+            Status = "Could not delete: " + error.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
-    [RelayCommand] private void AddPhone() => Editor.PhoneNumbers.Add(new EditableValue());
-    [RelayCommand] private void RemovePhone() { if (Editor.SelectedPhone is { } item) Editor.PhoneNumbers.Remove(item); }
-    [RelayCommand] private void AddEmail() => Editor.EmailAddresses.Add(new EditableValue());
-    [RelayCommand] private void RemoveEmail() { if (Editor.SelectedEmail is { } item) Editor.EmailAddresses.Remove(item); }
-    [RelayCommand] private void AddAddress() => Editor.Addresses.Add(new EditableAddress());
-    [RelayCommand] private void RemoveAddress() { if (Editor.SelectedAddress is { } item) Editor.Addresses.Remove(item); }
-    [RelayCommand] private void RemovePhoto() => Editor.SetPhoto(null);
+    [RelayCommand]
+    private void AddPhone()
+    {
+        Editor.PhoneNumbers.Add(new EditableValue());
+    }
+
+    [RelayCommand] private void RemovePhone()
+    {
+        if (Editor.SelectedPhone is { } item)
+        {
+            Editor.PhoneNumbers.Remove(item);
+        }
+    }
+
+    [RelayCommand]
+    private void AddEmail()
+    {
+        Editor.EmailAddresses.Add(new EditableValue());
+    }
+
+    [RelayCommand] private void RemoveEmail()
+    {
+        if (Editor.SelectedEmail is { } item)
+        {
+            Editor.EmailAddresses.Remove(item);
+        }
+    }
+
+    [RelayCommand]
+    private void AddAddress()
+    {
+        Editor.Addresses.Add(new EditableAddress());
+    }
+
+    [RelayCommand] private void RemoveAddress()
+    {
+        if (Editor.SelectedAddress is { } item)
+        {
+            Editor.Addresses.Remove(item);
+        }
+    }
+
+    [RelayCommand]
+    private void RemovePhoto()
+    {
+        Editor.SetPhoto(null);
+    }
 
     public async Task SetPhotoAsync(Stream stream)
     {
@@ -166,7 +249,10 @@ public partial class HomeViewModel : BaseViewModel
             Editor.SetPhoto(buffer.ToArray());
             Status = "Photo selected. Save the contact to keep it.";
         }
-        catch (Exception error) { Status = "Could not use photo: " + error.Message; }
+        catch (Exception error)
+        {
+            Status = "Could not use photo: " + error.Message;
+        }
     }
 
     public async Task ImportOlderAsync(string path)
@@ -179,14 +265,26 @@ public partial class HomeViewModel : BaseViewModel
             Status = $"Older data: {result.Outcome} ({result.ContactCount} contacts)." +
                 (result.BackupPath is null ? "" : $" Backup: {result.BackupPath}");
         }
-        catch (Exception error) { Status = "Import failed; the source was retained: " + error.Message; }
-        finally { IsBusy = false; }
+        catch (Exception error)
+        {
+            Status = "Import failed; the source was retained: " + error.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     public async Task ExportJsonAsync(string path)
     {
-        try { await _export.ExportAsync(path); Status = "JSON export saved."; }
-        catch (Exception error) { Status = "Export failed: " + error.Message; }
+        try
+        {
+            await _export.ExportAsync(path); Status = "JSON export saved.";
+        }
+        catch (Exception error)
+        {
+            Status = "Export failed: " + error.Message;
+        }
     }
 
     public async Task PreviewVCardAsync(Stream stream)
@@ -208,7 +306,11 @@ public partial class HomeViewModel : BaseViewModel
             PreviewTitle = $"Review {Candidates.Count} vCard contacts (possible duplicates are unchecked)";
             Status = HasPreview ? "Select the contacts to add, then confirm import." : "No vCards in the file.";
         }
-        catch (Exception error) { HasPreview = false; Status = "Could not read vCard: " + error.Message; }
+        catch (Exception error)
+        {
+            HasPreview = false;
+            Status = "Could not read vCard: " + error.Message;
+        }
     }
 
     [RelayCommand]
@@ -228,12 +330,23 @@ public partial class HomeViewModel : BaseViewModel
             await RefreshAsync();
             Status = $"Imported {count} vCard contacts.";
         }
-        catch (Exception error) { Status = "Import stopped: " + error.Message; }
-        finally { IsBusy = false; }
+        catch (Exception error)
+        {
+            Status = "Import stopped: " + error.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
-    private void CancelVCardImport() { Candidates.Clear(); HasPreview = false; Status = "Import cancelled."; }
+    private void CancelVCardImport()
+    {
+        Candidates.Clear();
+        HasPreview = false;
+        Status = "Import cancelled.";
+    }
 
     public async Task ExportVCardAsync(Stream stream)
     {
@@ -244,12 +357,22 @@ public partial class HomeViewModel : BaseViewModel
             await stream.WriteAsync(bytes);
             Status = "vCard export saved.";
         }
-        catch (Exception error) { Status = "vCard export failed: " + error.Message; }
+        catch (Exception error)
+        {
+            Status = "vCard export failed: " + error.Message;
+        }
     }
 
     public async Task ExportJsonAsync(Stream stream)
     {
-        try { await _export.ExportAsync(stream); Status = "JSON export saved."; }
-        catch (Exception error) { Status = "Export failed: " + error.Message; }
+        try
+        {
+            await _export.ExportAsync(stream);
+            Status = "JSON export saved.";
+        }
+        catch (Exception error)
+        {
+            Status = "Export failed: " + error.Message;
+        }
     }
 }

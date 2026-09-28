@@ -46,9 +46,10 @@ public partial class EditableAddress : ObservableObject
 
 public partial class ContactEditorViewModel : ObservableObject, IDisposable
 {
-    private ContactId _id;
-    private string[] _vCardProperties = [];
+    private readonly ContactId _id;
+    private readonly string[] _vCardProperties = [];
     private byte[]? _photo;
+    private bool _disposed;
 
     [ObservableProperty] private string? _givenName;
     [ObservableProperty] private string? _middleName;
@@ -80,7 +81,12 @@ public partial class ContactEditorViewModel : ObservableObject, IDisposable
     public ContactEditorViewModel(Contact? contact = null)
     {
         _id = contact?.Id ?? ContactId.New();
-        if (contact is null) return;
+
+        if (contact is null)
+        {
+            return;
+        }
+
         GivenName = contact.GivenName;
         MiddleName = contact.MiddleName;
         FamilyName = contact.FamilyName;
@@ -99,19 +105,40 @@ public partial class ContactEditorViewModel : ObservableObject, IDisposable
         LinkedInUser = contact.LinkedInUser;
         IsFavorite = contact.IsFavorite;
         _vCardProperties = [.. contact.VCardProperties];
-        foreach (ContactValue value in contact.PhoneNumbers) PhoneNumbers.Add(new(value));
-        foreach (ContactValue value in contact.EmailAddresses) EmailAddresses.Add(new(value));
-        foreach (ContactAddress address in contact.Addresses) Addresses.Add(new(address));
+
+        foreach (ContactValue value in contact.PhoneNumbers)
+        {
+            PhoneNumbers.Add(new(value));
+        }
+
+        foreach (ContactValue value in contact.EmailAddresses)
+        {
+            EmailAddresses.Add(new(value));
+        }
+
+        foreach (ContactAddress address in contact.Addresses)
+        {
+            Addresses.Add(new(address));
+        }
+
         SetPhoto(contact.Photo);
     }
 
     public void SetPhoto(byte[]? bytes)
     {
-        if (bytes?.Length > 8 * 1024 * 1024) throw new InvalidDataException("Photos must be 8 MiB or smaller.");
+        if (bytes?.Length > 8 * 1024 * 1024)
+        {
+            throw new InvalidDataException("Photos must be 8 MiB or smaller.");
+        }
+
         Bitmap? preview = null;
         if (bytes is not null)
         {
-            if (!IsJpeg(bytes) && !IsPng(bytes)) throw new InvalidDataException("Select a JPEG or PNG photo.");
+            if (!IsJpeg(bytes) && !IsPng(bytes))
+            {
+                throw new InvalidDataException("Select a JPEG or PNG photo.");
+            }
+
             try
             {
                 using MemoryStream stream = new(bytes);
@@ -122,27 +149,49 @@ public partial class ContactEditorViewModel : ObservableObject, IDisposable
                 // Keep the original bytes even if the platform cannot preview the image.
             }
         }
+
         Bitmap? previous = PhotoPreview;
         _photo = bytes is null ? null : [.. bytes];
         PhotoPreview = preview;
         PhotoDescription = bytes is null ? "No photo" : preview is null ? "Photo saved; preview unavailable" :
             $"{(IsPng(bytes) ? "PNG" : "JPEG")} photo ({bytes.Length / 1024} KiB)";
+
         previous?.Dispose();
     }
 
-    private static bool IsPng(byte[] data) => data.Length >= 8 && data.AsSpan(0, 8).SequenceEqual(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 });
-    private static bool IsJpeg(byte[] data) => data.Length >= 3 && data[0] == 0xff && data[1] == 0xd8 && data[2] == 0xff;
+    private static bool IsPng(byte[] data)
+    {
+        return data.Length >= 8 && data.AsSpan(0, 8).SequenceEqual(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 });
+    }
+
+    private static bool IsJpeg(byte[] data)
+    {
+        return data.Length >= 3 && data[0] == 0xff && data[1] == 0xd8 && data[2] == 0xff;
+    }
 
     public Contact ToContact()
     {
         return new Contact
         {
-            Id = _id, GivenName = GivenName, MiddleName = MiddleName, FamilyName = FamilyName,
-            PhoneticGivenName = PhoneticGivenName, PhoneticFamilyName = PhoneticFamilyName,
-            Nickname = Nickname, Prefix = Prefix, Suffix = Suffix, Birthday = Birthday,
-            Title = Title, Organization = Organization, Url = Url, Notes = Notes,
-            TwitterUser = TwitterUser, FacebookUser = FacebookUser, LinkedInUser = LinkedInUser,
-            IsFavorite = IsFavorite, Photo = _photo is null ? null : [.. _photo],
+            Id = _id,
+            GivenName = GivenName,
+            MiddleName = MiddleName,
+            FamilyName = FamilyName,
+            PhoneticGivenName = PhoneticGivenName,
+            PhoneticFamilyName = PhoneticFamilyName,
+            Nickname = Nickname,
+            Prefix = Prefix,
+            Suffix = Suffix,
+            Birthday = Birthday,
+            Title = Title,
+            Organization = Organization,
+            Url = Url,
+            Notes = Notes,
+            TwitterUser = TwitterUser,
+            FacebookUser = FacebookUser,
+            LinkedInUser = LinkedInUser,
+            IsFavorite = IsFavorite,
+            Photo = _photo is null ? null : [.. _photo],
             PhoneNumbers = [.. PhoneNumbers.Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => new ContactValue(x.Value.Trim(), x.Type.Trim()))],
             EmailAddresses = [.. EmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => new ContactValue(x.Value.Trim(), x.Type.Trim()))],
             Addresses = [.. Addresses.Select(x => new ContactAddress(x.Type.Trim(), x.Street, x.City, x.Region, x.PostalCode, x.Country))],
@@ -150,5 +199,24 @@ public partial class ContactEditorViewModel : ObservableObject, IDisposable
         };
     }
 
-    public void Dispose() => PhotoPreview?.Dispose();
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            PhotoPreview?.Dispose();
+        }
+
+        _disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 }

@@ -1,10 +1,16 @@
+using Avalonia;
+using Avalonia.Styling;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using PhiliaContacts.Presentation.Desktop.Base;
 using RunnethOverStudio.AppToolkit.Modules.ComponentModel;
+
 namespace PhiliaContacts.Presentation.Desktop.ViewModels;
 
 public partial class SettingsViewModel : BaseViewModel
 {
     [ObservableProperty] private string _themeDescription = "Follow system";
+
     public string AppDisplayName { get; }
 
     public string ApplicationInfo { get; }
@@ -36,11 +42,9 @@ public partial class SettingsViewModel : BaseViewModel
             "Dark" => ThemeVariant.Dark,
             _ => ThemeVariant.Default
         };
-        if (Application.Current is not null) Application.Current.RequestedThemeVariant = variant;
+
+        Application.Current?.RequestedThemeVariant = variant;
+
         ThemeDescription = variant == ThemeVariant.Default ? "Follow system" : choice;
     }
 }
-using Avalonia;
-using Avalonia.Styling;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;

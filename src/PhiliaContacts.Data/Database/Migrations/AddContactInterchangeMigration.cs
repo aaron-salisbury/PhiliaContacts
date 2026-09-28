@@ -21,6 +21,7 @@ internal sealed class AddContactInterchangeMigration : Migration
                 FOREIGN KEY(ContactId) REFERENCES Contact(Id) ON DELETE CASCADE
             );
             """;
+
         return connection.ExecuteAsync(new CommandDefinition(sql, transaction: transaction, cancellationToken: cancellationToken));
     }
 }

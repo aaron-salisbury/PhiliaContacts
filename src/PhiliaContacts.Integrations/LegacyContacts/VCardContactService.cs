@@ -13,7 +13,12 @@ internal sealed class VCardContactService : IVCardContactService
     public IReadOnlyList<Contact> Read(string vcf)
     {
         ArgumentNullException.ThrowIfNull(vcf);
-        if (Encoding.UTF8.GetByteCount(vcf) > 32 * 1024 * 1024) throw new InvalidDataException("vCard import exceeds 32 MiB.");
+
+        if (Encoding.UTF8.GetByteCount(vcf) > 32 * 1024 * 1024)
+        {
+            throw new InvalidDataException("vCard import exceeds 32 MiB.");
+        }
+
         List<Contact> result = [];
         List<string>? lines = null;
         foreach (string line in Unfold(vcf))
@@ -38,7 +43,12 @@ internal sealed class VCardContactService : IVCardContactService
                 throw new InvalidDataException("Content outside a vCard.");
             }
         }
-        if (lines is not null) throw new InvalidDataException("Incomplete vCard.");
+
+        if (lines is not null)
+        {
+            throw new InvalidDataException("Incomplete vCard.");
+        }
+
         return result;
     }
 
@@ -50,18 +60,29 @@ internal sealed class VCardContactService : IVCardContactService
         List<ContactValue> phones = [], emails = [];
         List<ContactAddress> addresses = [];
         List<string> extras = [];
+
         foreach (string line in lines)
         {
             int colon = line.IndexOf(':');
-            if (colon < 0) throw new InvalidDataException("Invalid vCard property.");
+
+            if (colon < 0)
+            {
+                throw new InvalidDataException("Invalid vCard property.");
+            }
+
             string head = line[..colon];
             string name = head.Split(';')[0].Split('.').Last().ToUpperInvariant();
             string raw = line[(colon + 1)..];
-            if (head.Contains("ENCODING=QUOTED-PRINTABLE", StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Quoted-printable vCard data is not supported.");
+
+            if (head.Contains("ENCODING=QUOTED-PRINTABLE", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidDataException("Quoted-printable vCard data is not supported.");
+            }
+
             switch (name)
             {
                 case "VERSION":
-                    if (raw is not ("3.0" or "4.0")) throw new InvalidDataException("Only vCard 3.0 and 4.0 are supported.");
+                    if (raw is not ("3.0" or "4.0")) { throw new InvalidDataException("Only vCard 3.0 and 4.0 are supported."); }
                     break;
                 case "N":
                     string[] parts = SplitStructured(raw);
@@ -83,7 +104,7 @@ internal sealed class VCardContactService : IVCardContactService
                     break;
                 case "PHOTO":
                     string encoded = raw.StartsWith("data:", StringComparison.OrdinalIgnoreCase) ? raw[(raw.IndexOf(',') + 1)..] : raw;
-                    if (encoded.Length > 12 * 1024 * 1024) throw new InvalidDataException("Photo too large.");
+                    if (encoded.Length > 12 * 1024 * 1024) { throw new InvalidDataException("Photo too large."); }
                     try { photo = Convert.FromBase64String(encoded); }
                     catch (FormatException error) { throw new InvalidDataException("Invalid vCard photo.", error); }
                     break;
@@ -93,26 +114,55 @@ internal sealed class VCardContactService : IVCardContactService
                 case "NOTE": notes = Unescape(raw); break;
                 case "URL": url = Unescape(raw); break;
                 default:
-                    if (name is not ("BEGIN" or "END") && IsSafeExtra(head)) extras.Add(line);
+                    if (name is not ("BEGIN" or "END") && IsSafeExtra(head)) { extras.Add(line); }
                     break;
             }
         }
+
         if (string.IsNullOrWhiteSpace(given) && string.IsNullOrWhiteSpace(family) && string.IsNullOrWhiteSpace(nickname))
+        {
             nickname = formattedName;
+        }
+
         if (string.IsNullOrWhiteSpace(given) && string.IsNullOrWhiteSpace(family) && string.IsNullOrWhiteSpace(nickname))
+        {
             throw new InvalidDataException("A vCard requires a name.");
-        if (photo?.Length > 8 * 1024 * 1024) throw new InvalidDataException("Photo exceeds 8 MiB.");
-        return new Contact { Id = ContactId.New(), GivenName = given, MiddleName = middle, FamilyName = family,
-            Prefix = prefix, Suffix = suffix, Nickname = nickname, PhoneticGivenName = phoneticGiven,
-            PhoneticFamilyName = phoneticFamily, Title = title, Organization = organization, Birthday = birthday,
-            Notes = notes, Url = url, Photo = photo, PhoneNumbers = phones, EmailAddresses = emails,
-            Addresses = addresses, VCardProperties = extras };
+        }
+
+        if (photo?.Length > 8 * 1024 * 1024)
+        {
+            throw new InvalidDataException("Photo exceeds 8 MiB.");
+        }
+
+        return new Contact
+        {
+            Id = ContactId.New(),
+            GivenName = given,
+            MiddleName = middle,
+            FamilyName = family,
+            Prefix = prefix,
+            Suffix = suffix,
+            Nickname = nickname,
+            PhoneticGivenName = phoneticGiven,
+            PhoneticFamilyName = phoneticFamily,
+            Title = title,
+            Organization = organization,
+            Birthday = birthday,
+            Notes = notes,
+            Url = url,
+            Photo = photo,
+            PhoneNumbers = phones,
+            EmailAddresses = emails,
+            Addresses = addresses,
+            VCardProperties = extras
+        };
     }
 
     public string Write(IReadOnlyList<Contact> contacts)
     {
         ArgumentNullException.ThrowIfNull(contacts);
         StringBuilder output = new();
+
         foreach (Contact contact in contacts)
         {
             Add(output, "BEGIN:VCARD"); Add(output, "VERSION:3.0");
@@ -121,27 +171,51 @@ internal sealed class VCardContactService : IVCardContactService
             Value(output, "NICKNAME", contact.Nickname);
             Value(output, "X-PHONETIC-FIRST-NAME", contact.PhoneticGivenName);
             Value(output, "X-PHONETIC-LAST-NAME", contact.PhoneticFamilyName);
-            foreach (ContactValue item in contact.PhoneNumbers) Value(output, $"TEL;TYPE={SafeType(item.Type)}", item.Value);
-            foreach (ContactValue item in contact.EmailAddresses) Value(output, $"EMAIL;TYPE={SafeType(item.Type)}", item.Value);
+
+            foreach (ContactValue item in contact.PhoneNumbers)
+            {
+                Value(output, $"TEL;TYPE={SafeType(item.Type)}", item.Value);
+            }
+
+            foreach (ContactValue item in contact.EmailAddresses)
+            {
+                Value(output, $"EMAIL;TYPE={SafeType(item.Type)}", item.Value);
+            }
+
             foreach (ContactAddress address in contact.Addresses)
+            {
                 Add(output, $"ADR;TYPE={SafeType(address.Type)}:;;{Escape(address.Street)};{Escape(address.City)};{Escape(address.Region)};{Escape(address.PostalCode)};{Escape(address.Country)}");
+            }
+
             Value(output, "BDAY", contact.Birthday); Value(output, "TITLE", contact.Title);
             Value(output, "ORG", contact.Organization); Value(output, "URL", contact.Url); Value(output, "NOTE", contact.Notes);
+
             if (contact.Photo is { Length: > 0 } photo)
             {
                 string format = photo.Length >= 3 && photo[0] == 0xff && photo[1] == 0xd8 ? "JPEG" : "PNG";
                 Add(output, $"PHOTO;ENCODING=b;TYPE={format}:{Convert.ToBase64String(photo)}");
             }
+
             foreach (string extra in contact.VCardProperties)
-                if (extra.IndexOfAny(['\r', '\n']) < 0 && extra.IndexOf(':') > 0 && IsSafeExtra(extra[..extra.IndexOf(':')])) Add(output, extra);
+            {
+                if (extra.IndexOfAny(['\r', '\n']) < 0 && extra.IndexOf(':') > 0 && IsSafeExtra(extra[..extra.IndexOf(':')]))
+                {
+                    Add(output, extra);
+                }
+            }
+
             Add(output, "END:VCARD");
         }
+
         return output.ToString();
     }
 
     private static void Value(StringBuilder output, string key, string? value)
     {
-        if (!string.IsNullOrEmpty(value)) Add(output, key + ":" + Escape(value));
+        if (!string.IsNullOrEmpty(value))
+        {
+            Add(output, key + ":" + Escape(value));
+        }
     }
 
     private static string SafeType(string type)
@@ -168,7 +242,11 @@ internal sealed class VCardContactService : IVCardContactService
 
     private static string Unescape(string? text)
     {
-        if (text is null) return "";
+        if (text is null)
+        {
+            return "";
+        }
+
         StringBuilder result = new();
         for (int i = 0; i < text.Length; i++)
         {
@@ -177,8 +255,12 @@ internal sealed class VCardContactService : IVCardContactService
                 char next = text[++i];
                 result.Append(next is 'n' or 'N' ? '\n' : next);
             }
-            else result.Append(text[i]);
+            else
+            {
+                result.Append(text[i]);
+            }
         }
+
         return result.ToString();
     }
 
@@ -186,13 +268,25 @@ internal sealed class VCardContactService : IVCardContactService
     {
         List<string> parts = [];
         StringBuilder part = new();
+
         for (int i = 0; i < text.Length; i++)
         {
-            if (text[i] == '\\' && i + 1 < text.Length) { part.Append(text[i++]); part.Append(text[i]); }
-            else if (text[i] == ';') { parts.Add(part.ToString()); part.Clear(); }
-            else part.Append(text[i]);
+            if (text[i] == '\\' && i + 1 < text.Length)
+            {
+                part.Append(text[i++]); part.Append(text[i]);
+            }
+            else if (text[i] == ';')
+            {
+                parts.Add(part.ToString()); part.Clear();
+            }
+            else
+            {
+                part.Append(text[i]);
+            }
         }
+
         parts.Add(part.ToString());
+
         return [.. parts];
     }
 
@@ -200,12 +294,27 @@ internal sealed class VCardContactService : IVCardContactService
     {
         string[] lines = text.Replace("\r\n", "\n").Replace('\r', '\n').Split('\n');
         string? previous = null;
+
         foreach (string line in lines)
         {
-            if (line.StartsWith(' ') || line.StartsWith('\t')) previous = (previous ?? "") + line[1..];
-            else { if (previous is not null) yield return previous; previous = line; }
+            if (line.StartsWith(' ') || line.StartsWith('\t'))
+            {
+                previous = (previous ?? "") + line[1..];
+            }
+            else
+            {
+                if (previous is not null)
+                {
+                    yield return previous;
+                }
+                previous = line;
+            }
         }
-        if (previous is not null) yield return previous;
+
+        if (previous is not null)
+        {
+            yield return previous;
+        }
     }
 
     private static void Add(StringBuilder output, string line)
