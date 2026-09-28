@@ -114,12 +114,12 @@ csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
+# IDisposable.Dispose should suppress finalization after successful cleanup.
+dotnet_diagnostic.CA1816.severity = warning
+
 # CommunityToolkit.Mvvm
 # Keep ObservableProperty on backing fields rather than requiring generated partial properties.
 dotnet_diagnostic.MVVMTK0042.severity = none
-
-# IDisposable.Dispose should suppress finalization after successful cleanup.
-dotnet_diagnostic.CA1816.severity = warning
 
 # XML documentation
 dotnet_diagnostic.CS1591.severity = suggestion
