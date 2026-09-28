@@ -73,7 +73,8 @@ csharp_style_expression_bodied_lambdas = when_on_single_line:suggestion
 csharp_style_expression_bodied_local_functions = false:suggestion
 
 # Braces
-csharp_prefer_braces = true:suggestion
+csharp_prefer_braces = true:warning
+dotnet_diagnostic.IDE0011.severity = warning
 csharp_new_line_before_open_brace = all
 
 # New lines
@@ -116,6 +117,9 @@ csharp_space_between_square_brackets = false
 # CommunityToolkit.Mvvm
 # Keep ObservableProperty on backing fields rather than requiring generated partial properties.
 dotnet_diagnostic.MVVMTK0042.severity = none
+
+# IDisposable.Dispose should suppress finalization after successful cleanup.
+dotnet_diagnostic.CA1816.severity = warning
 
 # XML documentation
 dotnet_diagnostic.CS1591.severity = suggestion

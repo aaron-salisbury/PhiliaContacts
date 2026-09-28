@@ -25,12 +25,18 @@ internal sealed class VCardContactService : IVCardContactService
         {
             if (line.Equals("BEGIN:VCARD", StringComparison.OrdinalIgnoreCase))
             {
-                if (lines is not null) throw new InvalidDataException("Nested vCard.");
+                if (lines is not null)
+                {
+                    throw new InvalidDataException("Nested vCard.");
+                }
                 lines = [];
             }
             else if (line.Equals("END:VCARD", StringComparison.OrdinalIgnoreCase))
             {
-                if (lines is null) throw new InvalidDataException("Unexpected vCard end.");
+                if (lines is null)
+                {
+                    throw new InvalidDataException("Unexpected vCard end.");
+                }
                 result.Add(Parse(lines));
                 lines = null;
             }
@@ -82,7 +88,10 @@ internal sealed class VCardContactService : IVCardContactService
             switch (name)
             {
                 case "VERSION":
-                    if (raw is not ("3.0" or "4.0")) { throw new InvalidDataException("Only vCard 3.0 and 4.0 are supported."); }
+                    if (raw is not ("3.0" or "4.0"))
+                    {
+                        throw new InvalidDataException("Only vCard 3.0 and 4.0 are supported.");
+                    }
                     break;
                 case "N":
                     string[] parts = SplitStructured(raw);
@@ -104,7 +113,10 @@ internal sealed class VCardContactService : IVCardContactService
                     break;
                 case "PHOTO":
                     string encoded = raw.StartsWith("data:", StringComparison.OrdinalIgnoreCase) ? raw[(raw.IndexOf(',') + 1)..] : raw;
-                    if (encoded.Length > 12 * 1024 * 1024) { throw new InvalidDataException("Photo too large."); }
+                    if (encoded.Length > 12 * 1024 * 1024)
+                    {
+                        throw new InvalidDataException("Photo too large.");
+                    }
                     try { photo = Convert.FromBase64String(encoded); }
                     catch (FormatException error) { throw new InvalidDataException("Invalid vCard photo.", error); }
                     break;
@@ -114,7 +126,10 @@ internal sealed class VCardContactService : IVCardContactService
                 case "NOTE": notes = Unescape(raw); break;
                 case "URL": url = Unescape(raw); break;
                 default:
-                    if (name is not ("BEGIN" or "END") && IsSafeExtra(head)) { extras.Add(line); }
+                    if (name is not ("BEGIN" or "END") && IsSafeExtra(head))
+                    {
+                        extras.Add(line);
+                    }
                     break;
             }
         }
