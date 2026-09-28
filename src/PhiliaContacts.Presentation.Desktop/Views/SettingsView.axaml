@@ -12,6 +12,16 @@
     <ScrollViewer>
         <StackPanel Spacing="18">
 
+            <StackPanel Spacing="6">
+                <TextBlock Text="Appearance" FontSize="18" FontWeight="Bold" />
+                <TextBlock Text="{Binding ThemeDescription}" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="System" Command="{Binding SetThemeCommand}" CommandParameter="System" />
+                    <Button Content="Light" Command="{Binding SetThemeCommand}" CommandParameter="Light" />
+                    <Button Content="Dark" Command="{Binding SetThemeCommand}" CommandParameter="Dark" />
+                </StackPanel>
+            </StackPanel>
+
             <StackPanel>
                 <TextBlock Text="About this Application" FontSize="18" FontWeight="Bold" Margin="0,0,0,6" />
                 <TextBlock Text="{Binding ApplicationInfo}" Margin="0,0,0,8" />

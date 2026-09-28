@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -63,4 +64,11 @@ public interface ILegacyContactFiles
 public interface IContactExportService
 {
     Task ExportAsync(string destinationPath, CancellationToken cancellationToken = default);
+    Task ExportAsync(Stream destination, CancellationToken cancellationToken = default);
+}
+
+public interface IVCardContactService
+{
+    IReadOnlyList<Contact> Read(string vcf);
+    string Write(IReadOnlyList<Contact> contacts);
 }

@@ -23,7 +23,7 @@ public static class DependencyInjection
         string databasePath = Path.Combine(applicationDataDirectory, "PhiliaContacts.db");
         services.AddSingleton<IPhiliaContactsDatabase>(_ => new PhiliaContactsDatabase(databasePath));
         services.AddSingleton<PhiliaContactsDatabaseInitializer>(provider => new PhiliaContactsDatabaseInitializer(
-            provider.GetRequiredService<IPhiliaContactsDatabase>(), [new CreateContactsMigration(), new TrackLegacyImportsMigration()]));
+            provider.GetRequiredService<IPhiliaContactsDatabase>(), [new CreateContactsMigration(), new TrackLegacyImportsMigration(), new AddContactInterchangeMigration()]));
         services.AddScoped<IContactStore, SqliteContactStore>();
         services.AddScoped<ILegacyContactImportStore, SqliteLegacyContactImportStore>();
 

@@ -1,15 +1,154 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
+             xmlns:contacts="clr-namespace:PhiliaContacts.Business.Modules.Contacts;assembly=PhiliaContacts.Business"
              x:Class="PhiliaContacts.Presentation.Desktop.Views.HomeView"
-						 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
              x:DataType="vm:HomeViewModel">
-
-		<Border>
-		<ScrollViewer>
-
-		</ScrollViewer>
-	</Border>
+    <Grid ColumnDefinitions="290,*" RowDefinitions="*,Auto" ColumnSpacing="16">
+        <Border Grid.Column="0" Background="{DynamicResource SystemListLowColor}" CornerRadius="8" Padding="10">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Spacing="8">
+                    <TextBox Watermark="Search contacts" Text="{Binding SearchText}" AutomationProperties.Name="Search contacts" />
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Button Content="New contact" Command="{Binding NewContactCommand}" />
+                        <Button Content="Refresh" Command="{Binding RefreshCommand}" />
+                    </StackPanel>
+                    <TextBlock Text="No contacts. Create one or import a file." IsVisible="{Binding !HasContacts}" TextWrapping="Wrap" />
+                </StackPanel>
+                <ListBox ItemsSource="{Binding VisibleContacts}" SelectedItem="{Binding SelectedContact}" Margin="0,10,0,0"
+                         AutomationProperties.Name="Contacts">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="contacts:Contact">
+                            <StackPanel Margin="2,5">
+                                <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding Organization}" FontSize="11" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="12" Margin="0,0,12,12">
+                <TextBlock Text="Contact details" FontSize="20" FontWeight="SemiBold" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Save contact" Command="{Binding SaveCommand}" />
+                    <Button Content="Delete selected" Click="Delete_Click" />
+                    <CheckBox Content="Favorite" IsChecked="{Binding Editor.IsFavorite}" VerticalAlignment="Center" />
+                </StackPanel>
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+                    <TextBox Grid.Row="0" Grid.Column="0" Watermark="Given name" Text="{Binding Editor.GivenName}" AutomationProperties.Name="Given name" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Watermark="Family name" Text="{Binding Editor.FamilyName}" AutomationProperties.Name="Family name" />
+                    <TextBox Grid.Row="1" Grid.Column="0" Watermark="Phonetic given name" Text="{Binding Editor.PhoneticGivenName}" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Watermark="Phonetic family name" Text="{Binding Editor.PhoneticFamilyName}" />
+                    <TextBox Grid.Row="2" Grid.Column="0" Watermark="Middle name" Text="{Binding Editor.MiddleName}" />
+                    <TextBox Grid.Row="2" Grid.Column="1" Watermark="Nickname" Text="{Binding Editor.Nickname}" />
+                    <TextBox Grid.Row="3" Grid.Column="0" Watermark="Prefix" Text="{Binding Editor.Prefix}" />
+                    <TextBox Grid.Row="3" Grid.Column="1" Watermark="Suffix" Text="{Binding Editor.Suffix}" />
+                    <TextBox Grid.Row="4" Grid.Column="0" Watermark="Organization" Text="{Binding Editor.Organization}" />
+                    <TextBox Grid.Row="4" Grid.Column="1" Watermark="Title" Text="{Binding Editor.Title}" />
+                </Grid>
+                <TextBox Watermark="Birthday (YYYY-MM-DD or original date/time)" Text="{Binding Editor.Birthday}" />
+                <TextBlock Text="Phone numbers" FontWeight="SemiBold" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Content="Add phone number" Command="{Binding AddPhoneCommand}" />
+                    <Button Content="Remove selected phone" Command="{Binding RemovePhoneCommand}" />
+                </StackPanel>
+                <ListBox ItemsSource="{Binding Editor.PhoneNumbers}" SelectedItem="{Binding Editor.SelectedPhone}" MaxHeight="175">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:EditableValue">
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="2">
+                                <TextBox Width="115" Watermark="Type (Home, Cell…)" Text="{Binding Type}" />
+                                <TextBox Width="290" Watermark="Phone number" Text="{Binding Value}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Text="Email addresses" FontWeight="SemiBold" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Content="Add email address" Command="{Binding AddEmailCommand}" />
+                    <Button Content="Remove selected email" Command="{Binding RemoveEmailCommand}" />
+                </StackPanel>
+                <ListBox ItemsSource="{Binding Editor.EmailAddresses}" SelectedItem="{Binding Editor.SelectedEmail}" MaxHeight="175">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:EditableValue">
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="2">
+                                <TextBox Width="115" Watermark="Type" Text="{Binding Type}" />
+                                <TextBox Width="290" Watermark="Email" Text="{Binding Value}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Text="Addresses" FontWeight="SemiBold" />
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Content="Add address" Command="{Binding AddAddressCommand}" />
+                    <Button Content="Remove selected address" Command="{Binding RemoveAddressCommand}" />
+                </StackPanel>
+                <ListBox ItemsSource="{Binding Editor.Addresses}" SelectedItem="{Binding Editor.SelectedAddress}" MaxHeight="260">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:EditableAddress">
+                            <StackPanel Spacing="4" Margin="2,5">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBox Width="100" Watermark="Type" Text="{Binding Type}" />
+                                    <TextBox Width="300" Watermark="Street" Text="{Binding Street}" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBox Width="120" Watermark="City" Text="{Binding City}" />
+                                    <TextBox Width="85" Watermark="State/region" Text="{Binding Region}" />
+                                    <TextBox Width="90" Watermark="Postal code" Text="{Binding PostalCode}" />
+                                    <TextBox Width="90" Watermark="Country" Text="{Binding Country}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Text="Photo" FontWeight="SemiBold" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Image Source="{Binding Editor.PhotoPreview}" Width="80" Height="80" Stretch="Uniform" />
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="{Binding Editor.PhotoDescription}" />
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Button Content="Choose JPEG/PNG" Click="ChoosePhoto_Click" />
+                            <Button Content="Remove photo" Command="{Binding RemovePhotoCommand}" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+                <TextBox Watermark="Website" Text="{Binding Editor.Url}" />
+                <TextBox Watermark="Notes" Text="{Binding Editor.Notes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="75" />
+                <Expander Header="Social profiles">
+                    <StackPanel Spacing="5">
+                        <TextBox Watermark="Twitter" Text="{Binding Editor.TwitterUser}" />
+                        <TextBox Watermark="Facebook" Text="{Binding Editor.FacebookUser}" />
+                        <TextBox Watermark="LinkedIn" Text="{Binding Editor.LinkedInUser}" />
+                    </StackPanel>
+                </Expander>
+                <TextBlock Text="Import and export" FontWeight="SemiBold" />
+                <TextBlock Text="Copy old JSON files before importing. Choose one source at a time; original files are retained." TextWrapping="Wrap" />
+                <WrapPanel Orientation="Horizontal">
+                    <Button Content="Import older data" Click="ImportOlder_Click" Margin="0,0,6,6" />
+                    <Button Content="Import vCard" Click="ImportVCard_Click" Margin="0,0,6,6" />
+                    <Button Content="Export JSON" Click="ExportJson_Click" Margin="0,0,6,6" />
+                    <Button Content="Export vCard" Click="ExportVCard_Click" Margin="0,0,6,6" />
+                </WrapPanel>
+                <StackPanel IsVisible="{Binding HasPreview}" Spacing="6">
+                    <TextBlock Text="{Binding PreviewTitle}" FontWeight="SemiBold" />
+                    <ItemsControl ItemsSource="{Binding Candidates}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ImportCandidate">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Name}" />
+                                    <TextBlock Text="{Binding Hint}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Content="Import selected" Command="{Binding ConfirmVCardImportCommand}" />
+                        <Button Content="Cancel" Command="{Binding CancelVCardImportCommand}" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Status}" TextWrapping="Wrap" Margin="6,8,6,0" />
+    </Grid>
 </UserControl>

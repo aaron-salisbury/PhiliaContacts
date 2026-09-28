@@ -22,6 +22,8 @@ public sealed record Contact
     public string? GivenName { get; init; }
     public string? MiddleName { get; init; }
     public string? FamilyName { get; init; }
+    public string? PhoneticGivenName { get; init; }
+    public string? PhoneticFamilyName { get; init; }
     public string? Nickname { get; init; }
     public string? Prefix { get; init; }
     public string? Suffix { get; init; }
@@ -38,6 +40,7 @@ public sealed record Contact
     public IReadOnlyList<ContactValue> EmailAddresses { get; init; } = [];
     public IReadOnlyList<ContactValue> PhoneNumbers { get; init; } = [];
     public IReadOnlyList<ContactAddress> Addresses { get; init; } = [];
+    public IReadOnlyList<string> VCardProperties { get; init; } = [];
 
     public string DisplayName => !string.IsNullOrWhiteSpace(Nickname)
         ? Nickname

@@ -45,4 +45,12 @@ internal sealed class ContactJsonExportService : IContactExportService
             }
         }
     }
+
+    public async Task ExportAsync(Stream destination, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(destination);
+        await JsonSerializer.SerializeAsync(destination, await _contacts.ListAsync(cancellationToken),
+            new JsonSerializerOptions { WriteIndented = true }, cancellationToken);
+        await destination.FlushAsync(cancellationToken);
+    }
 }

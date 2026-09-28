@@ -88,6 +88,8 @@ public sealed class ContactFoundationTests
                 FamilyName = "Test",
                 IsFavorite = true,
                 Birthday = "2000-01-01T13:03:02.7850172",
+                PhoneticGivenName = "Furst", PhoneticFamilyName = "Test",
+                VCardProperties = ["X-TEST:retained"],
                 Photo = [1, 2, 3],
                 PhoneNumbers = [new ContactValue("+1 555-0100", "Cell"), new ContactValue("555-0101", "Home")],
                 EmailAddresses = [new ContactValue("first@example.invalid", "Internet")],
@@ -102,6 +104,8 @@ public sealed class ContactFoundationTests
             Assert.AreEqual("Street", loaded.Addresses.Single().Street);
             CollectionAssert.AreEqual(new byte[] { 1, 2, 3 }, loaded.Photo!);
             Assert.AreEqual(first.Birthday, loaded.Birthday);
+            Assert.AreEqual("Furst", loaded.PhoneticGivenName);
+            CollectionAssert.AreEqual(new[] { "X-TEST:retained" }, loaded.VCardProperties.ToArray());
 
             await service.SaveAsync(first with { PhoneNumbers = [new ContactValue("555-0111", "Work")], Photo = null }, TestContext.CancellationToken);
             loaded = (await service.GetAsync(first.Id, TestContext.CancellationToken))!;

@@ -4,6 +4,7 @@ namespace PhiliaContacts.Presentation.Desktop.ViewModels;
 
 public partial class SettingsViewModel : BaseViewModel
 {
+    [ObservableProperty] private string _themeDescription = "Follow system";
     public string AppDisplayName { get; }
 
     public string ApplicationInfo { get; }
@@ -25,4 +26,21 @@ public partial class SettingsViewModel : BaseViewModel
         PrivacyURL = AppInfo.PrivacyURL;
         IssuesURL = AppInfo.IssuesURL;
     }
+
+    [RelayCommand]
+    private void SetTheme(string choice)
+    {
+        ThemeVariant variant = choice switch
+        {
+            "Light" => ThemeVariant.Light,
+            "Dark" => ThemeVariant.Dark,
+            _ => ThemeVariant.Default
+        };
+        if (Application.Current is not null) Application.Current.RequestedThemeVariant = variant;
+        ThemeDescription = variant == ThemeVariant.Default ? "Follow system" : choice;
+    }
 }
+using Avalonia;
+using Avalonia.Styling;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
