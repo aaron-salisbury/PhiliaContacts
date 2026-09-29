@@ -17,7 +17,7 @@ public partial class ContactDetailView : UserControl
 
     private async void ChoosePhoto_Click(object? sender, RoutedEventArgs e)
     {
-        IStorageFile? file = await this.GetUserSelectedFileAsync("Choose a JPEG or PNG photo", Environment.SpecialFolder.MyPictures, "Images", "*.png", "*.jpg", "*.jpeg");
+        IStorageFile? file = await this.GetUserSelectedFileAsync("Choose a JPEG or PNG photo", "Images", "*.png", "*.jpg", "*.jpeg");
         if (file is not null && DataContext is ContactDetailViewModel model)
         {
             await using Stream stream = await file.OpenReadAsync();

@@ -45,7 +45,7 @@ public partial class ContactsView : UserControl
 
     private async void ImportVCard_Click(object? sender, RoutedEventArgs e)
     {
-        IStorageFile? file = await this.GetUserSelectedFileAsync("Choose a vCard file", Environment.SpecialFolder.MyDocuments, "vCard", "*.vcf");
+        IStorageFile? file = await this.GetUserSelectedFileAsync("Choose a vCard file", "vCard", "*.vcf");
         if (file is not null && DataContext is ContactsViewModel model)
         {
             await using Stream stream = await file.OpenReadAsync();
