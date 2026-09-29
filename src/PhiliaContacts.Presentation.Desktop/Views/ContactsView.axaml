@@ -6,7 +6,7 @@
              x:Class="PhiliaContacts.Presentation.Desktop.Views.ContactsView"
              x:DataType="vm:ContactsViewModel">
 
-	<!-- TODO: https://docs.avaloniaui.net/docs/data-binding/master-detail -->
+	<!-- ref: https://docs.avaloniaui.net/docs/data-binding/master-detail -->
 
 	<Grid ColumnDefinitions="250,*">
 		<!-- Master: list of items -->
@@ -39,18 +39,6 @@
 								<CheckBox Content="Favorite" IsChecked="{Binding Detail.IsFavorite}" VerticalAlignment="Center" />
 							</StackPanel>
 
-							<TextBlock Text="Photo" FontWeight="SemiBold" />
-							<StackPanel Orientation="Horizontal" Spacing="8">
-								<Image Source="{Binding Detail.PhotoPreview}" Width="80" Height="80" Stretch="Uniform" />
-								<StackPanel Spacing="5">
-									<TextBlock Text="{Binding Detail.PhotoDescription}" />
-									<StackPanel Orientation="Horizontal" Spacing="6">
-										<Button Content="Choose JPEG/PNG" Click="ChoosePhoto_Click" />
-										<Button Content="Remove photo" Command="{Binding RemovePhotoCommand}" />
-									</StackPanel>
-								</StackPanel>
-							</StackPanel>
-							
 							<views:ContactDetailView />
 
 							<Separator />
