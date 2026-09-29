@@ -1,10 +1,12 @@
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using PhiliaContacts.Business.Modules.Contacts;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PhiliaContacts.Presentation.Desktop.ViewModels;
 
@@ -122,6 +124,78 @@ public partial class ContactDetailViewModel : ObservableObject, IDisposable
         }
 
         SetPhoto(contact.Photo);
+    }
+
+    [RelayCommand]
+    private void FlipFavorite()
+    {
+        IsFavorite = !IsFavorite;
+    }
+
+    [RelayCommand]
+    private void AddPhone()
+    {
+        PhoneNumbers.Add(new EditableValue());
+    }
+
+    [RelayCommand]
+    private void RemovePhone()
+    {
+        if (SelectedPhone is { } item)
+        {
+            PhoneNumbers.Remove(item);
+        }
+    }
+
+    [RelayCommand]
+    private void AddEmail()
+    {
+        EmailAddresses.Add(new EditableValue());
+    }
+
+    [RelayCommand]
+    private void RemoveEmail()
+    {
+        if (SelectedEmail is { } item)
+        {
+            EmailAddresses.Remove(item);
+        }
+    }
+
+    [RelayCommand]
+    private void AddAddress()
+    {
+        Addresses.Add(new EditableAddress());
+    }
+
+    [RelayCommand]
+    private void RemoveAddress()
+    {
+        if (SelectedAddress is { } item)
+        {
+            Addresses.Remove(item);
+        }
+    }
+
+    [RelayCommand]
+    private void RemovePhoto()
+    {
+        SetPhoto(null);
+    }
+
+    public async Task SetPhotoAsync(Stream stream)
+    {
+        try
+        {
+            using MemoryStream buffer = new();
+            await stream.CopyToAsync(buffer);
+            SetPhoto(buffer.ToArray());
+            //Status = "Photo selected. Save the contact to keep it.";
+        }
+        catch (Exception error)
+        {
+            //Status = "Could not use photo: " + error.Message;
+        }
     }
 
     public void SetPhoto(byte[]? bytes)

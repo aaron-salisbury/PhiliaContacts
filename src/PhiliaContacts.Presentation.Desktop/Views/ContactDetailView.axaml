@@ -1,9 +1,14 @@
 <UserControl xmlns="https://github.com/avaloniaui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
+			 xmlns:converters="clr-namespace:PhiliaContacts.Presentation.Desktop.Base.Converters"
 			 x:Class="PhiliaContacts.Presentation.Desktop.Views.ContactDetailView"
-			 x:DataType="vm:ContactsViewModel"
+			 x:DataType="vm:ContactDetailViewModel"
 			 xmlns:i="using:Material.Icons.Avalonia">
+
+	<UserControl.Resources>
+		<converters:BooleanToMaterialIconKindConverter x:Key="BooleanToMaterialIconKindConverter" />
+	</UserControl.Resources>
 
 	<UserControl.Styles>
 		<Style Selector="i|MaterialIcon.section-icon">
@@ -11,47 +16,87 @@
 			<Setter Property="Height" Value="24"/>
 			<Setter Property="Opacity" Value="0.5"/>
 		</Style>
+
+		<Style Selector="Button#AddPhotoButton">
+			<Setter Property="Opacity" Value="0"/>
+		</Style>
+		<Style Selector="Ellipse#AddPhotoButtonBackground">
+			<Setter Property="Opacity" Value="0"/>
+		</Style>
+		<Style Selector="Grid#PhotoGrid:pointerover Button#AddPhotoButton">
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+		<Style Selector="Grid#PhotoGrid:pointerover Ellipse#AddPhotoButtonBackground">
+			<Setter Property="Opacity" Value="0.8"/>
+		</Style>
 	</UserControl.Styles>
 	
 	<StackPanel Spacing="12">
 
-		<!-- Photo -->
-		<TextBlock Text="Photo" FontWeight="SemiBold" />
-		<StackPanel Orientation="Horizontal" Spacing="8">
-			<Image Source="{Binding Detail.PhotoPreview}" Width="80" Height="80" Stretch="Uniform" />
-			<StackPanel Spacing="5">
-				<TextBlock Text="{Binding Detail.PhotoDescription}" />
-				<StackPanel Orientation="Horizontal" Spacing="6">
-					<Button Content="Choose JPEG/PNG" Click="ChoosePhoto_Click" />
-					<Button Content="Remove photo" Command="{Binding RemovePhotoCommand}" />
-				</StackPanel>
-			</StackPanel>
+		<!-- Header -->
+		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+			
+			<!-- Photo -->
+			<Grid Name="PhotoGrid">
+				<Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" Width="80" Height="80">
+					<Ellipse.Fill>
+						<ImageBrush Source="{Binding PhotoPreview}" Stretch="UniformToFill" />
+					</Ellipse.Fill>
+				</Ellipse>
+
+				<Grid Name="AddPhotoOverlay">
+					<Ellipse
+						Name="AddPhotoButtonBackground"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Width="83"
+						Height="83"
+						Fill="{DynamicResource SystemRegionColor}" />
+
+					<Button
+						Name="AddPhotoButton"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Width="80"
+						Height="80"
+						CornerRadius="35"
+						Foreground="White"
+						Click="ChoosePhoto_Click">
+						<i:MaterialIcon Kind="CameraOutline" Width="24" Height="24" />
+					</Button>
+				</Grid>
+			</Grid>
+
+			<!-- Favorite -->
+			<Button Name="FavoriteButton" Command="{Binding FlipFavoriteCommand}" Classes="noBackground">
+				<i:MaterialIcon Kind="{Binding IsFavorite, Converter={StaticResource BooleanToMaterialIconKindConverter}, ConverterParameter=Star|StarOutline}" Width="30" Height="30" />
+			</Button>
 		</StackPanel>
-		
+
 		<!-- Name -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="AccountOutline" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Given name" Text="{Binding Detail.GivenName}" AutomationProperties.Name="Given name" />
-			<TextBox Grid.Row="0" Grid.Column="2" Watermark="Family name" Text="{Binding Detail.FamilyName}" AutomationProperties.Name="Family name" />
-			<TextBox Grid.Row="1" Grid.Column="1" Watermark="Phonetic given name" Text="{Binding Detail.PhoneticGivenName}" />
-			<TextBox Grid.Row="1" Grid.Column="2" Watermark="Phonetic family name" Text="{Binding Detail.PhoneticFamilyName}" />
-			<TextBox Grid.Row="2" Grid.Column="1" Watermark="Middle name" Text="{Binding Detail.MiddleName}" />
-			<TextBox Grid.Row="2" Grid.Column="2" Watermark="Nickname" Text="{Binding Detail.Nickname}" />
-			<TextBox Grid.Row="3" Grid.Column="1" Watermark="Prefix" Text="{Binding Detail.Prefix}" />
-			<TextBox Grid.Row="3" Grid.Column="2" Watermark="Suffix" Text="{Binding Detail.Suffix}" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Given name" Text="{Binding GivenName}" AutomationProperties.Name="Given name" />
+			<TextBox Grid.Row="0" Grid.Column="2" Watermark="Family name" Text="{Binding FamilyName}" AutomationProperties.Name="Family name" />
+			<TextBox Grid.Row="1" Grid.Column="1" Watermark="Phonetic given name" Text="{Binding PhoneticGivenName}" />
+			<TextBox Grid.Row="1" Grid.Column="2" Watermark="Phonetic family name" Text="{Binding PhoneticFamilyName}" />
+			<TextBox Grid.Row="2" Grid.Column="1" Watermark="Middle name" Text="{Binding MiddleName}" />
+			<TextBox Grid.Row="2" Grid.Column="2" Watermark="Nickname" Text="{Binding Nickname}" />
+			<TextBox Grid.Row="3" Grid.Column="1" Watermark="Prefix" Text="{Binding Prefix}" />
+			<TextBox Grid.Row="3" Grid.Column="2" Watermark="Suffix" Text="{Binding Suffix}" />
 		</Grid>
 
 		<!-- Work -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="OfficeBuildingOutline" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Organization" Text="{Binding Detail.Organization}" />
-			<TextBox Grid.Row="0" Grid.Column="2" Watermark="Title" Text="{Binding Detail.Title}" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Organization" Text="{Binding Organization}" />
+			<TextBox Grid.Row="0" Grid.Column="2" Watermark="Title" Text="{Binding Title}" />
 		</Grid>
 
 		<!-- Birthday -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="CakeVariantOutline" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Birthday (YYYY-MM-DD or original date/time)" Text="{Binding Detail.Birthday}" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Birthday (YYYY-MM-DD or original date/time)" Text="{Binding Birthday}" />
 		</Grid>
 
 		<!-- Phone Numbers -->
@@ -62,7 +107,7 @@
 				<Button Content="Add phone number" Command="{Binding AddPhoneCommand}" />
 				<Button Content="Remove selected phone" Command="{Binding RemovePhoneCommand}" />
 			</StackPanel>
-			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Detail.PhoneNumbers}" SelectedItem="{Binding Detail.SelectedPhone}" MaxHeight="175">
+			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding PhoneNumbers}" SelectedItem="{Binding SelectedPhone}" MaxHeight="175">
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="vm:EditableValue">
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="2">
@@ -82,7 +127,7 @@
 				<Button Content="Add email address" Command="{Binding AddEmailCommand}" />
 				<Button Content="Remove selected email" Command="{Binding RemoveEmailCommand}" />
 			</StackPanel>
-			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Detail.EmailAddresses}" SelectedItem="{Binding Detail.SelectedEmail}" MaxHeight="175">
+			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding EmailAddresses}" SelectedItem="{Binding SelectedEmail}" MaxHeight="175">
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="vm:EditableValue">
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="2">
@@ -102,7 +147,7 @@
 				<Button Content="Add address" Command="{Binding AddAddressCommand}" />
 				<Button Content="Remove selected address" Command="{Binding RemoveAddressCommand}" />
 			</StackPanel>
-			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Detail.Addresses}" SelectedItem="{Binding Detail.SelectedAddress}" MaxHeight="260">
+			<ListBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Addresses}" SelectedItem="{Binding SelectedAddress}" MaxHeight="260">
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="vm:EditableAddress">
 						<StackPanel Spacing="4" Margin="2,5">
@@ -125,13 +170,13 @@
 		<!-- URL -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="Web" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Website" Text="{Binding Detail.Url}" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Website" Text="{Binding Url}" />
 		</Grid>
 
 		<!-- Notes -->
 		<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="NoteMultipleOutline" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Notes" Text="{Binding Detail.Notes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="75" />
+			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Notes" Text="{Binding Notes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="75" />
 		</Grid>
 
 		<!-- Socials -->
@@ -139,9 +184,9 @@
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Classes="section-icon" />
 			<Expander Grid.Row="0" Grid.Column="1" Header="Social profiles">
 				<StackPanel Spacing="5">
-					<TextBox Watermark="X" Text="{Binding Detail.TwitterUser}" />
-					<TextBox Watermark="Facebook" Text="{Binding Detail.FacebookUser}" />
-					<TextBox Watermark="LinkedIn" Text="{Binding Detail.LinkedInUser}" />
+					<TextBox Watermark="X" Text="{Binding TwitterUser}" />
+					<TextBox Watermark="Facebook" Text="{Binding FacebookUser}" />
+					<TextBox Watermark="LinkedIn" Text="{Binding LinkedInUser}" />
 				</StackPanel>
 			</Expander>
 		</Grid>

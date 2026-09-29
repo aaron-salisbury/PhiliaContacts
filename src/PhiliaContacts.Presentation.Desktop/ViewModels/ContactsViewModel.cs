@@ -192,69 +192,6 @@ public partial class ContactsViewModel : BaseViewModel
         }
     }
 
-    [RelayCommand]
-    private void AddPhone()
-    {
-        Detail.PhoneNumbers.Add(new EditableValue());
-    }
-
-    [RelayCommand] private void RemovePhone()
-    {
-        if (Detail.SelectedPhone is { } item)
-        {
-            Detail.PhoneNumbers.Remove(item);
-        }
-    }
-
-    [RelayCommand]
-    private void AddEmail()
-    {
-        Detail.EmailAddresses.Add(new EditableValue());
-    }
-
-    [RelayCommand] private void RemoveEmail()
-    {
-        if (Detail.SelectedEmail is { } item)
-        {
-            Detail.EmailAddresses.Remove(item);
-        }
-    }
-
-    [RelayCommand]
-    private void AddAddress()
-    {
-        Detail.Addresses.Add(new EditableAddress());
-    }
-
-    [RelayCommand] private void RemoveAddress()
-    {
-        if (Detail.SelectedAddress is { } item)
-        {
-            Detail.Addresses.Remove(item);
-        }
-    }
-
-    [RelayCommand]
-    private void RemovePhoto()
-    {
-        Detail.SetPhoto(null);
-    }
-
-    public async Task SetPhotoAsync(Stream stream)
-    {
-        try
-        {
-            using MemoryStream buffer = new();
-            await stream.CopyToAsync(buffer);
-            Detail.SetPhoto(buffer.ToArray());
-            Status = "Photo selected. Save the contact to keep it.";
-        }
-        catch (Exception error)
-        {
-            Status = "Could not use photo: " + error.Message;
-        }
-    }
-
     public async Task ImportOlderAsync(string path)
     {
         try
