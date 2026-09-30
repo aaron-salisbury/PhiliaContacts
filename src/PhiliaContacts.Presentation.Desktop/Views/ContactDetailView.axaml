@@ -30,12 +30,11 @@
 			<Setter Property="Opacity" Value="0.8"/>
 		</Style>
 	</UserControl.Styles>
-	
+
 	<StackPanel Spacing="12">
 
 		<!-- Header -->
-		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-			
+		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,0,0,12">
 			<!-- Photo -->
 			<Grid Name="PhotoGrid">
 				<Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" Width="80" Height="80">
@@ -43,7 +42,6 @@
 						<ImageBrush Source="{Binding PhotoPreview}" Stretch="UniformToFill" />
 					</Ellipse.Fill>
 				</Ellipse>
-
 				<Grid Name="AddPhotoOverlay">
 					<Ellipse
 						Name="AddPhotoButtonBackground"
@@ -52,7 +50,6 @@
 						Width="83"
 						Height="83"
 						Fill="{DynamicResource SystemRegionColor}" />
-
 					<Button
 						Name="AddPhotoButton"
 						HorizontalAlignment="Center"
@@ -66,7 +63,11 @@
 					</Button>
 				</Grid>
 			</Grid>
-
+			<!-- Display Name -->
+			<StackPanel Orientation="Horizontal" Spacing="8" Margin="24,0,12,0">
+				<TextBlock Text="{Binding GivenName}" VerticalAlignment="Center" MaxLines="1" TextTrimming="CharacterEllipsis" FontSize="30" MaxWidth="300" />
+				<TextBlock Text="{Binding FamilyName}" VerticalAlignment="Center" MaxLines="1" TextTrimming="CharacterEllipsis" FontSize="30" MaxWidth="300" />
+			</StackPanel>
 			<!-- Favorite -->
 			<Button Name="FavoriteButton" Command="{Binding FlipFavoriteCommand}" Classes="noBackground">
 				<i:MaterialIcon Kind="{Binding IsFavorite, Converter={StaticResource BooleanToMaterialIconKindConverter}, ConverterParameter=Star|StarOutline}" Width="30" Height="30" />
@@ -192,5 +193,4 @@
 		</Grid>
 
 	</StackPanel>
-
 </UserControl>

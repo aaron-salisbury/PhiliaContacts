@@ -3,7 +3,6 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using PhiliaContacts.Presentation.Desktop.Base.Extensions;
 using PhiliaContacts.Presentation.Desktop.ViewModels;
-using System;
 using System.IO;
 
 namespace PhiliaContacts.Presentation.Desktop.Views;
