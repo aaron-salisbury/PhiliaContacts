@@ -9,8 +9,7 @@
         xmlns:views="clr-namespace:PhiliaContacts.Presentation.Desktop.Views"
         Icon="/Base/Assets/icon.ico"
         Title="Philia Contacts"
-        WindowStartupLocation="CenterScreen"
-		x:Name="Win">
+        WindowStartupLocation="CenterScreen">
 
 	<views:MainView Grid.Row="1" />
 
