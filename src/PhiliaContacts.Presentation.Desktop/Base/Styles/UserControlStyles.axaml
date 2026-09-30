@@ -6,22 +6,42 @@
         </Border>
     </Design.PreviewWith>
 
-    <!-- Add Styles Here -->
-
-	<Style Selector="HyperlinkButton.inlineHyperlink">
-		<Setter Property="Template">
-			<ControlTemplate>
-				<TextBlock Text="{TemplateBinding Content}" Foreground="{DynamicResource HyperlinkButtonForeground}" TextDecorations="Underline">
-					<TextBlock.Styles>
-						<Style Selector="TextBlock:pointerover">
-							<Setter Property="Foreground" Value="{StaticResource SystemAccentColorLight1}" />
-						</Style>
-					</TextBlock.Styles>
-				</TextBlock>
-			</ControlTemplate>
-		</Setter>
+    <!-- Update all HyperlinkButtons; no background, no inner padding, on-hover highlight. -->
+	<Style Selector="HyperlinkButton">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Padding" Value="0"/>
+	</Style>
+	<Style Selector="HyperlinkButton:pointerover">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="Foreground" Value="{StaticResource SystemAccentColorLight1}" />
+	</Style>
+	<Style Selector="HyperlinkButton:pressed">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+	</Style>
+	<Style Selector="HyperlinkButton:focus">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+	</Style>
+	<Style Selector="HyperlinkButton /template/ ContentPresenter#PART_ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="BorderThickness" Value="0"/>
+	</Style>
+	<Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="Foreground" Value="{StaticResource SystemAccentColorLight1}" />
+	</Style>
+	<Style Selector="HyperlinkButton:pressed /template/ ContentPresenter#PART_ContentPresenter">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
 	</Style>
 
+	<!-- Remove background from Buttons with noBackground class. -->
 	<Style Selector="Button.noBackground">
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="BorderBrush" Value="Transparent"/>

@@ -9,7 +9,9 @@ namespace PhiliaContacts.Presentation.Desktop.ViewModels;
 
 public partial class SettingsViewModel : BaseViewModel
 {
-    [ObservableProperty] private string _themeDescription = "Follow system";
+    [ObservableProperty] private bool _themeIsSystem;
+    [ObservableProperty] private bool _themeIsLight;
+    [ObservableProperty] private bool _themeIsDark;
 
     public string AppDisplayName { get; }
 
@@ -36,15 +38,32 @@ public partial class SettingsViewModel : BaseViewModel
     [RelayCommand]
     private void SetTheme(string choice)
     {
-        ThemeVariant variant = choice switch
+        //TODO: Currently the user's selection does not persist across app restarts.
+
+        ThemeVariant variant;
+
+        switch (choice.ToLower())
         {
-            "Light" => ThemeVariant.Light,
-            "Dark" => ThemeVariant.Dark,
-            _ => ThemeVariant.Default
-        };
+            case "light":
+                ThemeIsSystem = false;
+                ThemeIsLight = true;
+                ThemeIsDark = false;
+                variant = ThemeVariant.Light;
+                break;
+            case "dark":
+                ThemeIsSystem = false;
+                ThemeIsLight = false;
+                ThemeIsDark = true;
+                variant = ThemeVariant.Dark;
+                break;
+            default:
+                ThemeIsSystem = true;
+                ThemeIsLight = false;
+                ThemeIsDark = false;
+                variant = ThemeVariant.Default;
+                break;
+        }
 
         Application.Current?.RequestedThemeVariant = variant;
-
-        ThemeDescription = variant == ThemeVariant.Default ? "Follow system" : choice;
     }
 }
