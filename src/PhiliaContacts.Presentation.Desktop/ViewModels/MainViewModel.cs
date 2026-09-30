@@ -26,9 +26,9 @@ public partial class MainViewModel : BaseViewModel
 
     public ObservableCollection<MenuPaneItemTemplate> PaneItems { get; }
 
-    public MainViewModel(HomeViewModel homeViewModel, SettingsViewModel settingsViewModel)
+    public MainViewModel(ContactsViewModel contactsViewModel, SettingsViewModel settingsViewModel)
     {
-        ArgumentNullException.ThrowIfNull(homeViewModel);
+        ArgumentNullException.ThrowIfNull(contactsViewModel);
 
         _settingsViewModel = settingsViewModel ?? throw new ArgumentNullException(nameof(settingsViewModel));
 
@@ -36,7 +36,7 @@ public partial class MainViewModel : BaseViewModel
         [
             // Icon key ref: https://pictogrammers.com/library/mdi/
 
-            new MenuPaneItemTemplate(homeViewModel, "CardAccountMail", "Contacts")
+            new MenuPaneItemTemplate(contactsViewModel, "CardAccountMail", "Contacts")
         ];
 
         IsPaneOpen = false;

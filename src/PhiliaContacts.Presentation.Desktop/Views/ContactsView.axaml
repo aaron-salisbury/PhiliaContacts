@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="PhiliaContacts.Presentation.Desktop.Views.ContactsView"
+             xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
+             x:DataType="vm:ContactsViewModel"
+			 xmlns:views="clr-namespace:PhiliaContacts.Presentation.Desktop.Views"
+			 xmlns:converters="clr-namespace:PhiliaContacts.Presentation.Desktop.Base.Converters"
+			 xmlns:i="using:Material.Icons.Avalonia"
+			 xmlns:contacts="clr-namespace:PhiliaContacts.Business.Modules.Contacts;assembly=PhiliaContacts.Business">
+
+	<!-- Offset default padding so master section aligns with header & nav menu bars. Reapply padding to detail section. -->
+	<UserControl.Margin>-20</UserControl.Margin>
+
+	<UserControl.Resources>
+		<converters:BytesToBitmapConverter x:Key="BytesToBitmapConverter" />
+		<converters:BooleanToMaterialIconKindConverter x:Key="BooleanToMaterialIconKindConverter" />
+	</UserControl.Resources>
+	
+	<Grid ColumnDefinitions="250,*">
+		
+		<!-- Master -->
+		<ContentControl Grid.Column="0">
+			<ListBox CornerRadius="12,0,0,0" ItemsSource="{Binding VisibleContacts}" SelectedItem="{Binding SelectedContact}">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="contacts:Contact">
+						<!-- Contact Preview -->
+						<Grid ColumnDefinitions="50,5,150,*,20">
+							<Ellipse Grid.Column="0" VerticalAlignment="Center" Width="50" Height="50">
+								<Ellipse.Fill>
+									<!-- TODO: Replace Photo conversion with IContactPhotoCache keyed by ContactId. Bitmaps created once per contact and disposed. -->
+									<ImageBrush Source="{Binding Photo, Converter={StaticResource BytesToBitmapConverter}}" Stretch="UniformToFill" />
+								</Ellipse.Fill>
+							</Ellipse>
+							<StackPanel Grid.Column="2" VerticalAlignment="Center">
+								<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+								<TextBlock Text="{Binding Organization}" TextTrimming="CharacterEllipsis" FontSize="11" />
+							</StackPanel>
+							<i:MaterialIcon Grid.Column="4" Kind="{Binding IsFavorite, Converter={StaticResource BooleanToMaterialIconKindConverter}, ConverterParameter=Star|StarOutline}"
+											Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+						</Grid>
+
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</ContentControl>
+
+		<!-- Detail -->
+		<ContentControl Grid.Column="1" Content="{Binding}" Padding="20">
+			<ContentControl.DataTemplates>
+				<DataTemplate DataType="vm:ContactsViewModel">
+					<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+						<StackPanel Spacing="12">
+							<TextBlock Text="Contact details" FontSize="20" FontWeight="SemiBold" />
+							<StackPanel Orientation="Horizontal" Spacing="8">
+								<Button Content="Save contact" Command="{Binding SaveCommand}" />
+								<Button Content="Delete selected" Click="Delete_Click" />
+							</StackPanel>
+
+							<views:ContactDetailView DataContext="{Binding Detail}" />
+
+							<Separator />
+
+							<TextBlock Text="Import and export" FontWeight="SemiBold" />
+							<TextBlock Text="Copy old JSON files before importing. Choose one source at a time; original files are retained." TextWrapping="Wrap" />
+							<WrapPanel Orientation="Horizontal">
+								<Button Content="Import older data" Click="ImportOlder_Click" Margin="0,0,6,6" />
+								<Button Content="Import vCard" Click="ImportVCard_Click" Margin="0,0,6,6" />
+								<Button Content="Export JSON" Click="ExportJson_Click" Margin="0,0,6,6" />
+								<Button Content="Export vCard" Click="ExportVCard_Click" Margin="0,0,6,6" />
+							</WrapPanel>
+
+							<StackPanel IsVisible="{Binding HasPreview}" Spacing="6">
+								<TextBlock Text="{Binding PreviewTitle}" FontWeight="SemiBold" />
+								<ItemsControl ItemsSource="{Binding Candidates}">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate x:DataType="vm:ImportCandidate">
+											<StackPanel Orientation="Horizontal" Spacing="10">
+												<CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Name}" />
+												<TextBlock Text="{Binding Hint}" />
+											</StackPanel>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<Button Content="Import selected" Command="{Binding ConfirmVCardImportCommand}" />
+									<Button Content="Cancel" Command="{Binding CancelVCardImportCommand}" />
+								</StackPanel>
+							</StackPanel>
+
+						</StackPanel>
+					</ScrollViewer>
+				</DataTemplate>
+			</ContentControl.DataTemplates>
+		</ContentControl>
+
+	</Grid>
+</UserControl>

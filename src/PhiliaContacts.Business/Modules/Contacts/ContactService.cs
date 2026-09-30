@@ -71,6 +71,11 @@ internal static class ContactValidation
             throw new ArgumentException("Contact collections must contain valid entries.", nameof(contact));
         }
 
+        if (contact.VCardProperties is null || contact.VCardProperties.Any(value => string.IsNullOrWhiteSpace(value) || value.Contains('\r') || value.Contains('\n')))
+        {
+            throw new ArgumentException("vCard extension properties must be single logical lines.", nameof(contact));
+        }
+
         if (contact.Photo?.Length > MAX_PHOTO_BYTES)
         {
             throw new ArgumentException("Contact photo exceeds the 8 MiB limit.", nameof(contact));
