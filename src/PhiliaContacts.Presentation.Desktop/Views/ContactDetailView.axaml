@@ -6,11 +6,13 @@
 			 x:Class="PhiliaContacts.Presentation.Desktop.Views.ContactDetailView"
 			 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
 			 x:DataType="vm:ContactDetailViewModel"
+			 xmlns:converters="clr-namespace:PhiliaContacts.Presentation.Desktop.Base.Converters"
 			 xmlns:i="using:Material.Icons.Avalonia"
-			 xmlns:converters="clr-namespace:PhiliaContacts.Presentation.Desktop.Base.Converters">
+			 xmlns:imaging="clr-namespace:Avalonia.Media.Imaging;assembly=Avalonia.Base">
 
 	<UserControl.Resources>
 		<converters:BooleanToMaterialIconKindConverter x:Key="BooleanToMaterialIconKindConverter" />
+		<imaging:Bitmap x:Key="ContactPlaceholder">avares://PhiliaContacts.Presentation.Desktop/Base/Assets/contact-placeholder.png</imaging:Bitmap>
 	</UserControl.Resources>
 
 	<UserControl.Styles>
@@ -42,7 +44,8 @@
 			<Grid Name="PhotoGrid">
 				<Ellipse HorizontalAlignment="Center" VerticalAlignment="Center" Width="80" Height="80">
 					<Ellipse.Fill>
-						<ImageBrush Source="{Binding PhotoPreview}" Stretch="UniformToFill" />
+						<!-- TODO: Replace PhotoPreview with IContactPhotoCache keyed by ContactId. Bitmaps created once per contact and disposed. -->
+						<ImageBrush Source="{Binding PhotoPreview, TargetNullValue={StaticResource ContactPlaceholder}}" Stretch="UniformToFill" />
 					</Ellipse.Fill>
 				</Ellipse>
 				<Grid Name="AddPhotoOverlay">

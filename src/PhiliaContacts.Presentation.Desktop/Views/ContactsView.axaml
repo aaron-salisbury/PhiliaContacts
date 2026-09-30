@@ -7,11 +7,18 @@
              xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
              x:DataType="vm:ContactsViewModel"
 			 xmlns:views="clr-namespace:PhiliaContacts.Presentation.Desktop.Views"
-             xmlns:contacts="clr-namespace:PhiliaContacts.Business.Modules.Contacts;assembly=PhiliaContacts.Business">
+			 xmlns:converters="clr-namespace:PhiliaContacts.Presentation.Desktop.Base.Converters"
+			 xmlns:i="using:Material.Icons.Avalonia"
+			 xmlns:contacts="clr-namespace:PhiliaContacts.Business.Modules.Contacts;assembly=PhiliaContacts.Business">
 
 	<!-- Offset default padding so master section aligns with header & nav menu bars. Reapply padding to detail section. -->
 	<UserControl.Margin>-20</UserControl.Margin>
 
+	<UserControl.Resources>
+		<converters:BytesToBitmapConverter x:Key="BytesToBitmapConverter" />
+		<converters:BooleanToMaterialIconKindConverter x:Key="BooleanToMaterialIconKindConverter" />
+	</UserControl.Resources>
+	
 	<Grid ColumnDefinitions="250,*">
 		
 		<!-- Master -->
@@ -19,10 +26,22 @@
 			<ListBox CornerRadius="12,0,0,0" ItemsSource="{Binding VisibleContacts}" SelectedItem="{Binding SelectedContact}">
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="contacts:Contact">
-						<StackPanel Margin="2,5">
-							<TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" />
-							<TextBlock Text="{Binding Organization}" FontSize="11" />
-						</StackPanel>
+						<!-- Contact Preview -->
+						<Grid ColumnDefinitions="50,5,150,*,20">
+							<Ellipse Grid.Column="0" VerticalAlignment="Center" Width="50" Height="50">
+								<Ellipse.Fill>
+									<!-- TODO: Replace Photo conversion with IContactPhotoCache keyed by ContactId. Bitmaps created once per contact and disposed. -->
+									<ImageBrush Source="{Binding Photo, Converter={StaticResource BytesToBitmapConverter}}" Stretch="UniformToFill" />
+								</Ellipse.Fill>
+							</Ellipse>
+							<StackPanel Grid.Column="2" VerticalAlignment="Center">
+								<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+								<TextBlock Text="{Binding Organization}" TextTrimming="CharacterEllipsis" FontSize="11" />
+							</StackPanel>
+							<i:MaterialIcon Grid.Column="4" Kind="{Binding IsFavorite, Converter={StaticResource BooleanToMaterialIconKindConverter}, ConverterParameter=Star|StarOutline}"
+											Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+						</Grid>
+
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>

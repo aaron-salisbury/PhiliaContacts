@@ -24,9 +24,9 @@
 					<StackPanel>
 						<TextBlock Text="Choose Theme" />
 						<StackPanel Margin="20,0,0,0">
-							<RadioButton IsChecked="False" GroupName="Theme" Content="System" Command="{Binding SetThemeCommand}" CommandParameter="System" />
-							<RadioButton IsChecked="False" GroupName="Theme" Content="Light" Command="{Binding SetThemeCommand}" CommandParameter="Light" />
-							<RadioButton IsChecked="False" GroupName="Theme" Content="Dark" Command="{Binding SetThemeCommand}" CommandParameter="Dark" />
+							<RadioButton IsChecked="{Binding ThemeIsSystem}" GroupName="Theme" Content="System" Command="{Binding SetThemeCommand}" CommandParameter="System" />
+							<RadioButton IsChecked="{Binding ThemeIsLight}" GroupName="Theme" Content="Light" Command="{Binding SetThemeCommand}" CommandParameter="Light" />
+							<RadioButton IsChecked="{Binding ThemeIsDark}" GroupName="Theme" Content="Dark" Command="{Binding SetThemeCommand}" CommandParameter="Dark" />
 						</StackPanel>
 					</StackPanel>
 				</StackPanel>

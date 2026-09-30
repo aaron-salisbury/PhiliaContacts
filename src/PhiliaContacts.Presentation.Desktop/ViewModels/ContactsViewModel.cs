@@ -68,6 +68,8 @@ public partial class ContactsViewModel : BaseViewModel
 
         await RefreshAsync();
 
+        SelectedContact = Contacts.FirstOrDefault();
+
         try
         {
             IReadOnlyList<string> sources = await _legacy.DiscoverAsync();

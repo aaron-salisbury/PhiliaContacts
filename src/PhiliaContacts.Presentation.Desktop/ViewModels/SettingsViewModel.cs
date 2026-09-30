@@ -33,13 +33,25 @@ public partial class SettingsViewModel : BaseViewModel
         AppDescription = AppInfo.AppDescription;
         PrivacyURL = AppInfo.PrivacyURL;
         IssuesURL = AppInfo.IssuesURL;
+
+        //TODO: Currently the user's selection does not persist across app restarts.
+        if (Application.Current?.RequestedThemeVariant == ThemeVariant.Light)
+        {
+            _themeIsLight = true;
+        }
+        else if (Application.Current?.RequestedThemeVariant == ThemeVariant.Dark)
+        {
+            _themeIsDark = true;
+        }
+        else
+        {
+            _themeIsSystem = true;
+        }
     }
 
     [RelayCommand]
     private void SetTheme(string choice)
     {
-        //TODO: Currently the user's selection does not persist across app restarts.
-
         ThemeVariant variant;
 
         switch (choice.ToLower())
