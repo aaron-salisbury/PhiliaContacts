@@ -48,53 +48,54 @@
 		</ContentControl>
 
 		<!-- Detail -->
-		<ContentControl Grid.Column="1" Content="{Binding}" Padding="20">
-			<ContentControl.DataTemplates>
-				<DataTemplate DataType="vm:ContactsViewModel">
-					<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-						<StackPanel Spacing="12">
-							<TextBlock Text="Contact details" FontSize="20" FontWeight="SemiBold" />
-							<StackPanel Orientation="Horizontal" Spacing="8">
-								<Button Content="Save contact" Command="{Binding SaveCommand}" />
-								<Button Content="Delete selected" Click="Delete_Click" />
-							</StackPanel>
+		<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Padding="20">
+			<ContentControl Content="{Binding}">
+				<ContentControl.DataTemplates>
+					<DataTemplate DataType="vm:ContactsViewModel">
 
-							<views:ContactDetailView DataContext="{Binding Detail}" />
-
-							<Separator />
-
-							<TextBlock Text="Import and export" FontWeight="SemiBold" />
-							<TextBlock Text="Copy old JSON files before importing. Choose one source at a time; original files are retained." TextWrapping="Wrap" />
-							<WrapPanel Orientation="Horizontal">
-								<Button Content="Import older data" Click="ImportOlder_Click" Margin="0,0,6,6" />
-								<Button Content="Import vCard" Click="ImportVCard_Click" Margin="0,0,6,6" />
-								<Button Content="Export JSON" Click="ExportJson_Click" Margin="0,0,6,6" />
-								<Button Content="Export vCard" Click="ExportVCard_Click" Margin="0,0,6,6" />
-							</WrapPanel>
-
-							<StackPanel IsVisible="{Binding HasPreview}" Spacing="6">
-								<TextBlock Text="{Binding PreviewTitle}" FontWeight="SemiBold" />
-								<ItemsControl ItemsSource="{Binding Candidates}">
-									<ItemsControl.ItemTemplate>
-										<DataTemplate x:DataType="vm:ImportCandidate">
-											<StackPanel Orientation="Horizontal" Spacing="10">
-												<CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Name}" />
-												<TextBlock Text="{Binding Hint}" />
-											</StackPanel>
-										</DataTemplate>
-									</ItemsControl.ItemTemplate>
-								</ItemsControl>
+							<StackPanel Spacing="12">
+								<TextBlock Text="Contact details" FontSize="20" FontWeight="SemiBold" />
 								<StackPanel Orientation="Horizontal" Spacing="8">
-									<Button Content="Import selected" Command="{Binding ConfirmVCardImportCommand}" />
-									<Button Content="Cancel" Command="{Binding CancelVCardImportCommand}" />
+									<Button Content="Save contact" Command="{Binding SaveCommand}" />
+									<Button Content="Delete selected" Click="Delete_Click" />
+								</StackPanel>
+
+								<views:ContactDetailView DataContext="{Binding Detail}" />
+
+								<Separator />
+
+								<TextBlock Text="Import and export" FontWeight="SemiBold" />
+								<TextBlock Text="Copy old JSON files before importing. Choose one source at a time; original files are retained." TextWrapping="Wrap" />
+								<WrapPanel Orientation="Horizontal">
+									<Button Content="Import older data" Click="ImportOlder_Click" Margin="0,0,6,6" />
+									<Button Content="Import vCard" Click="ImportVCard_Click" Margin="0,0,6,6" />
+									<Button Content="Export JSON" Click="ExportJson_Click" Margin="0,0,6,6" />
+									<Button Content="Export vCard" Click="ExportVCard_Click" Margin="0,0,6,6" />
+								</WrapPanel>
+
+								<StackPanel IsVisible="{Binding HasPreview}" Spacing="6">
+									<TextBlock Text="{Binding PreviewTitle}" FontWeight="SemiBold" />
+									<ItemsControl ItemsSource="{Binding Candidates}">
+										<ItemsControl.ItemTemplate>
+											<DataTemplate x:DataType="vm:ImportCandidate">
+												<StackPanel Orientation="Horizontal" Spacing="10">
+													<CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Name}" />
+													<TextBlock Text="{Binding Hint}" />
+												</StackPanel>
+											</DataTemplate>
+										</ItemsControl.ItemTemplate>
+									</ItemsControl>
+									<StackPanel Orientation="Horizontal" Spacing="8">
+										<Button Content="Import selected" Command="{Binding ConfirmVCardImportCommand}" />
+										<Button Content="Cancel" Command="{Binding CancelVCardImportCommand}" />
+									</StackPanel>
 								</StackPanel>
 							</StackPanel>
-
-						</StackPanel>
-					</ScrollViewer>
-				</DataTemplate>
-			</ContentControl.DataTemplates>
-		</ContentControl>
+					
+					</DataTemplate>
+				</ContentControl.DataTemplates>
+			</ContentControl>
+		</ScrollViewer>
 
 	</Grid>
 </UserControl>

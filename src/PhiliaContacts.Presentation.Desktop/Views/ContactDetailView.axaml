@@ -103,7 +103,7 @@
 		<!-- Birthday -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="CakeVariantOutline" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Birthday (YYYY-MM-DD or original date/time)" Text="{Binding Birthday}" />
+			<DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding Birthday, Mode=TwoWay}" />
 		</Grid>
 
 		<!-- Phone Numbers -->
