@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using PhiliaContacts.Presentation.Desktop.Base.Controls.RibbonControls;
 using RunnethOverStudio.AppToolkit.Modules.ComponentModel;
 using System;
 
@@ -14,14 +15,21 @@ public static class DependencyInjection
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        // View Models
+        services.AddSingleton<IRibbonControlFactory, RibbonControlFactory>();
+
+        // View Models and ribbon content.
         foreach (Type assemblyType in typeof(App).Assembly.GetTypes())
         {
-            if (assemblyType.IsClass
-                && !assemblyType.IsAbstract
-                && typeof(BaseViewModel).IsAssignableFrom(assemblyType))
+            if (assemblyType.IsClass && !assemblyType.IsAbstract)
             {
-                services.AddTransient(assemblyType);
+                if (typeof(BaseViewModel).IsAssignableFrom(assemblyType))
+                {
+                    services.AddTransient(assemblyType);
+                }
+                else if (typeof(BaseRibbonControl).IsAssignableFrom(assemblyType))
+                {
+                    services.AddTransient(assemblyType);
+                }
             }
         }
 
