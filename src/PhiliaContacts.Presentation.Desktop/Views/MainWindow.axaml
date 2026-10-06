@@ -11,6 +11,6 @@
         Title="Philia Contacts"
         WindowStartupLocation="CenterScreen">
 
-	<views:MainView Grid.Row="1" />
+	<views:MainView />
 
 </Window>
