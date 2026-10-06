@@ -65,6 +65,7 @@ internal sealed class VCardContactService : IVCardContactService
     {
         string? given = null, middle = null, family = null, prefix = null, suffix = null;
         string? nickname = null, formattedName = null, phoneticGiven = null, phoneticFamily = null, title = null, organization = null, birthday = null, notes = null, url = null;
+        bool isFavorite = false;
         byte[]? photo = null;
         List<ContactValue> phones = [], emails = [];
         List<ContactAddress> addresses = [];
@@ -107,6 +108,7 @@ internal sealed class VCardContactService : IVCardContactService
                 case "NICKNAME": nickname = Unescape(raw); break;
                 case "X-PHONETIC-FIRST-NAME": case "X-PHONETIC-GIVEN-NAME": phoneticGiven = Unescape(raw); break;
                 case "X-PHONETIC-LAST-NAME": case "X-PHONETIC-FAMILY-NAME": phoneticFamily = Unescape(raw); break;
+                case "CATEGORIES": isFavorite = raw.Equals("starred", StringComparison.OrdinalIgnoreCase); break;
                 case "TEL": phones.Add(new(Unescape(raw).Replace("tel:", string.Empty, StringComparison.OrdinalIgnoreCase), Type(head))); break;
                 case "EMAIL": emails.Add(new(Unescape(raw), Type(head))); break;
                 case "ADR":
@@ -155,6 +157,7 @@ internal sealed class VCardContactService : IVCardContactService
         return new Contact
         {
             Id = ContactId.New(),
+            IsFavorite = isFavorite,
             GivenName = given,
             MiddleName = middle,
             FamilyName = family,
@@ -189,6 +192,11 @@ internal sealed class VCardContactService : IVCardContactService
             Value(output, "NICKNAME", contact.Nickname);
             Value(output, "X-PHONETIC-FIRST-NAME", contact.PhoneticGivenName);
             Value(output, "X-PHONETIC-LAST-NAME", contact.PhoneticFamilyName);
+
+            if (contact.IsFavorite)
+            {
+                Value(output, "CATEGORIES", "starred");
+            }
 
             foreach (ContactValue item in contact.PhoneNumbers)
             {
@@ -238,7 +246,7 @@ internal sealed class VCardContactService : IVCardContactService
 
     private static string SafeType(string type)
     {
-        return new string(type.Where(char.IsLetterOrDigit).ToArray()) is { Length: > 0 } safe ? safe : "OTHER";
+        return new string([.. type.Where(char.IsLetterOrDigit)]) is { Length: > 0 } safe ? safe : "OTHER";
     }
 
     private static bool IsSafeExtra(string head)
