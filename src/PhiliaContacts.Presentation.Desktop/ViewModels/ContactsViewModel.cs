@@ -1,5 +1,8 @@
+using Avalonia.Animation.Easings;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.VisualBasic;
 using PhiliaContacts.Business.Modules.Contacts;
 using PhiliaContacts.Presentation.Desktop.Base.Controls.RibbonControls;
 using RunnethOverStudio.AppToolkit.Modules.ComponentModel;
@@ -8,7 +11,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PhiliaContacts.Presentation.Desktop.ViewModels;
@@ -200,6 +206,14 @@ public partial class ContactsViewModel : BaseViewModel, IRibbonProvider
 
     public async Task ImportVCardAsync(Stream stream)
     {
+        // 1. Do I/O asynchronously (ReadToEndAsync, WriteAsync).
+        // 2. Do CPU - heavy parsing / transforms off UI thread(Task.Run), but keep it pure(no UI collection / property writes there).
+        // 3. Apply results on UI thread(update ObservableCollection, Status, etc.).
+        // For Avalonia specifically:
+        //    •	ObservableCollection and bound property updates should happen on UI thread.
+        //    •	If command continuation is guaranteed on UI context, direct updates are fine.
+        //    •	If context is uncertain, use Dispatcher.UIThread.InvokeAsync(...) for the UI-update block.
+
         try
         {
             IsBusy = true;
