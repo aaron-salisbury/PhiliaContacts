@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="PhiliaContacts.Presentation.Desktop.Views.ContactsView"
+             xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
+             x:DataType="vm:ContactsViewModel"
+			 xmlns:views="clr-namespace:PhiliaContacts.Presentation.Desktop.Views"
+			 xmlns:converters="clr-namespace:PhiliaContacts.Presentation.Desktop.Base.Converters"
+			 xmlns:i="using:Material.Icons.Avalonia"
+			 xmlns:contacts="clr-namespace:PhiliaContacts.Business.Modules.Contacts;assembly=PhiliaContacts.Business">
+
+	<!-- Offset default padding so master section aligns with header & nav menu bars. Reapply padding to detail section. -->
+	<UserControl.Margin>-20</UserControl.Margin>
+
+	<UserControl.Resources>
+		<converters:BytesToBitmapConverter x:Key="BytesToBitmapConverter" />
+		<converters:BooleanToMaterialIconKindConverter x:Key="BooleanToMaterialIconKindConverter" />
+	</UserControl.Resources>
+	
+	<Grid ColumnDefinitions="250,*">
+		
+		<!-- Master -->
+		<ContentControl Grid.Column="0">
+			<ListBox CornerRadius="12,0,0,0" ItemsSource="{Binding VisibleContacts}" SelectedItem="{Binding SelectedContact}">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="contacts:Contact">
+						
+						<!-- Contact Preview -->
+						<Grid ColumnDefinitions="50,5,150,*,20">
+							<Ellipse Grid.Column="0" VerticalAlignment="Center" Width="50" Height="50">
+								<Ellipse.Fill>
+									<!-- TODO: Replace Photo conversion with IContactPhotoCache keyed by ContactId. Bitmaps created once per contact and disposed. -->
+									<ImageBrush Source="{Binding Photo, Converter={StaticResource BytesToBitmapConverter}}" Stretch="UniformToFill" />
+								</Ellipse.Fill>
+							</Ellipse>
+							<StackPanel Grid.Column="2" VerticalAlignment="Center">
+								<TextBlock Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+								<TextBlock Text="{Binding Organization}" TextTrimming="CharacterEllipsis" FontSize="11" />
+							</StackPanel>
+							<i:MaterialIcon Grid.Column="4" Kind="{Binding IsFavorite, Converter={StaticResource BooleanToMaterialIconKindConverter}, ConverterParameter=Star|StarOutline}"
+											Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+						</Grid>
+
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</ContentControl>
+
+		<!-- Detail -->
+		<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Padding="20">
+			<ContentControl Content="{Binding}">
+				<ContentControl.DataTemplates>
+					<DataTemplate DataType="vm:ContactsViewModel">
+
+							<StackPanel Spacing="12">
+								
+								<views:ContactDetailView DataContext="{Binding Detail}" />
+
+								<!-- TODO: Move import of legacy data to somewhere else. -->
+								<Separator />
+								<TextBlock Text="Copy old JSON files before importing. Choose one source at a time; original files are retained." TextWrapping="Wrap" />
+								<WrapPanel Orientation="Horizontal">
+									<Button Content="Import older data" Click="ImportOlder_Click" Margin="0,0,6,6" />
+								</WrapPanel>
+							</StackPanel>
+					
+					</DataTemplate>
+				</ContentControl.DataTemplates>
+			</ContentControl>
+		</ScrollViewer>
+
+	</Grid>
+</UserControl>

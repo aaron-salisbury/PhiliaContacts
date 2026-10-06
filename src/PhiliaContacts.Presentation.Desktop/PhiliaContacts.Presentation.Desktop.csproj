@@ -43,6 +43,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>AppInfo.resx</DependentUpon>
     </Compile>
+    <Compile Update="Base\Controls\RibbonControls\ContactsRibbonControl.axaml.cs">
+      <DependentUpon>ContactsRibbonControl.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

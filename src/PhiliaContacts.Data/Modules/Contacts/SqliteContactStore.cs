@@ -31,11 +31,14 @@ internal sealed class SqliteContactStore : IContactStore
 
         IEnumerable<AddressRow> addresses = await connection.QueryAsync<AddressRow>(new CommandDefinition(
             "SELECT * FROM ContactAddress ORDER BY ContactId, Position", cancellationToken: cancellationToken));
+        IEnumerable<VCardPropertyRow> properties = await connection.QueryAsync<VCardPropertyRow>(new CommandDefinition(
+            "SELECT * FROM ContactVCardProperty ORDER BY ContactId, Position", cancellationToken: cancellationToken));
 
         ILookup<string, ValueRow> groupedValues = values.ToLookup(value => value.ContactId);
         ILookup<string, AddressRow> groupedAddresses = addresses.ToLookup(address => address.ContactId);
+        ILookup<string, VCardPropertyRow> groupedProperties = properties.ToLookup(property => property.ContactId);
 
-        return [.. rows.Select(row => Map(row, groupedValues[row.Id], groupedAddresses[row.Id]))];
+        return [.. rows.Select(row => Map(row, groupedValues[row.Id], groupedAddresses[row.Id], groupedProperties[row.Id]))];
     }
 
     public async Task<Contact?> GetAsync(ContactId id, CancellationToken cancellationToken = default)
@@ -57,8 +60,10 @@ internal sealed class SqliteContactStore : IContactStore
 
         IEnumerable<AddressRow> addresses = await connection.QueryAsync<AddressRow>(new CommandDefinition(
             "SELECT * FROM ContactAddress WHERE ContactId = @key ORDER BY Position", new { key }, cancellationToken: cancellationToken));
+        IEnumerable<VCardPropertyRow> properties = await connection.QueryAsync<VCardPropertyRow>(new CommandDefinition(
+            "SELECT * FROM ContactVCardProperty WHERE ContactId = @key ORDER BY Position", new { key }, cancellationToken: cancellationToken));
 
-        return Map(row, values, addresses);
+        return Map(row, values, addresses, properties);
     }
 
     public async Task UpsertAsync(Contact contact, CancellationToken cancellationToken = default)
@@ -74,12 +79,13 @@ internal sealed class SqliteContactStore : IContactStore
         string key = contact.Id.Value.ToString("D");
 
         const string sql = """
-            INSERT INTO Contact (Id, GivenName, MiddleName, FamilyName, Nickname, Prefix, Suffix, Birthday, Title,
+            INSERT INTO Contact (Id, GivenName, MiddleName, FamilyName, PhoneticGivenName, PhoneticFamilyName, Nickname, Prefix, Suffix, Birthday, Title,
                 Organization, Photo, TwitterUser, FacebookUser, LinkedInUser, Url, Notes, IsFavorite)
-            VALUES (@Id, @GivenName, @MiddleName, @FamilyName, @Nickname, @Prefix, @Suffix, @Birthday, @Title,
+            VALUES (@Id, @GivenName, @MiddleName, @FamilyName, @PhoneticGivenName, @PhoneticFamilyName, @Nickname, @Prefix, @Suffix, @Birthday, @Title,
                 @Organization, @Photo, @TwitterUser, @FacebookUser, @LinkedInUser, @Url, @Notes, @IsFavorite)
             ON CONFLICT(Id) DO UPDATE SET
                 GivenName=excluded.GivenName, MiddleName=excluded.MiddleName, FamilyName=excluded.FamilyName,
+                PhoneticGivenName=excluded.PhoneticGivenName, PhoneticFamilyName=excluded.PhoneticFamilyName,
                 Nickname=excluded.Nickname, Prefix=excluded.Prefix, Suffix=excluded.Suffix, Birthday=excluded.Birthday,
                 Title=excluded.Title, Organization=excluded.Organization, Photo=excluded.Photo,
                 TwitterUser=excluded.TwitterUser, FacebookUser=excluded.FacebookUser, LinkedInUser=excluded.LinkedInUser,
@@ -92,6 +98,8 @@ internal sealed class SqliteContactStore : IContactStore
             contact.GivenName,
             contact.MiddleName,
             contact.FamilyName,
+            contact.PhoneticGivenName,
+            contact.PhoneticFamilyName,
             contact.Nickname,
             contact.Prefix,
             contact.Suffix,
@@ -107,7 +115,7 @@ internal sealed class SqliteContactStore : IContactStore
             contact.IsFavorite
         }, transaction, cancellationToken: cancellationToken));
 
-        await connection.ExecuteAsync(new CommandDefinition("DELETE FROM ContactValue WHERE ContactId = @key; DELETE FROM ContactAddress WHERE ContactId = @key", new { key }, transaction, cancellationToken: cancellationToken));
+        await connection.ExecuteAsync(new CommandDefinition("DELETE FROM ContactValue WHERE ContactId = @key; DELETE FROM ContactAddress WHERE ContactId = @key; DELETE FROM ContactVCardProperty WHERE ContactId = @key", new { key }, transaction, cancellationToken: cancellationToken));
 
         for (int i = 0; i < contact.EmailAddresses.Count; i++)
         {
@@ -129,6 +137,13 @@ internal sealed class SqliteContactStore : IContactStore
                 transaction, cancellationToken: cancellationToken));
         }
 
+        for (int i = 0; i < contact.VCardProperties.Count; i++)
+        {
+            await connection.ExecuteAsync(new CommandDefinition(
+                "INSERT INTO ContactVCardProperty (ContactId, Position, Content) VALUES (@ContactId, @Position, @Content)",
+                new { ContactId = key, Position = i, Content = contact.VCardProperties[i] }, transaction, cancellationToken: cancellationToken));
+        }
+
     }
 
     public async Task<bool> DeleteAsync(ContactId id, CancellationToken cancellationToken = default)
@@ -145,7 +160,7 @@ internal sealed class SqliteContactStore : IContactStore
             new { ContactId = id, Kind = kind, Position = position, value.Value, value.Type }, transaction, cancellationToken: cancellationToken));
     }
 
-    private static Contact Map(ContactRow row, IEnumerable<ValueRow> values, IEnumerable<AddressRow> addresses)
+    private static Contact Map(ContactRow row, IEnumerable<ValueRow> values, IEnumerable<AddressRow> addresses, IEnumerable<VCardPropertyRow> properties)
     {
         return new()
         {
@@ -153,6 +168,8 @@ internal sealed class SqliteContactStore : IContactStore
             GivenName = row.GivenName,
             MiddleName = row.MiddleName,
             FamilyName = row.FamilyName,
+            PhoneticGivenName = row.PhoneticGivenName,
+            PhoneticFamilyName = row.PhoneticFamilyName,
             Nickname = row.Nickname,
             Prefix = row.Prefix,
             Suffix = row.Suffix,
@@ -168,16 +185,19 @@ internal sealed class SqliteContactStore : IContactStore
             IsFavorite = row.IsFavorite,
             EmailAddresses = [.. values.Where(value => value.Kind == "email").Select(value => new ContactValue(value.Value, value.Type))],
             PhoneNumbers = [.. values.Where(value => value.Kind == "phone").Select(value => new ContactValue(value.Value, value.Type))],
-            Addresses = [.. addresses.Select(address => new ContactAddress(address.Type, address.Street, address.City, address.Region, address.PostalCode, address.Country))]
+            Addresses = [.. addresses.Select(address => new ContactAddress(address.Type, address.Street, address.City, address.Region, address.PostalCode, address.Country))],
+            VCardProperties = [.. properties.Select(property => property.Content)]
         };
     }
 
     private sealed class ContactRow
     {
-        public string Id { get; set; } = "";
+        public string Id { get; set; } = string.Empty;
         public string? GivenName { get; set; }
         public string? MiddleName { get; set; }
         public string? FamilyName { get; set; }
+        public string? PhoneticGivenName { get; set; }
+        public string? PhoneticFamilyName { get; set; }
         public string? Nickname { get; set; }
         public string? Prefix { get; set; }
         public string? Suffix { get; set; }
@@ -195,20 +215,26 @@ internal sealed class SqliteContactStore : IContactStore
 
     private sealed class ValueRow
     {
-        public string ContactId { get; set; } = "";
-        public string Kind { get; set; } = "";
-        public string Value { get; set; } = "";
-        public string Type { get; set; } = "";
+        public string ContactId { get; set; } = string.Empty;
+        public string Kind { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
     }
 
     private sealed class AddressRow
     {
-        public string ContactId { get; set; } = "";
-        public string Type { get; set; } = "";
+        public string ContactId { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
         public string? Street { get; set; }
         public string? City { get; set; }
         public string? Region { get; set; }
         public string? PostalCode { get; set; }
         public string? Country { get; set; }
+    }
+
+    private sealed class VCardPropertyRow
+    {
+        public string ContactId { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
     }
 }

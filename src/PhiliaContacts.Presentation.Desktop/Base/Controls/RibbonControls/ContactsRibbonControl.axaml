@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="60"
+             x:Class="PhiliaContacts.Presentation.Desktop.Base.Controls.RibbonControls.ContactsRibbonControl"
+			 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
+             x:DataType="vm:ContactsViewModel"
+			 xmlns:i="using:Material.Icons.Avalonia"
+			 Background="Transparent">
+
+	<UserControl.Styles>
+		<Style Selector="Button">
+			<Setter Property="Width" Value="60" />
+			<Setter Property="Height" Value="60" />
+			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="CornerRadius" Value="0" />
+		</Style>
+		<Style Selector="i|MaterialIcon">
+			<Setter Property="Width" Value="25" />
+			<Setter Property="Height" Value="25" />
+		</Style>
+	</UserControl.Styles>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+		<Button Command="{Binding NewContactCommand}">
+			<i:MaterialIcon Kind="AccountPlusOutline" />
+		</Button>
+
+		<Button Click="Delete_Click">
+			<i:MaterialIcon Kind="TrashCanOutline" />
+		</Button>
+
+		<Button Click="ImportVCard_Click">
+			<i:MaterialIcon Kind="Import" />
+		</Button>
+
+		<Button Click="ExportVCard_Click">
+			<i:MaterialIcon Kind="Export" />
+		</Button>
+		
+		<Button Command="{Binding SaveCommand}">
+			<i:MaterialIcon Kind="ContentSaveOutline" />
+		</Button>
+		
+    </StackPanel>
+</UserControl>

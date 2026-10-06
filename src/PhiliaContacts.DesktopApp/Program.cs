@@ -38,6 +38,8 @@ internal class Program
         }
     }
 
+    //TODO: I'm not sure about even doing this, but even if we stick with it, to me this seems more like an initialization concern and not something
+    //the application root should be doing. Maybe this should be moved to the data layer and called from the data layer initialization code.
     private static async Task TryImportLegacyContactsAsync(ServiceProvider serviceProvider)
     {
         using IServiceScope scope = serviceProvider.CreateScope();
