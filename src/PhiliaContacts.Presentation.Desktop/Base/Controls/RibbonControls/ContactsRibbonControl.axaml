@@ -28,19 +28,19 @@
 			<i:MaterialIcon Kind="AccountPlusOutline" />
 		</Button>
 
-		<Button Click="Delete_Click" Background="Transparent">
+		<Button Click="Delete_Click">
 			<i:MaterialIcon Kind="TrashCanOutline" />
 		</Button>
 
-		<Button Click="ImportVCard_Click" Background="Transparent">
+		<Button Click="ImportVCard_Click">
 			<i:MaterialIcon Kind="Import" />
 		</Button>
 
-		<Button Click="ExportVCard_Click" Background="Transparent">
+		<Button Click="ExportVCard_Click">
 			<i:MaterialIcon Kind="Export" />
 		</Button>
 		
-		<Button Command="{Binding SaveCommand}" Background="Transparent">
+		<Button Command="{Binding SaveCommand}">
 			<i:MaterialIcon Kind="ContentSaveOutline" />
 		</Button>
 		
