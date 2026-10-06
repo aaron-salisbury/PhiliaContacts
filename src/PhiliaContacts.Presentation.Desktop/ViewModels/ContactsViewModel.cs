@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhiliaContacts.Business.Modules.Contacts;
+using PhiliaContacts.Presentation.Desktop.Base.Controls.RibbonControls;
 using RunnethOverStudio.AppToolkit.Modules.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -12,23 +13,7 @@ using System.Threading.Tasks;
 
 namespace PhiliaContacts.Presentation.Desktop.ViewModels;
 
-public partial class ImportCandidate : ObservableObject
-{
-    public Contact Contact { get; }
-    public string Name => Contact.DisplayName;
-    public string Hint { get; }
-
-    [ObservableProperty] private bool _isSelected;
-
-    public ImportCandidate(Contact contact, bool possibleDuplicate)
-    {
-        Contact = contact;
-        Hint = possibleDuplicate ? "Possible duplicate — review before adding" : "New contact";
-        IsSelected = !possibleDuplicate;
-    }
-}
-
-public partial class ContactsViewModel : BaseViewModel
+public partial class ContactsViewModel : BaseViewModel, IRibbonProvider
 {
     private readonly IContactService _contacts;
     private readonly ILegacyContactImportService _legacy;
@@ -41,13 +26,11 @@ public partial class ContactsViewModel : BaseViewModel
     [ObservableProperty] private string _searchText = string.Empty;
     [ObservableProperty] private string _status = "Loading contacts…";
     [ObservableProperty] private bool _hasContacts;
-    [ObservableProperty] private bool _hasPreview;
-    [ObservableProperty] private bool _isBusy;
-    [ObservableProperty] private string _previewTitle = string.Empty;
 
     public ObservableCollection<Contact> Contacts { get; } = [];
     public ObservableCollection<Contact> VisibleContacts { get; } = [];
-    public ObservableCollection<ImportCandidate> Candidates { get; } = [];
+
+    public Type RibbonControlType => typeof(ContactsRibbonControl);
 
     public ContactsViewModel(IContactService contacts, ILegacyContactImportService legacy, IContactExportService export, IVCardContactService vCards)
     {
@@ -180,6 +163,7 @@ public partial class ContactsViewModel : BaseViewModel
         {
             IsBusy = true;
             await _contacts.DeleteAsync(SelectedContact.Id);
+            //TODO: Set SelectedContact to the next contact in the list, or previous if the was the last one. If none, set to null.
             SelectedContact = null;
             await RefreshAsync();
             Status = "Contact deleted.";
@@ -214,104 +198,66 @@ public partial class ContactsViewModel : BaseViewModel
         }
     }
 
-    public async Task ExportJsonAsync(string path)
-    {
-        try
-        {
-            await _export.ExportAsync(path); Status = "JSON export saved.";
-        }
-        catch (Exception error)
-        {
-            Status = "Export failed: " + error.Message;
-        }
-    }
-
-    public async Task PreviewVCardAsync(Stream stream)
-    {
-        try
-        {
-            using StreamReader reader = new(stream, new UTF8Encoding(false, true), true, 1024, true);
-            IReadOnlyList<Contact> incoming = _vCards.Read(await reader.ReadToEndAsync());
-            Candidates.Clear();
-            foreach (Contact contact in incoming)
-            {
-                bool match = Contacts.Any(existing =>
-                    string.Equals(existing.DisplayName, contact.DisplayName, StringComparison.OrdinalIgnoreCase) &&
-                    existing.EmailAddresses.Any(email => contact.EmailAddresses.Any(candidate =>
-                        string.Equals(email.Value, candidate.Value, StringComparison.OrdinalIgnoreCase))));
-                Candidates.Add(new(contact, match));
-            }
-            HasPreview = Candidates.Count > 0;
-            PreviewTitle = $"Review {Candidates.Count} vCard contacts (possible duplicates are unchecked)";
-            Status = HasPreview ? "Select the contacts to add, then confirm import." : "No vCards in the file.";
-        }
-        catch (Exception error)
-        {
-            HasPreview = false;
-            Status = "Could not read vCard: " + error.Message;
-        }
-    }
-
-    [RelayCommand]
-    private async Task ConfirmVCardImportAsync()
+    public async Task ImportVCardAsync(Stream stream)
     {
         try
         {
             IsBusy = true;
-            int count = 0;
-            foreach (ImportCandidate item in Candidates.Where(item => item.IsSelected))
+
+            string vCardText;
+            using (StreamReader reader = new(stream, new UTF8Encoding(false, true), true, 1024, true))
             {
-                await _contacts.SaveAsync(item.Contact);
+                vCardText = await reader.ReadToEndAsync();
+            }
+
+            IReadOnlyList<Contact> incoming = await Task.Run(() => _vCards.Read(vCardText));
+
+            int count = 0;
+            foreach (Contact contact in incoming)
+            {
+                await _contacts.SaveAsync(contact);
                 count++;
             }
-            Candidates.Clear();
-            HasPreview = false;
+
             await RefreshAsync();
+            LongRunningProcessSuccessful = true;
             Status = $"Imported {count} vCard contacts.";
         }
         catch (Exception error)
         {
-            Status = "Import stopped: " + error.Message;
+            LongRunningProcessSuccessful = false;
+            Status = "Could not import vCard: " + error.Message;
         }
         finally
         {
             IsBusy = false;
+            LongRunningProcessSuccessful = null;
         }
-    }
-
-    [RelayCommand]
-    private void CancelVCardImport()
-    {
-        Candidates.Clear();
-        HasPreview = false;
-        Status = "Import cancelled.";
     }
 
     public async Task ExportVCardAsync(Stream stream)
     {
         try
         {
-            string text = _vCards.Write(await _contacts.ListAsync());
+            IsBusy = true;
+
+            IReadOnlyList<Contact> contacts = await _contacts.ListAsync();
+            string text = await Task.Run(() => _vCards.Write(contacts));
             byte[] bytes = Encoding.UTF8.GetBytes(text);
             await stream.WriteAsync(bytes);
+
+            LongRunningProcessSuccessful = true;
             Status = "vCard export saved.";
         }
         catch (Exception error)
         {
+            LongRunningProcessSuccessful = false;
             Status = "vCard export failed: " + error.Message;
         }
-    }
-
-    public async Task ExportJsonAsync(Stream stream)
-    {
-        try
+        finally
         {
-            await _export.ExportAsync(stream);
-            Status = "JSON export saved.";
-        }
-        catch (Exception error)
-        {
-            Status = "Export failed: " + error.Message;
+            IsBusy = false;
+            LongRunningProcessSuccessful = null;
         }
     }
 }
