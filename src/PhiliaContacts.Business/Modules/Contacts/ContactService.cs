@@ -41,6 +41,18 @@ internal sealed class ContactService : IContactService
 
         return _store.UpsertAsync(contact, cancellationToken);
     }
+
+    public Task SaveManyAsync(IReadOnlyList<Contact> contacts, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(contacts);
+
+        foreach (Contact contact in contacts)
+        {
+            ContactValidation.Validate(contact);
+        }
+
+        return _store.UpsertManyAsync(contacts, cancellationToken);
+    }
 }
 
 internal static class ContactValidation
@@ -69,6 +81,11 @@ internal static class ContactValidation
         if (notAllEntriesAreValid)
         {
             throw new ArgumentException("Contact collections must contain valid entries.", nameof(contact));
+        }
+
+        if (contact.VCardProperties is null || contact.VCardProperties.Any(value => string.IsNullOrWhiteSpace(value) || value.Contains('\r') || value.Contains('\n')))
+        {
+            throw new ArgumentException("vCard extension properties must be single logical lines.", nameof(contact));
         }
 
         if (contact.Photo?.Length > MAX_PHOTO_BYTES)

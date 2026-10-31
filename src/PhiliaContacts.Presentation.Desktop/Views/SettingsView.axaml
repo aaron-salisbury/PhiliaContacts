@@ -2,30 +2,57 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="PhiliaContacts.Presentation.Desktop.Views.SettingsView"
              xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
-             x:Class="PhiliaContacts.Presentation.Desktop.Views.SettingsView"
-             x:DataType="vm:SettingsViewModel"
-             mc:Ignorable="d"
-             d:DesignWidth="1000"
-             d:DesignHeight="750">
+             x:DataType="vm:SettingsViewModel">
 
-    <ScrollViewer>
-        <StackPanel Spacing="18">
+	<UserControl.Styles>
+		<Style Selector="TextBlock.section-header">
+			<Setter Property="FontSize" Value="18"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+		</Style>
+	</UserControl.Styles>
+	
+	<Border>
+		<ScrollViewer>
+			<Grid ColumnDefinitions="*,*">
+				<StackPanel Grid.Column="0" Spacing="18">
 
-            <StackPanel>
-                <TextBlock Text="About this Application" FontSize="18" FontWeight="Bold" Margin="0,0,0,6" />
-                <TextBlock Text="{Binding ApplicationInfo}" Margin="0,0,0,8" />
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                    <TextBlock Text="© " />
-                    <TextBlock Text="{Binding CopyHolder}" />
-                </StackPanel>
-                <TextBlock TextWrapping="Wrap" Margin="0,0,0,4" Text="{Binding AppDescription}" />
-                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                    <HyperlinkButton Content="Privacy Statement" NavigateUri="{Binding PrivacyURL}" />
-                    <HyperlinkButton Content="Issues" NavigateUri="{Binding IssuesURL}" Margin="5,0,0,0" />
-                </StackPanel>
-            </StackPanel>
+					<StackPanel Spacing="8">
+						<TextBlock Text="Appearance" Classes="section-header" />
 
-        </StackPanel>
-    </ScrollViewer>
+						<StackPanel>
+							<TextBlock Text="Choose Theme" />
+							<StackPanel Margin="20,0,0,0">
+								<RadioButton IsChecked="{Binding ThemeIsSystem}" GroupName="Theme" Content="System" Command="{Binding SetThemeCommand}" CommandParameter="System" />
+								<RadioButton IsChecked="{Binding ThemeIsLight}" GroupName="Theme" Content="Light" Command="{Binding SetThemeCommand}" CommandParameter="Light" />
+								<RadioButton IsChecked="{Binding ThemeIsDark}" GroupName="Theme" Content="Dark" Command="{Binding SetThemeCommand}" CommandParameter="Dark" />
+							</StackPanel>
+						</StackPanel>
+					</StackPanel>
+
+					<StackPanel Spacing="8">
+						<TextBlock Text="About this Application" Classes="section-header" />
+
+						<StackPanel>
+							<TextBlock Text="{Binding ApplicationInfo}" />
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Text="© " />
+								<TextBlock Text="{Binding CopyHolder}" />
+							</StackPanel>
+						</StackPanel>
+
+						<TextBlock TextWrapping="Wrap" Text="{Binding AppDescription}" />
+
+						<StackPanel Orientation="Horizontal" Spacing="12">
+							<HyperlinkButton Content="Privacy Statement" NavigateUri="{Binding PrivacyURL}" />
+							<HyperlinkButton Content="Issues" NavigateUri="{Binding IssuesURL}" />
+						</StackPanel>
+					</StackPanel>
+
+				</StackPanel>
+			</Grid>
+		</ScrollViewer>
+	</Border>
 </UserControl>

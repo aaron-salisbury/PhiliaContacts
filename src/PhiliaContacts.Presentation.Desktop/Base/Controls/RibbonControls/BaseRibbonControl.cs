@@ -41,10 +41,7 @@ public partial class BaseRibbonControl : UserControl
             switch (e.PropertyName)
             {
                 case nameof(BaseViewModel.IsBusy):
-                    if (_parentViewHeaderControl != null)
-                    {
-                        _parentViewHeaderControl.IsBusy = baseViewModel.IsBusy;
-                    }
+                    _parentViewHeaderControl?.IsBusy = baseViewModel.IsBusy;
                     break;
                 case nameof(BaseViewModel.LongRunningProcessSuccessful):
                     HandleWorkflowComplete(baseViewModel.LongRunningProcessSuccessful);

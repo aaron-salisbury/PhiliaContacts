@@ -18,15 +18,13 @@ public partial class ViewHeaderControl : UserControl
     private string? _friendlyPageName;
     public string? FriendlyPageName
     {
-        get { return _friendlyPageName; }
-        set { SetAndRaise(FriendlyPageNameProperty, ref _friendlyPageName, value); }
+        get => _friendlyPageName; set => SetAndRaise(FriendlyPageNameProperty, ref _friendlyPageName, value);
     }
 
     private object? _ribbonContent;
     public object? RibbonContent
     {
-        get { return _ribbonContent; }
-        set { SetAndRaise(RibbonContentProperty, ref _ribbonContent, value); }
+        get => _ribbonContent; set => SetAndRaise(RibbonContentProperty, ref _ribbonContent, value);
     }
 
     private bool _isBusy;

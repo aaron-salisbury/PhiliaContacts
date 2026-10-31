@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,6 +10,11 @@ public interface IContactService
     Task<IReadOnlyList<Contact>> ListAsync(CancellationToken cancellationToken = default);
     Task<Contact?> GetAsync(ContactId id, CancellationToken cancellationToken = default);
     Task SaveAsync(Contact contact, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Validates and saves all contacts in a single transaction; if any contact is invalid or a write fails, none are saved.
+    /// </summary>
+    Task SaveManyAsync(IReadOnlyList<Contact> contacts, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(ContactId id, CancellationToken cancellationToken = default);
 }
 
@@ -17,6 +23,7 @@ public interface IContactStore
     Task<IReadOnlyList<Contact>> ListAsync(CancellationToken cancellationToken = default);
     Task<Contact?> GetAsync(ContactId id, CancellationToken cancellationToken = default);
     Task UpsertAsync(Contact contact, CancellationToken cancellationToken = default);
+    Task UpsertManyAsync(IReadOnlyList<Contact> contacts, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(ContactId id, CancellationToken cancellationToken = default);
 }
 
@@ -63,4 +70,11 @@ public interface ILegacyContactFiles
 public interface IContactExportService
 {
     Task ExportAsync(string destinationPath, CancellationToken cancellationToken = default);
+    Task ExportAsync(Stream destination, CancellationToken cancellationToken = default);
+}
+
+public interface IVCardContactService
+{
+    IReadOnlyList<Contact> Read(string vcf);
+    string Write(IReadOnlyList<Contact> contacts);
 }

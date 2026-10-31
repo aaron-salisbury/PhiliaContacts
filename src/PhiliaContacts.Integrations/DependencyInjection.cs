@@ -16,6 +16,7 @@ public static class DependencyInjection
         services.AddSingleton<ILegacyContactFiles>(_ => new LegacyContactFiles(applicationDataDirectory ??
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PhiliaContacts")));
         services.AddScoped<IContactExportService, ContactJsonExportService>();
+        services.AddSingleton<IVCardContactService, VCardContactService>();
 
         return services;
     }

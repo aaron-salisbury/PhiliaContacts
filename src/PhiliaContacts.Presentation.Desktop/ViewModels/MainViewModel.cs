@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using PhiliaContacts.Presentation.Desktop.Base.Controls.RibbonControls;
 using PhiliaContacts.Presentation.Desktop.Models;
 using RunnethOverStudio.AppToolkit.Modules.ComponentModel;
 using System;
@@ -10,6 +11,7 @@ namespace PhiliaContacts.Presentation.Desktop.ViewModels;
 
 public partial class MainViewModel : BaseViewModel
 {
+    private readonly IRibbonControlFactory _ribbonControlFactory;
     private readonly SettingsViewModel _settingsViewModel;
 
     [ObservableProperty]
@@ -22,13 +24,17 @@ public partial class MainViewModel : BaseViewModel
     private string _pageTitle;
 
     [ObservableProperty]
+    private object? _ribbonContent;
+
+    [ObservableProperty]
     private MenuPaneItemTemplate? _selectedPaneItem;
 
     public ObservableCollection<MenuPaneItemTemplate> PaneItems { get; }
 
-    public MainViewModel(HomeViewModel homeViewModel, SettingsViewModel settingsViewModel)
+    public MainViewModel(IRibbonControlFactory ribbonControlFactory, ContactsViewModel contactsViewModel, SettingsViewModel settingsViewModel)
     {
-        ArgumentNullException.ThrowIfNull(homeViewModel);
+        _ribbonControlFactory = ribbonControlFactory ?? throw new ArgumentNullException(nameof(ribbonControlFactory));
+        ArgumentNullException.ThrowIfNull(contactsViewModel);
 
         _settingsViewModel = settingsViewModel ?? throw new ArgumentNullException(nameof(settingsViewModel));
 
@@ -36,7 +42,7 @@ public partial class MainViewModel : BaseViewModel
         [
             // Icon key ref: https://pictogrammers.com/library/mdi/
 
-            new MenuPaneItemTemplate(homeViewModel, "CardAccountMail", "Contacts")
+            new MenuPaneItemTemplate(contactsViewModel, "CardAccountMail", "Contacts")
         ];
 
         IsPaneOpen = false;
@@ -44,6 +50,7 @@ public partial class MainViewModel : BaseViewModel
         SelectedPaneItem = PaneItems[0];
         CurrentContent = SelectedPaneItem.Content;
         PageTitle = SelectedPaneItem.Label;
+        RibbonContent = _ribbonControlFactory.Create(SelectedPaneItem.Content);
     }
 
     [RelayCommand]
@@ -59,6 +66,7 @@ public partial class MainViewModel : BaseViewModel
         SelectedPaneItem = null;
         CurrentContent = _settingsViewModel;
         PageTitle = "Settings";
+        RibbonContent = _ribbonControlFactory.Create(_settingsViewModel);
     }
 
     partial void OnSelectedPaneItemChanged(MenuPaneItemTemplate? value)
@@ -70,5 +78,6 @@ public partial class MainViewModel : BaseViewModel
 
         CurrentContent = value.Content;
         PageTitle = value.Label;
+        RibbonContent = _ribbonControlFactory.Create(value.Content);
     }
 }

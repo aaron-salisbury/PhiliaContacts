@@ -2,14 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PhiliaContacts.Presentation.Desktop.Views.MainView"
+			 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
              x:DataType="vm:MainViewModel"
-						 xmlns:m="clr-namespace:PhiliaContacts.Presentation.Desktop.Models"
-						 xmlns:v="clr-namespace:PhiliaContacts.Presentation.Desktop.Views"
-						 xmlns:vm="clr-namespace:PhiliaContacts.Presentation.Desktop.ViewModels"
-						 xmlns:c="clr-namespace:PhiliaContacts.Presentation.Desktop.Base.Controls"
-						 xmlns:i="using:Material.Icons.Avalonia">
+			 xmlns:m="clr-namespace:PhiliaContacts.Presentation.Desktop.Models"
+			 xmlns:c="clr-namespace:PhiliaContacts.Presentation.Desktop.Base.Controls"
+			 xmlns:i="using:Material.Icons.Avalonia">
 
 	<SplitView IsPaneOpen="{Binding IsPaneOpen}" OpenPaneLength="200" DisplayMode="CompactInline" CompactPaneLength="45" PaneBackground="{DynamicResource SystemListLowColor}">
 
@@ -50,10 +49,10 @@
 
 		<SplitView.Content>
 			<Grid RowDefinitions="Auto,*">
-				<c:ViewHeaderControl Grid.Row="0" FriendlyPageName="{Binding PageTitle}" />
-				<Border Grid.Row="1" Background="{DynamicResource SystemListLowColor}">
-					<ContentControl CornerRadius="12,0,0,0" Padding="20" Content="{Binding CurrentContent}" Background="{DynamicResource SystemRegionColor}" />
-				</Border>
+				<c:ViewHeaderControl Grid.Row="0" FriendlyPageName="{Binding PageTitle}" RibbonContent="{Binding RibbonContent}" />
+				<ContentControl Grid.Row="1" Background="{DynamicResource SystemListLowColor}">
+					<ContentControl Content="{Binding CurrentContent}" CornerRadius="12,0,0,0" Padding="20" Background="{DynamicResource SystemRegionColor}" />
+				</ContentControl>
 			</Grid>
 		</SplitView.Content>
 

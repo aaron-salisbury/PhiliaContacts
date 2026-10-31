@@ -2,14 +2,18 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <PublishSingleFile>true</PublishSingleFile>
     <Product>Philia Contacts</Product>
     <Description>Manage all your contacts centrally and cleanly. Import from, or export to, your Android or Apple contacts using the universal vCard (Virtual Contact File) format.</Description>
+    <AssemblyName>PhiliaContacts</AssemblyName>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
     <Version>2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AsyncAwaitBestPractices" Version="10.0.0" />
+    <AvaloniaResource Include="icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
