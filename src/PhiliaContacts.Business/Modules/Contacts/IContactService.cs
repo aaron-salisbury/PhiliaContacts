@@ -10,6 +10,11 @@ public interface IContactService
     Task<IReadOnlyList<Contact>> ListAsync(CancellationToken cancellationToken = default);
     Task<Contact?> GetAsync(ContactId id, CancellationToken cancellationToken = default);
     Task SaveAsync(Contact contact, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Validates and saves all contacts in a single transaction; if any contact is invalid or a write fails, none are saved.
+    /// </summary>
+    Task SaveManyAsync(IReadOnlyList<Contact> contacts, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(ContactId id, CancellationToken cancellationToken = default);
 }
 
@@ -18,6 +23,7 @@ public interface IContactStore
     Task<IReadOnlyList<Contact>> ListAsync(CancellationToken cancellationToken = default);
     Task<Contact?> GetAsync(ContactId id, CancellationToken cancellationToken = default);
     Task UpsertAsync(Contact contact, CancellationToken cancellationToken = default);
+    Task UpsertManyAsync(IReadOnlyList<Contact> contacts, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(ContactId id, CancellationToken cancellationToken = default);
 }
 

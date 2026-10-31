@@ -41,6 +41,18 @@ internal sealed class ContactService : IContactService
 
         return _store.UpsertAsync(contact, cancellationToken);
     }
+
+    public Task SaveManyAsync(IReadOnlyList<Contact> contacts, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(contacts);
+
+        foreach (Contact contact in contacts)
+        {
+            ContactValidation.Validate(contact);
+        }
+
+        return _store.UpsertManyAsync(contacts, cancellationToken);
+    }
 }
 
 internal static class ContactValidation

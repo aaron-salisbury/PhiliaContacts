@@ -5,6 +5,7 @@ using Avalonia.Media.Imaging;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace PhiliaContacts.Presentation.Desktop.Base.Converters;
 
@@ -13,6 +14,10 @@ namespace PhiliaContacts.Presentation.Desktop.Base.Converters;
 /// </summary>
 public class BytesToBitmapConverter : IValueConverter
 {
+    // Decoded bitmaps live as long as their source buffer, so re-realized list items reuse them instead of decoding again.
+    // Keys are the byte[] instances, so a cache entry is released once the owning contact is no longer referenced.
+    private readonly ConditionalWeakTable<byte[], Bitmap> _cache = [];
+
     /// <summary>
     /// Converts a source value to a <see cref="Bitmap"/> when possible.
     /// </summary>
@@ -20,7 +25,10 @@ public class BytesToBitmapConverter : IValueConverter
     /// The source value. Supported values are <see langword="null"/>, <see cref="Bitmap"/>, and <see cref="byte[]"/>.
     /// </param>
     /// <param name="targetType">The expected target type for the binding result.</param>
-    /// <param name="parameter">An optional converter parameter. This converter does not use this parameter during forward conversion.</param>
+    /// <param name="parameter">
+    /// An optional decode width in pixels. When given, the image is decoded at that width (preserving aspect ratio), which keeps
+    /// thumbnails from holding full-resolution bitmaps in memory.
+    /// </param>
     /// <param name="culture">The culture to use in the converter.</param>
     /// <returns>
     /// A <see cref="Bitmap"/> when conversion succeeds, <see langword="null"/> when <paramref name="value"/> is <see langword="null"/>,
@@ -43,10 +51,19 @@ public class BytesToBitmapConverter : IValueConverter
         }
         else if (value is byte[] imageBuffer)
         {
+            if (_cache.TryGetValue(imageBuffer, out Bitmap? cached))
+            {
+                return cached;
+            }
+
             try
             {
                 using MemoryStream ms = new(imageBuffer);
-                return new Bitmap(ms);
+                Bitmap decoded = int.TryParse(parameter?.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int decodeWidth) && decodeWidth > 0
+                    ? Bitmap.DecodeToWidth(ms, decodeWidth)
+                    : new Bitmap(ms);
+                _cache.AddOrUpdate(imageBuffer, decoded);
+                return decoded;
             }
             catch (Exception ex)
             {

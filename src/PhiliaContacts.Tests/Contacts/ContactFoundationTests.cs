@@ -147,5 +147,32 @@ public sealed class ContactFoundationTests
         }
     }
 
+    [TestMethod]
+    public async Task ContactService_SaveManyWritesNothingWhenAnyContactIsInvalid()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"PhiliaContacts-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            ServiceCollection services = new();
+            services.RegisterInternalDataServices(directory).RegisterInternalBusinessServices();
+            using ServiceProvider provider = services.BuildServiceProvider();
+            await provider.InitializePhiliaContactsDataAsync(TestContext.CancellationToken);
+            IContactService service = provider.GetRequiredService<IContactService>();
+
+            Contact valid = new() { Id = ContactId.New(), GivenName = "Valid" };
+            await Assert.ThrowsExactlyAsync<ArgumentException>(() => service.SaveManyAsync([valid, new Contact { Id = ContactId.New() }], TestContext.CancellationToken));
+            Assert.IsEmpty(await service.ListAsync(TestContext.CancellationToken));
+
+            await service.SaveManyAsync([valid, new Contact { Id = ContactId.New(), FamilyName = "Second" }], TestContext.CancellationToken);
+            Assert.HasCount(2, await service.ListAsync(TestContext.CancellationToken));
+        }
+        finally
+        {
+            SqliteConnection.ClearAllPools();
+            Directory.Delete(directory, true);
+        }
+    }
+
     public TestContext TestContext { get; set; }
 }

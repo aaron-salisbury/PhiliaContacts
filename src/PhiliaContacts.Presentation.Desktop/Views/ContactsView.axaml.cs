@@ -17,6 +17,7 @@ public partial class ContactsView : UserControl
         {
             if (DataContext is ContactsViewModel model)
             {
+                model.ConfirmDiscardChangesAsync ??= () => this.ConfirmAsync("Unsaved changes", "Discard your unsaved changes to this contact?");
                 await model.InitializeAsync();
             }
         };

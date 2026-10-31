@@ -1,8 +1,10 @@
 using PhiliaContacts.Business.Modules.Contacts;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace PhiliaContacts.Integrations.LegacyContacts;
@@ -12,6 +14,11 @@ internal sealed class VCardContactService : IVCardContactService
 {
     //TODO: This class is in the LegacyContacts namespace, but it does not pertain to the legacy JSON implementation.
     //TODO: We're throwing exceptions for non-extraordinary scenarios. Possibly just skip invalid vCards or return error data so caller can gracefully fallback and report to user.
+
+    private const string FAVORITE_CATEGORY = "starred";
+
+    // TYPE values that describe capabilities or preference rather than a user-facing label.
+    private static readonly HashSet<string> _nonLabelTypes = new(StringComparer.OrdinalIgnoreCase) { "INTERNET", "PREF", "VOICE", "X400", "MSG", "TEXT" };
 
     public IReadOnlyList<Contact> Read(string vcf)
     {
@@ -63,8 +70,9 @@ internal sealed class VCardContactService : IVCardContactService
 
     private static Contact Parse(List<string> lines)
     {
-        string? given = null, middle = null, family = null, prefix = null, suffix = null;
+        string? given = null, middle = null, family = null, prefix = null, suffix = null, uid = null;
         string? nickname = null, formattedName = null, phoneticGiven = null, phoneticFamily = null, title = null, organization = null, birthday = null, notes = null, url = null;
+        string? twitter = null, facebook = null, linkedIn = null;
         bool isFavorite = false;
         byte[]? photo = null;
         List<ContactValue> phones = [], emails = [];
@@ -81,7 +89,7 @@ internal sealed class VCardContactService : IVCardContactService
             }
 
             string head = line[..colon];
-            string name = head.Split(';')[0].Split('.').Last().ToUpperInvariant();
+            string name = PropertyName(head).ToUpperInvariant();
             string raw = line[(colon + 1)..];
 
             if (head.Contains("ENCODING=QUOTED-PRINTABLE", StringComparison.OrdinalIgnoreCase))
@@ -108,7 +116,17 @@ internal sealed class VCardContactService : IVCardContactService
                 case "NICKNAME": nickname = Unescape(raw); break;
                 case "X-PHONETIC-FIRST-NAME": case "X-PHONETIC-GIVEN-NAME": phoneticGiven = Unescape(raw); break;
                 case "X-PHONETIC-LAST-NAME": case "X-PHONETIC-FAMILY-NAME": phoneticFamily = Unescape(raw); break;
-                case "CATEGORIES": isFavorite = raw.Equals("starred", StringComparison.OrdinalIgnoreCase); break;
+                case "CATEGORIES":
+                    List<string> categories = [.. SplitList(raw)];
+                    if (categories.RemoveAll(category => Unescape(category).Trim().Equals(FAVORITE_CATEGORY, StringComparison.OrdinalIgnoreCase)) > 0)
+                    {
+                        isFavorite = true;
+                    }
+                    if (categories.Count > 0 && IsSafeExtra(head))
+                    {
+                        extras.Add(head + ":" + string.Join(',', categories));
+                    }
+                    break;
                 case "TEL": phones.Add(new(Unescape(raw).Replace("tel:", string.Empty, StringComparison.OrdinalIgnoreCase), Type(head))); break;
                 case "EMAIL": emails.Add(new(Unescape(raw), Type(head))); break;
                 case "ADR":
@@ -117,20 +135,39 @@ internal sealed class VCardContactService : IVCardContactService
                         Unescape(address.ElementAtOrDefault(4)), Unescape(address.ElementAtOrDefault(5)), Unescape(address.ElementAtOrDefault(6))));
                     break;
                 case "PHOTO":
-                    string encoded = raw.StartsWith("data:", StringComparison.OrdinalIgnoreCase) ? raw[(raw.IndexOf(',') + 1)..] : raw;
-                    if (encoded.Length > 12 * 1024 * 1024)
-                    {
-                        throw new InvalidDataException("Photo too large.");
-                    }
-                    try { photo = Convert.FromBase64String(encoded); }
-                    catch (FormatException error) { throw new InvalidDataException("Invalid vCard photo.", error); }
+                    // Remote photo URLs (e.g. Google Contacts exports) and undecodable photos are skipped rather than failing the import.
+                    photo = TryReadPhoto(head, raw) ?? photo;
                     break;
-                case "BDAY": birthday = Unescape(raw); break;
+                case "BDAY": birthday = ContactBirthday.Normalize(Unescape(raw)); break;
                 case "TITLE": title = Unescape(raw); break;
                 case "ORG": organization = Unescape(raw); break;
                 case "NOTE": notes = Unescape(raw); break;
                 case "URL": url = Unescape(raw); break;
+                case "X-SOCIALPROFILE":
+                    string? service = Parameters(head).FirstOrDefault(parameter => parameter.Name == "TYPE").Value?.ToLowerInvariant();
+                    string? user = SocialUser(head, Unescape(raw));
+                    switch (service)
+                    {
+                        case "twitter" or "x" when user is not null: twitter = user; break;
+                        case "facebook" when user is not null: facebook = user; break;
+                        case "linkedin" when user is not null: linkedIn = user; break;
+                        default:
+                            if (IsSafeExtra(head))
+                            {
+                                extras.Add(line);
+                            }
+                            break;
+                    }
+                    break;
+                case "X-TWITTER": twitter = Unescape(raw); break;
+                case "X-FACEBOOK": facebook = Unescape(raw); break;
+                case "X-LINKEDIN": linkedIn = Unescape(raw); break;
                 default:
+                    if (name == "UID")
+                    {
+                        uid = Unescape(raw).Trim();
+                    }
+
                     if (name is not ("BEGIN" or "END") && IsSafeExtra(head))
                     {
                         extras.Add(line);
@@ -149,14 +186,9 @@ internal sealed class VCardContactService : IVCardContactService
             throw new InvalidDataException("A vCard requires a name.");
         }
 
-        if (photo?.Length > 8 * 1024 * 1024)
-        {
-            throw new InvalidDataException("Photo exceeds 8 MiB.");
-        }
-
         return new Contact
         {
-            Id = ContactId.New(),
+            Id = IdFromUid(uid),
             IsFavorite = isFavorite,
             GivenName = given,
             MiddleName = middle,
@@ -171,6 +203,9 @@ internal sealed class VCardContactService : IVCardContactService
             Birthday = birthday,
             Notes = notes,
             Url = url,
+            TwitterUser = twitter,
+            FacebookUser = facebook,
+            LinkedInUser = linkedIn,
             Photo = photo,
             PhoneNumbers = phones,
             EmailAddresses = emails,
@@ -193,9 +228,28 @@ internal sealed class VCardContactService : IVCardContactService
             Value(output, "X-PHONETIC-FIRST-NAME", contact.PhoneticGivenName);
             Value(output, "X-PHONETIC-LAST-NAME", contact.PhoneticFamilyName);
 
+            List<string> extras = [.. contact.VCardProperties.Where(extra =>
+                extra.IndexOfAny(['\r', '\n']) < 0 && extra.IndexOf(':') > 0 && IsSafeExtra(extra[..extra.IndexOf(':')]))];
+
+            // Keep a single identity across exports so a re-import updates rather than duplicates.
+            if (!extras.Any(extra => PropertyName(extra[..extra.IndexOf(':')]).Equals("UID", StringComparison.OrdinalIgnoreCase)))
+            {
+                Add(output, $"UID:urn:uuid:{contact.Id.Value:D}");
+            }
+
             if (contact.IsFavorite)
             {
-                Value(output, "CATEGORIES", "starred");
+                int categoriesIndex = extras.FindIndex(extra => PropertyName(extra[..extra.IndexOf(':')]).Equals("CATEGORIES", StringComparison.OrdinalIgnoreCase));
+                if (categoriesIndex < 0)
+                {
+                    Add(output, $"CATEGORIES:{FAVORITE_CATEGORY}");
+                }
+                else
+                {
+                    string categories = extras[categoriesIndex];
+                    int colon = categories.IndexOf(':');
+                    extras[categoriesIndex] = $"{categories[..colon]}:{FAVORITE_CATEGORY},{categories[(colon + 1)..]}";
+                }
             }
 
             foreach (ContactValue item in contact.PhoneNumbers)
@@ -213,27 +267,129 @@ internal sealed class VCardContactService : IVCardContactService
                 Add(output, $"ADR;TYPE={SafeType(address.Type)}:;;{Escape(address.Street)};{Escape(address.City)};{Escape(address.Region)};{Escape(address.PostalCode)};{Escape(address.Country)}");
             }
 
-            Value(output, "BDAY", contact.Birthday); Value(output, "TITLE", contact.Title);
-            Value(output, "ORG", contact.Organization); Value(output, "URL", contact.Url); Value(output, "NOTE", contact.Notes);
+            Value(output, "BDAY", ContactBirthday.Normalize(contact.Birthday)); Value(output, "TITLE", contact.Title);
+            Value(output, "ORG", contact.Organization); Value(output, "NOTE", contact.Notes);
+
+            // URL is a URI value type, not TEXT, so it is written without TEXT escaping.
+            if (!string.IsNullOrWhiteSpace(contact.Url))
+            {
+                Add(output, "URL:" + contact.Url.Trim().Replace("\r", string.Empty).Replace("\n", string.Empty));
+            }
+
+            SocialProfile(output, "twitter", "https://x.com/", contact.TwitterUser);
+            SocialProfile(output, "facebook", "https://www.facebook.com/", contact.FacebookUser);
+            SocialProfile(output, "linkedin", "https://www.linkedin.com/in/", contact.LinkedInUser);
 
             if (contact.Photo is { Length: > 0 } photo)
             {
-                string format = photo.Length >= 3 && photo[0] == 0xff && photo[1] == 0xd8 ? "JPEG" : "PNG";
-                Add(output, $"PHOTO;ENCODING=b;TYPE={format}:{Convert.ToBase64String(photo)}");
+                string? format = IsJpeg(photo) ? "JPEG" : IsPng(photo) ? "PNG" : null;
+                Add(output, format is null
+                    ? $"PHOTO;ENCODING=b:{Convert.ToBase64String(photo)}"
+                    : $"PHOTO;ENCODING=b;TYPE={format}:{Convert.ToBase64String(photo)}");
             }
 
-            foreach (string extra in contact.VCardProperties)
+            foreach (string extra in extras)
             {
-                if (extra.IndexOfAny(['\r', '\n']) < 0 && extra.IndexOf(':') > 0 && IsSafeExtra(extra[..extra.IndexOf(':')]))
-                {
-                    Add(output, extra);
-                }
+                Add(output, extra);
             }
 
             Add(output, "END:VCARD");
         }
 
         return output.ToString();
+    }
+
+    private static byte[]? TryReadPhoto(string head, string raw)
+    {
+        bool isUri = Parameters(head).Any(parameter => parameter.Name == "VALUE" && parameter.Value.Equals("uri", StringComparison.OrdinalIgnoreCase));
+        bool isDataUri = raw.StartsWith("data:", StringComparison.OrdinalIgnoreCase);
+
+        if ((isUri && !isDataUri) || raw.Contains("://", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        string encoded = isDataUri ? raw[(raw.IndexOf(',') + 1)..] : raw;
+        if (encoded.Length > 12 * 1024 * 1024)
+        {
+            return null;
+        }
+
+        byte[] bytes;
+        try
+        {
+            bytes = Convert.FromBase64String(encoded);
+        }
+        catch (FormatException)
+        {
+            return null;
+        }
+
+        // Formats the app cannot preview are still kept, so their bytes survive a later export.
+        return bytes.Length is > 0 and <= 8 * 1024 * 1024 ? bytes : null;
+    }
+
+    private static bool IsPng(byte[] data)
+    {
+        return data.Length >= 8 && data.AsSpan(0, 8).SequenceEqual((ReadOnlySpan<byte>)[137, 80, 78, 71, 13, 10, 26, 10]);
+    }
+
+    private static bool IsJpeg(byte[] data)
+    {
+        return data.Length >= 3 && data[0] == 0xff && data[1] == 0xd8 && data[2] == 0xff;
+    }
+
+    /// <summary>
+    /// Uses the vCard UID as the contact identity so re-importing the same card updates the existing contact.
+    /// GUID UIDs (including <c>urn:uuid:</c>) map directly; other UIDs map to a stable hash-derived GUID.
+    /// </summary>
+    private static ContactId IdFromUid(string? uid)
+    {
+        if (string.IsNullOrWhiteSpace(uid))
+        {
+            return ContactId.New();
+        }
+
+        string candidate = uid.StartsWith("urn:uuid:", StringComparison.OrdinalIgnoreCase) ? uid[9..] : uid;
+        if (Guid.TryParse(candidate, out Guid guid) && guid != Guid.Empty)
+        {
+            return new ContactId(guid);
+        }
+
+        byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes("vcard-uid:" + uid));
+        return new ContactId(new Guid(hash.AsSpan(0, 16)));
+    }
+
+    private static void SocialProfile(StringBuilder output, string service, string baseUrl, string? user)
+    {
+        if (string.IsNullOrWhiteSpace(user))
+        {
+            return;
+        }
+
+        string trimmed = user.Trim().TrimStart('@');
+        string parameterValue = new([.. trimmed.Where(character => char.IsLetterOrDigit(character) || character is '.' or '_' or '-')]);
+        string parameter = parameterValue.Length > 0 ? $";X-USER={parameterValue}" : string.Empty;
+        Add(output, $"X-SOCIALPROFILE;TYPE={service}{parameter}:{baseUrl}{Uri.EscapeDataString(trimmed)}");
+    }
+
+    private static string? SocialUser(string head, string value)
+    {
+        string? user = Parameters(head).FirstOrDefault(parameter => parameter.Name == "X-USER").Value;
+        if (!string.IsNullOrWhiteSpace(user))
+        {
+            return user;
+        }
+
+        if (Uri.TryCreate(value, UriKind.Absolute, out Uri? uri) && uri.Scheme is "http" or "https")
+        {
+            string? segment = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+            return segment is null ? null : Uri.UnescapeDataString(segment);
+        }
+
+        int colon = value.IndexOf(':');
+        string bare = colon >= 0 ? value[(colon + 1)..] : value;
+        return string.IsNullOrWhiteSpace(bare) ? null : bare.Trim();
     }
 
     private static void Value(StringBuilder output, string key, string? value)
@@ -249,16 +405,46 @@ internal sealed class VCardContactService : IVCardContactService
         return new string([.. type.Where(char.IsLetterOrDigit)]) is { Length: > 0 } safe ? safe : "OTHER";
     }
 
+    private static string PropertyName(string head)
+    {
+        return head.Split(';')[0].Split('.').Last();
+    }
+
     private static bool IsSafeExtra(string head)
     {
-        string key = head.Split(';')[0].Split('.').Last();
+        string key = PropertyName(head);
         return key.Length > 0 && key.All(character => char.IsLetterOrDigit(character) || character == '-');
+    }
+
+    /// <summary>
+    /// Parameters as upper-cased name/value pairs, one per comma-separated value. Bare vCard 2.1-style
+    /// parameters (e.g. <c>TEL;CELL</c>) are treated as TYPE values.
+    /// </summary>
+    private static IEnumerable<(string Name, string Value)> Parameters(string head)
+    {
+        foreach (string parameter in head.Split(';').Skip(1))
+        {
+            int equals = parameter.IndexOf('=');
+            string parameterName = equals < 0 ? "TYPE" : parameter[..equals].Trim().ToUpperInvariant();
+            string values = equals < 0 ? parameter : parameter[(equals + 1)..];
+
+            foreach (string value in values.Split(','))
+            {
+                string trimmed = value.Trim().Trim('"');
+                if (trimmed.Length > 0)
+                {
+                    yield return (parameterName, trimmed);
+                }
+            }
+        }
     }
 
     private static string Type(string head)
     {
-        string? parameter = head.Split(';').Skip(1).FirstOrDefault(part => part.StartsWith("TYPE=", StringComparison.OrdinalIgnoreCase));
-        return parameter is null ? "Other" : parameter[5..].Split(',')[0];
+        string[] types = [.. Parameters(head).Where(parameter => parameter.Name == "TYPE").Select(parameter => parameter.Value)];
+        string? label = types.FirstOrDefault(type => !_nonLabelTypes.Contains(type)) ?? types.FirstOrDefault();
+
+        return label is null ? "Other" : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(label.ToLowerInvariant());
     }
 
     private static string Escape(string? text)
@@ -292,6 +478,17 @@ internal sealed class VCardContactService : IVCardContactService
 
     private static string[] SplitStructured(string text)
     {
+        return Split(text, ';');
+    }
+
+    private static string[] SplitList(string text)
+    {
+        return [.. Split(text, ',').Where(part => part.Trim().Length > 0)];
+    }
+
+    // Splits on an unescaped separator, leaving escape sequences intact for Unescape.
+    private static string[] Split(string text, char separator)
+    {
         List<string> parts = [];
         StringBuilder part = new();
 
@@ -301,7 +498,7 @@ internal sealed class VCardContactService : IVCardContactService
             {
                 part.Append(text[i++]); part.Append(text[i]);
             }
-            else if (text[i] == ';')
+            else if (text[i] == separator)
             {
                 parts.Add(part.ToString()); part.Clear();
             }

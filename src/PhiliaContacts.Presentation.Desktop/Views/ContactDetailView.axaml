@@ -12,6 +12,7 @@
 
 	<UserControl.Resources>
 		<converters:BooleanToMaterialIconKindConverter x:Key="BooleanToMaterialIconKindConverter" />
+		<converters:BirthdayToDateConverter x:Key="BirthdayToDateConverter" />
 		<imaging:Bitmap x:Key="ContactPlaceholder">avares://PhiliaContacts.Presentation.Desktop/Base/Assets/contact-placeholder.png</imaging:Bitmap>
 	</UserControl.Resources>
 
@@ -83,27 +84,27 @@
 		<!-- Name -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="AccountOutline" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Given name" Text="{Binding GivenName}" AutomationProperties.Name="Given name" />
-			<TextBox Grid.Row="0" Grid.Column="2" Watermark="Family name" Text="{Binding FamilyName}" AutomationProperties.Name="Family name" />
-			<TextBox Grid.Row="1" Grid.Column="1" Watermark="Phonetic given name" Text="{Binding PhoneticGivenName}" />
-			<TextBox Grid.Row="1" Grid.Column="2" Watermark="Phonetic family name" Text="{Binding PhoneticFamilyName}" />
-			<TextBox Grid.Row="2" Grid.Column="1" Watermark="Middle name" Text="{Binding MiddleName}" />
-			<TextBox Grid.Row="2" Grid.Column="2" Watermark="Nickname" Text="{Binding Nickname}" />
-			<TextBox Grid.Row="3" Grid.Column="1" Watermark="Prefix" Text="{Binding Prefix}" />
-			<TextBox Grid.Row="3" Grid.Column="2" Watermark="Suffix" Text="{Binding Suffix}" />
+			<TextBox Grid.Row="0" Grid.Column="1" PlaceholderText="Given name" Text="{Binding GivenName}" AutomationProperties.Name="Given name" />
+			<TextBox Grid.Row="0" Grid.Column="2" PlaceholderText="Family name" Text="{Binding FamilyName}" AutomationProperties.Name="Family name" />
+			<TextBox Grid.Row="1" Grid.Column="1" PlaceholderText="Phonetic given name" Text="{Binding PhoneticGivenName}" />
+			<TextBox Grid.Row="1" Grid.Column="2" PlaceholderText="Phonetic family name" Text="{Binding PhoneticFamilyName}" />
+			<TextBox Grid.Row="2" Grid.Column="1" PlaceholderText="Middle name" Text="{Binding MiddleName}" />
+			<TextBox Grid.Row="2" Grid.Column="2" PlaceholderText="Nickname" Text="{Binding Nickname}" />
+			<TextBox Grid.Row="3" Grid.Column="1" PlaceholderText="Prefix" Text="{Binding Prefix}" />
+			<TextBox Grid.Row="3" Grid.Column="2" PlaceholderText="Suffix" Text="{Binding Suffix}" />
 		</Grid>
 
 		<!-- Work -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="OfficeBuildingOutline" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Organization" Text="{Binding Organization}" />
-			<TextBox Grid.Row="0" Grid.Column="2" Watermark="Title" Text="{Binding Title}" />
+			<TextBox Grid.Row="0" Grid.Column="1" PlaceholderText="Organization" Text="{Binding Organization}" />
+			<TextBox Grid.Row="0" Grid.Column="2" PlaceholderText="Title" Text="{Binding Title}" />
 		</Grid>
 
 		<!-- Birthday -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="CakeVariantOutline" Classes="section-icon" />
-			<DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding Birthday, Mode=TwoWay}" />
+			<DatePicker Grid.Row="0" Grid.Column="1" SelectedDate="{Binding Birthday, Mode=TwoWay, Converter={StaticResource BirthdayToDateConverter}}" />
 		</Grid>
 
 		<!-- Phone Numbers -->
@@ -118,8 +119,8 @@
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="vm:EditableValue">
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="2">
-							<TextBox Width="115" Watermark="Type (Home, Cell…)" Text="{Binding Type}" />
-							<TextBox Width="290" Watermark="Phone number" Text="{Binding Value}" />
+							<TextBox Width="115" PlaceholderText="Type (Home, Cell…)" Text="{Binding Type}" />
+							<TextBox Width="290" PlaceholderText="Phone number" Text="{Binding Value}" />
 						</StackPanel>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
@@ -138,8 +139,8 @@
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="vm:EditableValue">
 						<StackPanel Orientation="Horizontal" Spacing="8" Margin="2">
-							<TextBox Width="115" Watermark="Type" Text="{Binding Type}" />
-							<TextBox Width="290" Watermark="Email" Text="{Binding Value}" />
+							<TextBox Width="115" PlaceholderText="Type" Text="{Binding Type}" />
+							<TextBox Width="290" PlaceholderText="Email" Text="{Binding Value}" />
 						</StackPanel>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
@@ -159,14 +160,14 @@
 					<DataTemplate x:DataType="vm:EditableAddress">
 						<StackPanel Spacing="4" Margin="2,5">
 							<StackPanel Orientation="Horizontal" Spacing="6">
-								<TextBox Width="100" Watermark="Type" Text="{Binding Type}" />
-								<TextBox Width="300" Watermark="Street" Text="{Binding Street}" />
+								<TextBox Width="100" PlaceholderText="Type" Text="{Binding Type}" />
+								<TextBox Width="300" PlaceholderText="Street" Text="{Binding Street}" />
 							</StackPanel>
 							<StackPanel Orientation="Horizontal" Spacing="6">
-								<TextBox Width="120" Watermark="City" Text="{Binding City}" />
-								<TextBox Width="85" Watermark="State/region" Text="{Binding Region}" />
-								<TextBox Width="90" Watermark="Postal code" Text="{Binding PostalCode}" />
-								<TextBox Width="90" Watermark="Country" Text="{Binding Country}" />
+								<TextBox Width="120" PlaceholderText="City" Text="{Binding City}" />
+								<TextBox Width="85" PlaceholderText="State/region" Text="{Binding Region}" />
+								<TextBox Width="90" PlaceholderText="Postal code" Text="{Binding PostalCode}" />
+								<TextBox Width="90" PlaceholderText="Country" Text="{Binding Country}" />
 							</StackPanel>
 						</StackPanel>
 					</DataTemplate>
@@ -177,13 +178,13 @@
 		<!-- URL -->
 		<Grid ColumnDefinitions="Auto,*,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="Web" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Website" Text="{Binding Url}" />
+			<TextBox Grid.Row="0" Grid.Column="1" PlaceholderText="Website" Text="{Binding Url}" />
 		</Grid>
 
 		<!-- Notes -->
 		<Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto" ColumnSpacing="10" RowSpacing="8">
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Kind="NoteMultipleOutline" Classes="section-icon" />
-			<TextBox Grid.Row="0" Grid.Column="1" Watermark="Notes" Text="{Binding Notes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="75" />
+			<TextBox Grid.Row="0" Grid.Column="1" PlaceholderText="Notes" Text="{Binding Notes}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="75" />
 		</Grid>
 
 		<!-- Socials -->
@@ -191,9 +192,9 @@
 			<i:MaterialIcon Grid.Row="0" Grid.Column="0" Classes="section-icon" />
 			<Expander Grid.Row="0" Grid.Column="1" Header="Social profiles">
 				<StackPanel Spacing="5">
-					<TextBox Watermark="X" Text="{Binding TwitterUser}" />
-					<TextBox Watermark="Facebook" Text="{Binding FacebookUser}" />
-					<TextBox Watermark="LinkedIn" Text="{Binding LinkedInUser}" />
+					<TextBox PlaceholderText="X" Text="{Binding TwitterUser}" />
+					<TextBox PlaceholderText="Facebook" Text="{Binding FacebookUser}" />
+					<TextBox PlaceholderText="LinkedIn" Text="{Binding LinkedInUser}" />
 				</StackPanel>
 			</Expander>
 		</Grid>

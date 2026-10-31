@@ -24,6 +24,12 @@ public partial class ContactsRibbonControl : BaseRibbonControl
 
     private async void ImportVCard_Click(object? sender, RoutedEventArgs e)
     {
+        // An import can update the contact being edited, so unsaved edits must be resolved first.
+        if (DataContext is ContactsViewModel current && !await current.CanDiscardChangesAsync())
+        {
+            return;
+        }
+
         IStorageFile? file = await this.GetUserSelectedFileAsync("Choose a vCard file", "vCard", "*.vcf");
         if (file is not null && DataContext is ContactsViewModel model)
         {

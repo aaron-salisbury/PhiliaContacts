@@ -74,6 +74,21 @@ internal sealed class SqliteContactStore : IContactStore
         await transaction.CommitAsync(cancellationToken);
     }
 
+    public async Task UpsertManyAsync(IReadOnlyList<Contact> contacts, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(contacts);
+
+        await using SqliteConnection connection = await _database.OpenConnectionAsync(cancellationToken);
+        await using SqliteTransaction transaction = connection.BeginTransaction();
+
+        foreach (Contact contact in contacts)
+        {
+            await WriteAsync(connection, transaction, contact, cancellationToken);
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+    }
+
     internal static async Task WriteAsync(SqliteConnection connection, SqliteTransaction transaction, Contact contact, CancellationToken cancellationToken)
     {
         string key = contact.Id.Value.ToString("D");

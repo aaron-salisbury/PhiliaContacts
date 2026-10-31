@@ -24,25 +24,33 @@
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
-		<Button Command="{Binding NewContactCommand}">
-			<i:MaterialIcon Kind="AccountPlusOutline" />
-		</Button>
+		<TextBlock Text="{Binding Status}" ToolTip.Tip="{Binding Status}" VerticalAlignment="Center" Margin="0,0,12,0"
+				   MaxWidth="420" TextTrimming="CharacterEllipsis" Opacity="0.8" />
 
-		<Button Click="Delete_Click">
-			<i:MaterialIcon Kind="TrashCanOutline" />
-		</Button>
+		<!-- Disabled while an operation runs so saves and imports cannot overlap. -->
+		<StackPanel Orientation="Horizontal" IsEnabled="{Binding !IsBusy}">
 
-		<Button Click="ImportVCard_Click">
-			<i:MaterialIcon Kind="Import" />
-		</Button>
+			<Button Command="{Binding NewContactCommand}">
+				<i:MaterialIcon Kind="AccountPlusOutline" />
+			</Button>
 
-		<Button Click="ExportVCard_Click">
-			<i:MaterialIcon Kind="Export" />
-		</Button>
-		
-		<Button Command="{Binding SaveCommand}">
-			<i:MaterialIcon Kind="ContentSaveOutline" />
-		</Button>
-		
+			<Button Click="Delete_Click">
+				<i:MaterialIcon Kind="TrashCanOutline" />
+			</Button>
+
+			<Button Click="ImportVCard_Click">
+				<i:MaterialIcon Kind="Import" />
+			</Button>
+
+			<Button Click="ExportVCard_Click">
+				<i:MaterialIcon Kind="Export" />
+			</Button>
+
+			<Button Command="{Binding SaveCommand}">
+				<i:MaterialIcon Kind="ContentSaveOutline" />
+			</Button>
+
+		</StackPanel>
+
     </StackPanel>
 </UserControl>
